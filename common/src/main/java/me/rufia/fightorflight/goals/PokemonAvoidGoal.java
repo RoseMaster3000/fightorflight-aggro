@@ -1,17 +1,23 @@
 package me.rufia.fightorflight.goals;
 
+import com.cobblemon.mod.common.api.moves.Move;
+import com.cobblemon.mod.common.api.moves.MoveSet;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.mojang.logging.LogUtils;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PokemonAvoidGoal extends Goal {
     protected final PathfinderMob mob;
@@ -28,7 +34,7 @@ public class PokemonAvoidGoal extends Goal {
     //protected final Predicate<LivingEntity> predicateOnAvoidEntity;
     private final TargetingConditions avoidEntityTargeting;
 
-//    public PokemonAvoidGoal(PathfinderMob p_25040_, Class<T> p_25041_, Predicate<LivingEntity> p_25042_, float p_25043_, double p_25044_, double p_25045_, Predicate<LivingEntity> p_25046_) {
+    //    public PokemonAvoidGoal(PathfinderMob p_25040_, Class<T> p_25041_, Predicate<LivingEntity> p_25042_, float p_25043_, double p_25044_, double p_25045_, Predicate<LivingEntity> p_25046_) {
 //        this.mob = p_25040_;
 //        this.avoidClass = p_25041_;
 //        this.avoidPredicate = p_25042_;
@@ -40,23 +46,29 @@ public class PokemonAvoidGoal extends Goal {
 //        this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 //        this.avoidEntityTargeting = TargetingConditions.forCombat().range((double)p_25043_).selector(p_25046_.and(p_25042_));
 //    }
-    public PokemonAvoidGoal(PathfinderMob mob, float maxDist, float walkSpeedModifier, float sprintSpeedModifier){
+    public PokemonAvoidGoal(PathfinderMob mob, float maxDist, float walkSpeedModifier, float sprintSpeedModifier) {
         this.mob = mob;
         this.maxDist = maxDist;
         this.walkSpeedModifier = walkSpeedModifier;
         this.sprintSpeedModifier = sprintSpeedModifier;
         this.pathNav = this.mob.getNavigation();
-        this.avoidEntityTargeting = TargetingConditions.forCombat().range((double)maxDist);
+        this.avoidEntityTargeting = TargetingConditions.forCombat().range((double) maxDist);
     }
 
 
     public boolean canUse() {
-        PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
-        if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
-        if (pokemonEntity.isBusy()) { return false; }
+        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
+        if (pokemonEntity.getPokemon().isPlayerOwned()) {
+            return false;
+        }
+        if (pokemonEntity.isBusy()) {
+            return false;
+        }
 
         if (this.mob.getTarget() != null) {
-            if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) { return false; }
+            if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) {
+                return false;
+            }
 
             if (this.mob.getTarget().distanceToSqr(this.mob) < maxDist) {
                 toAvoid = this.mob.getTarget();
@@ -103,7 +115,25 @@ public class PokemonAvoidGoal extends Goal {
     }
 
     public void start() {
-        this.pathNav.moveTo(this.path, this.walkSpeedModifier);
+        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
+        boolean has_teleport=false;
+        List<Move> moves=pokemonEntity.getPokemon().getMoveSet().getMoves();
+        for (Move move : moves) {
+            if (move.getName() .equals("teleport")) {
+                has_teleport = true;
+                break;
+            }
+        }
+
+        if (CobblemonFightOrFlight.config().allow_teleport_to_flee && has_teleport) {
+            for(int i = 0; i < 5; ++i) {
+                this.mob.level().addParticle(ParticleTypes.PORTAL, this.mob.getRandomX(0.5), this.mob.getRandomY(), this.mob.getRandomZ(0.5), 0.0, 0.0, 0.0);
+            }
+            this.mob.teleportTo(this.path.getEndNode().x, this.path.getEndNode().y + 0.2, this.path.getEndNode().z);
+
+        } else {
+            this.pathNav.moveTo(this.path, this.walkSpeedModifier);
+        }
     }
 
     public void stop() {
@@ -111,7 +141,7 @@ public class PokemonAvoidGoal extends Goal {
     }
 
     public void tick() {
-        PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
+        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
 //        LogUtils.getLogger().info(pokemonEntity.getPokemon().getSpecies().getName() + " is running away " + this.mob.distanceToSqr(this.toAvoid) + " distanceSqr from here");
 
         if (this.mob.distanceToSqr(this.toAvoid) < (maxDist * 0.5)) {
