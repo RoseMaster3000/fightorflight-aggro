@@ -1,22 +1,17 @@
 package me.rufia.fightorflight;
 
-import com.cobblemon.mod.common.api.Priority;
-import com.cobblemon.mod.common.api.events.CobblemonEvents;
-import com.cobblemon.mod.common.api.events.entity.SpawnEvent;
+
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
+import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.goals.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -26,25 +21,27 @@ import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.mojang.logging.LogUtils;
 
 public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
-
+    //public static final DeferredRegister<PokemonTracingBullet>;
     public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
-    private static FightOrFlightCommonConfigModel config;
+    private static FightOrFlightCommonConfigModel commonConfig;
+    private static FightOrFlightMoveConfigModel moveConfig;
     private static TriConsumer<PokemonEntity, Integer, Goal> goalAdder;
 
-    public static FightOrFlightCommonConfigModel config() {
-        return config;
+    public static FightOrFlightCommonConfigModel commonConfig() {
+        return commonConfig;
     }
+    public static FightOrFlightMoveConfigModel moveConfig(){return  moveConfig;}
 
     public static void init(TriConsumer<PokemonEntity, Integer, Goal> goalAdder) {
         CobblemonFightOrFlight.goalAdder = goalAdder;
         AutoConfig.register(FightOrFlightCommonConfigModel.class, JanksonConfigSerializer::new);
-        config = AutoConfig.getConfigHolder(FightOrFlightCommonConfigModel.class).getConfig();
-
+        AutoConfig.register(FightOrFlightMoveConfigModel.class,JanksonConfigSerializer::new);
+        commonConfig = AutoConfig.getConfigHolder(FightOrFlightCommonConfigModel.class).getConfig();
+        moveConfig=AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
 //		CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe(Priority.HIGHEST, event -> {
 //			//LogUtils.getLogger().info(((PokemonEntity)event.getEntity()).getPokemon().getSpecies().getName() + "spawn event");
 //			addPokemonGoal(event.getEntity());
@@ -63,17 +60,23 @@ public class CobblemonFightOrFlight {
     }
 
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {
-        float minimum_movement_speed = CobblemonFightOrFlight.config().minimum_movement_speed;
-        float maximum_movement_speed = CobblemonFightOrFlight.config().maximum_movement_speed;
-        float speed_limit= CobblemonFightOrFlight.config().speed_stat_limit;
+        float minimum_movement_speed = CobblemonFightOrFlight.commonConfig().minimum_movement_speed;
+        float maximum_movement_speed = CobblemonFightOrFlight.commonConfig().maximum_movement_speed;
+        float speed_limit= CobblemonFightOrFlight.commonConfig().speed_stat_limit;
         float speed = pokemonEntity.getPokemon().getSpeed();
         float speedMultiplier = minimum_movement_speed + (maximum_movement_speed - minimum_movement_speed) * speed/speed_limit;
         float fleeSpeed = 1.5f * speedMultiplier;
 
         float pursuitSpeed = 1.2f * speedMultiplier;
+        boolean should_melee= pokemonEntity.getPokemon().getAttack()>pokemonEntity.getPokemon().getSpecialAttack();
+
+        if(should_melee){
+            goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
+        }else{
+            goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,1.0f,16));
+        }
 
         goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, 48.0f, 1.0f, fleeSpeed));
-        goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
 
         goalAdder.accept(pokemonEntity, 1, new PokemonOwnerHurtByTargetGoal(pokemonEntity));
@@ -88,7 +91,7 @@ public class CobblemonFightOrFlight {
     }
 
     public static double getFightOrFlightCoefficient(PokemonEntity pokemonEntity) {
-        if (!CobblemonFightOrFlight.config().do_pokemon_attack) {
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack) {
             return -100;
         }
 
@@ -102,7 +105,7 @@ public class CobblemonFightOrFlight {
             //LogUtils.getLogger().info(pokemon.getSpecies().getName() + " Never Aggro");
             return -100;
         }
-        float levelMultiplier = CobblemonFightOrFlight.config().aggression_level_multiplier;
+        float levelMultiplier = CobblemonFightOrFlight.commonConfig().aggression_level_multiplier;
         double pkmnLevel = levelMultiplier * pokemon.getLevel();
         //double levelAggressionCoefficient = (pokemon.getLevel() - 20);
         double lowStatPenalty = (pkmnLevel * 1.5) + 30;
@@ -148,8 +151,8 @@ public class CobblemonFightOrFlight {
             typeSecondary = typePrimary;
         }
 
-        boolean ghostLightLevelModifier = CobblemonFightOrFlight.config().ghost_light_level_aggro && (typePrimary.getName() == "ghost" || typeSecondary.getName() == "ghost");
-        boolean darkLightLevelModifier = CobblemonFightOrFlight.config().dark_light_level_aggro && (typePrimary.getName() == "dark" || typeSecondary.getName() == "dark");
+        boolean ghostLightLevelModifier = CobblemonFightOrFlight.commonConfig().ghost_light_level_aggro && (typePrimary.getName() == "ghost" || typeSecondary.getName() == "ghost");
+        boolean darkLightLevelModifier = CobblemonFightOrFlight.commonConfig().dark_light_level_aggro && (typePrimary.getName() == "dark" || typeSecondary.getName() == "dark");
 
         if (ghostLightLevelModifier || darkLightLevelModifier) {
             int skyDarken = ((Entity) pokemonEntity).level().getSkyDarken();
@@ -184,7 +187,7 @@ public class CobblemonFightOrFlight {
 
     public static boolean SpeciesAlwaysAggro(String speciesName) {
         //LogUtils.getLogger().info("Are " + speciesName + " always aggro?");
-        for (String aggroSpecies : CobblemonFightOrFlight.config().always_aggro) {
+        for (String aggroSpecies : CobblemonFightOrFlight.commonConfig().always_aggro) {
             if (aggroSpecies.equals(speciesName)) {
                 return true;
             }
@@ -193,7 +196,7 @@ public class CobblemonFightOrFlight {
     }
 
     public static boolean SpeciesNeverAggro(String speciesName) {
-        for (String passiveSpecies : CobblemonFightOrFlight.config().never_aggro) {
+        for (String passiveSpecies : CobblemonFightOrFlight.commonConfig().never_aggro) {
             if (passiveSpecies.equals(speciesName)) {
                 return true;
             }

@@ -17,10 +17,14 @@
   "entrypoints": {
     "main": [
       "me.rufia.fightorflight.CobblemonFightOrFlightFabric"
+    ],
+    "client": [
+      "me.rufia.fightorflight.FabricClient"
     ]
   },
   "mixins": [
-    "fightorflight.mixins.json"
+    "fightorflight.mixins_fabric.json",
+    "fightorflight.mixins_common.json"
   ],
   "depends": {
     "java": ">=17",

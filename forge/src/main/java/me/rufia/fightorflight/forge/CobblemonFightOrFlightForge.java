@@ -1,29 +1,28 @@
-package me.rufia.fightorflight;
+package me.rufia.fightorflight.forge;
 
+
+import dev.architectury.platform.forge.EventBuses;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.entity.EntityFightOrFlight;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-
-
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(CobblemonFightOrFlight.MODID)
-@Mod.EventBusSubscriber
-public class CobblemonFightOrFlightForge {
-
+@Mod.EventBusSubscriber(modid = CobblemonFightOrFlight.MODID,bus= Mod.EventBusSubscriber.Bus.MOD)
+public final class CobblemonFightOrFlightForge {
     public CobblemonFightOrFlightForge() {
+        CobblemonFightOrFlight.LOGGER.info("Hello forge");
+        EventBuses.registerModEventBus(CobblemonFightOrFlight.MODID, FMLJavaModLoadingContext.get().getModEventBus());
+        EntityFightOrFlight.bootstrap();
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
-    }
-    @SubscribeEvent
-    public static void onEntityJoined(EntityJoinLevelEvent event) {
-        //LOGGER.info("onEntityJoined");
+        MinecraftForge.EVENT_BUS.register(ForgeBusEvent.class);
 
-        if (event.getEntity() instanceof PokemonEntity) {
-            PokemonEntity pokemonEntity = (PokemonEntity)event.getEntity();
-
-            CobblemonFightOrFlight.addPokemonGoal(pokemonEntity);
-        }
     }
+
     //    @SubscribeEvent
 //    public static void onEntityAttributes(EntityAttributeModificationEvent event){
 //        LOGGER.info("onEntityAttributes");

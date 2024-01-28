@@ -21,7 +21,7 @@ public class PokemonOwnerHurtByTargetGoal extends TargetGoal {
     }
 
     public boolean canUse() {
-        if (!CobblemonFightOrFlight.config().do_pokemon_defend_owner) { return false; }
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner) { return false; }
 
         LivingEntity owner = this.pokemonEntity.getOwner();
 

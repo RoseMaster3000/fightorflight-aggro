@@ -1,7 +1,6 @@
 package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.mojang.logging.LogUtils;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -22,7 +21,7 @@ public class PokemonOwnerHurtTargetGoal extends TargetGoal {
     }
 
     public boolean canUse() {
-        if (!CobblemonFightOrFlight.config().do_pokemon_defend_owner) { return false; }
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner) { return false; }
 
         LivingEntity owner = this.pokemonEntity.getOwner();
 //        if (owner != null) {

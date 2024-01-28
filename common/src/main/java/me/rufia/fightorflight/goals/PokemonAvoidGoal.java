@@ -1,7 +1,6 @@
 package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.api.moves.MoveSet;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.mojang.logging.LogUtils;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
@@ -12,7 +11,6 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
-import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -121,16 +119,17 @@ public class PokemonAvoidGoal extends Goal {
         for (Move move : moves) {
             if (move.getName() .equals("teleport")) {
                 has_teleport = true;
+                LogUtils.getLogger().info("This pokemon got teleport to avoid you");
                 break;
             }
         }
 
-        if (CobblemonFightOrFlight.config().allow_teleport_to_flee && has_teleport) {
+        if (CobblemonFightOrFlight.commonConfig().allow_teleport_to_flee && has_teleport) {
             for(int i = 0; i < 5; ++i) {
                 this.mob.level().addParticle(ParticleTypes.PORTAL, this.mob.getRandomX(0.5), this.mob.getRandomY(), this.mob.getRandomZ(0.5), 0.0, 0.0, 0.0);
             }
             this.mob.teleportTo(this.path.getEndNode().x, this.path.getEndNode().y + 0.2, this.path.getEndNode().z);
-
+            this.path=null;
         } else {
             this.pathNav.moveTo(this.path, this.walkSpeedModifier);
         }

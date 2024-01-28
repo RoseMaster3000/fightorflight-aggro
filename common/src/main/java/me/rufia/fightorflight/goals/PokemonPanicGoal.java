@@ -5,7 +5,6 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.animal.PolarBear;
 
 public class PokemonPanicGoal extends PanicGoal {
     public PokemonPanicGoal(PathfinderMob mob, double speedModifier) {
