@@ -1,9 +1,12 @@
 package me.rufia.fightorflight.entity;
 
+import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
@@ -16,10 +19,6 @@ import net.minecraft.world.entity.Mob;
 import java.awt.*;
 
 public class PokemonAttackEffect {
-    private static boolean shouldUseMeleeAttack(Pokemon pokemon) {
-        return pokemon.getAttack() > pokemon.getSpecialAttack();
-    }
-
     public static SimpleParticleType getParticleFromType(String name) {
         return switch (name) {
             case "fire" -> ParticleTypes.FLAME;
@@ -100,17 +99,80 @@ public class PokemonAttackEffect {
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial) {
-        return calculatePokemonDamage(pokemonEntity, isSpecial, 60);
+        return calculatePokemonDamage(pokemonEntity, isSpecial, CobblemonFightOrFlight.moveConfig().base_power);
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial, float movePower) {
         float attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         attack = Math.min(attack, 255.0f) / 255.0f;
-        float moveModifier =isSpecial? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier:1;//TODO Currently the physical moves has no special effect.
+        float moveModifier = isSpecial ? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier : 1;//TODO Currently the physical moves has no special effect.
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
 
         return Math.min(Mth.lerp(attack * moveModifier, minDmg, maxDmg), maxDmg);
+    }
+
+    protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
+        if (hurtTarget instanceof
+                LivingEntity livingHurtTarget) {
+            int effectStrength = Math.max(pkmLevel / 10, 1);
+
+            switch (typeName) {
+                case "fire":
+                    livingHurtTarget.setSecondsOnFire(effectStrength);
+                    break;
+                case "ice":
+                    livingHurtTarget.setTicksFrozen(livingHurtTarget.getTicksFrozen() + effectStrength * 30);
+                    break;
+                case "poison":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.POISON, effectStrength * 20, 0), pokemonEntity);
+                    break;
+                case "psychic":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.LEVITATION, effectStrength * 20, 0), pokemonEntity);
+                    break;
+                case "fairy":
+                case "fighting":
+                case "steel":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, effectStrength * 20, 0), pokemonEntity);
+                    break;
+                case "ghost":
+                case "dark":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    break;
+                case "ground":
+                case "rock":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    break;
+                case "electric":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    break;
+                case "bug":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.HUNGER, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    break;
+                case "grass":
+                    pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (effectStrength + 2) * 20, 0), pokemonEntity);
+                    break;
+                case "dragon":
+                    break;
+                case "flying":
+                    break;
+                case "water":
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public static void applyTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName) {
+        if (pokemonEntity == null) {
+            return;
+        }
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        int pkmLevel = pokemon.getLevel();
+
+        calculateTypeEffect(pokemonEntity, hurtTarget, typeName, pkmLevel);
     }
 
     public static void applyTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget) {
@@ -119,9 +181,35 @@ public class PokemonAttackEffect {
         }
         Pokemon pokemon = pokemonEntity.getPokemon();
         int pkmLevel = pokemon.getLevel();
-        ElementalType primaryType = pokemon.getPrimaryType();
-        if (hurtTarget instanceof
-                LivingEntity livingHurtTarget) {
+        String primaryType = pokemon.getPrimaryType().getName();
+        calculateTypeEffect(pokemonEntity, hurtTarget, primaryType, pkmLevel);
+    }
+
+    public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        float hurtDamage;
+        float hurtKnockback = 1f;
+        Move move = PokemonUtils.getMove(pokemonEntity, false);
+        if (move != null) {
+            applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
+            hurtDamage= calculatePokemonDamage(pokemonEntity,false, (float) move.getPower());
+        } else {
+            applyTypeEffect(pokemonEntity, hurtTarget);
+            hurtDamage=calculatePokemonDamage(pokemonEntity,false);
+        }
+
+        boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
+        if (flag) {
+            if (hurtTarget instanceof LivingEntity) {
+                ((LivingEntity) hurtTarget).knockback(hurtKnockback * 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
+                pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+            }
+
+            pokemonEntity.setLastHurtMob(hurtTarget);
+        }
+        return flag;
+        /*
+        * if (hurtTarget instanceof LivingEntity livingHurtTarget) {
             int effectStrength = Math.max(pkmLevel / 10, 1);
 
             switch (primaryType.getName()) {
@@ -160,73 +248,6 @@ public class PokemonAttackEffect {
                     pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (effectStrength + 2) * 20, 0), pokemonEntity);
                     break;
                 case "dragon":
-
-                    break;
-                case "flying":
-
-                    break;
-                case "water":
-
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-    public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget, Mob mob) {
-        Pokemon pokemon = pokemonEntity.getPokemon();
-        int pkmLevel = pokemon.getLevel();
-        //float maxAttack = Math.max(pokemonEntity.getPokemon().getAttack(), pokemonEntity.getPokemon().getSpecialAttack());
-
-
-        //LogUtils.getLogger().info("target took " + primaryType.getName() + " damage");
-
-
-        float hurtDamage = calculatePokemonDamage(pokemonEntity, true);
-        float hurtKnockback = 1.0f;
-        ElementalType primaryType = pokemon.getPrimaryType();
-        if (hurtTarget instanceof LivingEntity livingHurtTarget) {
-            int effectStrength = Math.max(pkmLevel / 10, 1);
-
-            switch (primaryType.getName()) {
-                case "fire":
-                    livingHurtTarget.setSecondsOnFire(effectStrength);
-                    break;
-                case "ice":
-                    livingHurtTarget.setTicksFrozen(livingHurtTarget.getTicksFrozen() + effectStrength * 30);
-                    break;
-                case "poison":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.POISON, effectStrength * 20, 0), mob);
-                    break;
-                case "psychic":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.LEVITATION, effectStrength * 20, 0), mob);
-                    break;
-                case "fairy":
-                case "fighting":
-                case "steel":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, effectStrength * 20, 0), mob);
-                    break;
-                case "ghost":
-                case "dark":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, (effectStrength + 2) * 25, 0), mob);
-                    break;
-                case "ground":
-                case "rock":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, (effectStrength + 2) * 25, 0), mob);
-                    break;
-                case "electric":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), mob);
-                    break;
-                case "bug":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.HUNGER, (effectStrength + 2) * 25, 0), mob);
-                    break;
-                case "grass":
-                    pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (effectStrength + 2) * 20, 0), mob);
-                    break;
-                case "dragon":
                     hurtDamage = hurtDamage + 3;
                     break;
                 case "flying":
@@ -234,23 +255,23 @@ public class PokemonAttackEffect {
                     break;
                 case "water":
                     hurtKnockback = hurtKnockback * 2;
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), mob);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
                     break;
 
                 default:
                     break;
             }
-            boolean flag = hurtTarget.hurt(mob.level().damageSources().mobAttack(mob), hurtDamage);
+            boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
             if (flag) {
                 if (hurtTarget instanceof LivingEntity) {
-                    ((LivingEntity) hurtTarget).knockback(hurtKnockback * 0.5F, Mth.sin(mob.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(mob.getYRot() * ((float) Math.PI / 180F)));
-                    mob.setDeltaMovement(mob.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+                    ((LivingEntity) hurtTarget).knockback(hurtKnockback * 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
+                    pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
                 }
 
-                mob.setLastHurtMob(hurtTarget);
+                pokemonEntity.setLastHurtMob(hurtTarget);
             }
             return flag;
         }
-        return false;
+        * */
     }
 }

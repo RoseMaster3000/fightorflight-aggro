@@ -12,7 +12,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public float move_power_multiplier=1.0f;
     @Comment("The multiplier for the moves that shoots a beam when calculating damage(The final damage can't be higher than the value in the config.These moves are hard to avoid in an open area so the damage should be slightly lower than the others)")
     public float beam_move_power_multiplier=0.8f;
-    @Comment("If a pokemon doesn't have the following special moves,the base power will be used to calculate the damage of the projectile.")
+    @Comment("If a pokemon doesn't have the correct moves to use,the base power will be used to calculate the damage.")
     public int base_power=60;
     @Comment("Moves that shoots multiple bullet")
     public String[] multiple_bullet_moves = {

@@ -133,7 +133,6 @@ public class PokemonArrow extends AbstractPokemonProjectile {
             if (bl) {
                 return;
             }
-
             if (target instanceof LivingEntity livingEntity) {
                 if (this.knockback > 0) {
                     double d = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
@@ -143,7 +142,7 @@ public class PokemonArrow extends AbstractPokemonProjectile {
                     }
                 }
                 if (entity2 instanceof PokemonEntity pokemonEntity) {
-                    PokemonAttackEffect.applyTypeEffect(pokemonEntity, target);
+                    applyTypeEffect(pokemonEntity, livingEntity);
                 }
             }
             this.discard();

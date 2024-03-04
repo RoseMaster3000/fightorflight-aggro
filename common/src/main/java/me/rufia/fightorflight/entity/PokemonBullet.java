@@ -102,9 +102,9 @@ public class PokemonBullet extends AbstractPokemonProjectile{
             if (bl) {
                 return;
             }
-            if(target instanceof LivingEntity){
+            if(target instanceof LivingEntity livingEntity){
                 if(entity2 instanceof  PokemonEntity pokemonEntity){
-                    PokemonAttackEffect.applyTypeEffect(pokemonEntity,target);
+                    applyTypeEffect(pokemonEntity,livingEntity);
                 }
             }
             this.discard();

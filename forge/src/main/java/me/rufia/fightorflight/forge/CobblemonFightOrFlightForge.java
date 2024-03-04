@@ -4,6 +4,7 @@ package me.rufia.fightorflight.forge;
 import dev.architectury.platform.forge.EventBuses;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
+import me.rufia.fightorflight.item.ItemFightOrFlight;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
@@ -18,6 +19,7 @@ public final class CobblemonFightOrFlightForge {
         CobblemonFightOrFlight.LOGGER.info("Hello forge");
         EventBuses.registerModEventBus(CobblemonFightOrFlight.MODID, FMLJavaModLoadingContext.get().getModEventBus());
         EntityFightOrFlight.bootstrap();
+        ItemFightOrFlight.bootstrap();
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
         MinecraftForge.EVENT_BUS.register(ForgeBusEvent.class);
 

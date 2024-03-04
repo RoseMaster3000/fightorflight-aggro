@@ -1,0 +1,14 @@
+package me.rufia.fightorflight;
+
+import com.cobblemon.mod.common.api.moves.Move;
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import org.spongepowered.asm.mixin.Mixin;
+
+
+public interface PokemonInterface {
+    default int getAttackTime(){return 0;};
+    default void setAttackTime(int val){};
+    default boolean usingBeam(){return false;};
+    default void setCurrentMove(Move move){};
+    default String getCurrentMove(){return null;};
+}

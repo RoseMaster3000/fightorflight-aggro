@@ -8,6 +8,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -114,7 +115,10 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     public boolean canUse() {
-        return shouldFightTarget() && super.canUse();
+        if (mob instanceof PokemonEntity pokemonEntity) {
+            return PokemonUtils.shouldMelee(pokemonEntity) && shouldFightTarget() && super.canUse();
+        }
+        return false;
     }
 
     public boolean canContinueToUse() {
@@ -141,7 +145,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         Pokemon pokemon = pokemonEntity.getPokemon();
 
         if (!pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
-            return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget, this.mob);
+            return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget);
         }
 
         return false;

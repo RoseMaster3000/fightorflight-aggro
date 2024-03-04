@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.mixin.PokemonEntityMixin;
+import me.rufia.fightorflight.PokemonInterface;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -29,11 +29,11 @@ public class PokemonPostRenderer {
     }
     public static void postRender(PokemonEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         LivingEntity livingEntity = entity.getTarget();
-        boolean enabled=false;
-        //TODO:This function will be enabled after I find a way to inject interfaces into the PokemonEntity class.
-        if (livingEntity != null&&enabled) {
+        int attackTime=((PokemonInterface)(Object)entity).getAttackTime();
+        boolean enabled=((PokemonInterface)(Object)entity).usingBeam();
+        if (livingEntity != null&&attackTime>5&&enabled) {
             //float f = 0.2F;//entity.getAttackAnimationScale(partialTicks);
-            float g = 40+partialTicks;//entity.getClientSideAttackTime() + partialTicks;
+            float g = 40+partialTicks+attackTime;//entity.getClientSideAttackTime() + partialTicks;
             Color color=Color.white;
             color=PokemonAttackEffect.getColorFromType(entity.getPokemon().getPrimaryType());
             float h = g * 0.5F % 1.0F;

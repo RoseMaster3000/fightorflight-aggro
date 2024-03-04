@@ -68,13 +68,20 @@ public class CobblemonFightOrFlight {
         float fleeSpeed = 1.5f * speedMultiplier;
 
         float pursuitSpeed = 1.2f * speedMultiplier;
-        boolean should_melee= pokemonEntity.getPokemon().getAttack()>pokemonEntity.getPokemon().getSpecialAttack();
+        /*
+        *
+        *         boolean should_melee= shouldMelee(pokemonEntity);
 
         if(should_melee){
             goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
         }else{
             goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,1.0f,16));
         }
+        *
+        *
+        * */
+        goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
+        goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,1.0f,16));
 
         goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, 48.0f, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
@@ -84,7 +91,7 @@ public class CobblemonFightOrFlight {
         goalAdder.accept(pokemonEntity, 3, new HurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 4, new CaughtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, 48.0f, true, true));
-        goalAdder.accept(pokemonEntity, 6, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> {
+        goalAdder.accept(pokemonEntity, 5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> {
             return arg instanceof Enemy && !(arg instanceof Creeper);
         }));
 

@@ -289,7 +289,7 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile {
         if (bl) {
             if (entity instanceof LivingEntity) {
                 LivingEntity livingEntity2 = (LivingEntity) entity;
-                PokemonAttackEffect.applyTypeEffect((PokemonEntity) livingEntity, livingEntity2);
+                applyTypeEffect((PokemonEntity) livingEntity, livingEntity2);
                 //livingEntity2.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200), (Entity) MoreObjects.firstNonNull(entity2, this));
             }
         }

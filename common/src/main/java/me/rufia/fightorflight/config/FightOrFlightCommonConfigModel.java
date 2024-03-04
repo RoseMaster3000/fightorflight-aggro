@@ -49,10 +49,10 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The amount of damage a pokemon would do on contact if it had 0 ATK and Sp.ATK.")
     public float minimum_attack_damage = 1.0f;
     @Comment("The amount of damage a pokemon would do on contact if it had 255 ATK or Sp.ATK.")
-    public float maximum_attack_damage = 25.0f;
+    public float maximum_attack_damage = 7.0f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
     public float minimum_movement_speed = 1.0f;
-    @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon reaches the following value in the config.")
+    @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon reaches the value in the config.")
     public float maximum_movement_speed = 2.0f;
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")
     public int speed_stat_limit = 548;
@@ -62,7 +62,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean force_player_battle_on_pokemon_hurt = false;
     @ConfigEntry.Category("Pokemon Ranged Attack")
     @Comment("If wild pokemon can use the ranged attack.")
-    public boolean wild_pokemon_ranged_attack=true;
+    public boolean wild_pokemon_ranged_attack=false;
     @Comment("The minimum time for pokemon to prepare(s).")
     public float minimum_ranged_attack_interval=1.0f;
     @Comment("The maximum time for pokemon to prepare(s).")
@@ -70,5 +70,5 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The amount of damage a pokemon would do on contact if it had 0 Sp.ATK.")
     public float minimum_ranged_attack_damage = 1.0f;
     @Comment("The amount of damage a pokemon would do on contact if it had 255 Sp.ATK.")
-    public float maximum_ranged_attack_damage = 15.0f;
+    public float maximum_ranged_attack_damage = 6.0f;
 }

@@ -7,7 +7,6 @@
     "RendererInjector"
   ],
   "mixins": [
-
     "PokemonEntityMixin"
   ],
   "injectors": {

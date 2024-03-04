@@ -1,14 +1,26 @@
 # What this branch do?
-In this branch, I made some changes to the original Fight or Flight mod to make the mod more interesting.  
-It's my first time to participate in the development of a mod so something may not go smoothly as I had expected.
-## Changes
-- Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
-> (It was quite annoying to use this mod with the Cobblemon Mass Outbreaks mod because the outbreak happens all of a sudden and most of these pokemon are aggressive,so they just keeps hitting you until you defeat them all.)  
-- Added a multiplier so the speed stat of a Pokemon can influence their speed when chasing a target or fleeing.(can be changed in the config)  
+- In this branch, I made some changes to the original Fight or Flight mod to make it more interesting.  
+- This branch is still WIP and it's my first time to participate in the development of a mod so something may not go smoothly as I had expected. This mod still needs to be polished before releasing.
+## Features&Changes
+- **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
+- **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
+- **Faster Pokemon:** Added a multiplier so the Pokemon with a higher speed stat can run faster.(can be changed in the config)  
 - The pokemon can now teleport to a nearby position if it learns the teleport move and got panicked.(can be disabled in the config)
-- Added a range attack for pokemon whose Sp.ATK is higher than its ATK.
-- If a pokemon has some special moves,they will shoot different bullet.
-- - The power of these moves will influence the damage of the projectile.However, if your pokemon doesn't have these moves there is also a base value(60 by default) .
+- **Range attack!:** Added a range attack for pokemon whose Sp.ATK is higher than its ATK.
+- - Wild pokemon are not allowed to use the range attack.(can be enabled in the config)
+- **Different ways of range attack:** If a pokemon has some special moves,they will shoot different bullet.
+- - The moves' type and power will influence the projectile's if the moves is a special move.However, if your pokemon doesn't have these moves there is also a base value(60 by default) .
+- - You can use the Poke Staff to select the move you want to choose, even forcing a special attacker to melee!(use JEI to check the recipe)
 ## TODO
+- Well, I do need some time to learn java.
 - Give more special effect to different moves.
-- Integrate the power of the pokemon's move more deeply into the calculation of the pokemon's damage to make the mod more immersive.
+- Special effect for status moves. 
+- The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon  weak at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough)  
+## Known Issues
+- Moves like electro ball can't calculate the damage correctly.  
+
+## How to use the Poke Staff
+Sneak+Right click: Switch the mode of the staff
+Right click:Send the command to the pokemon(send command mode)/Select the move(select mode)
+  
+It's cool to see that someone had found my branch before I release a stable version and he rewrote most of the code.I didn't find out about it until three weeks later as I don't always check my gitHub.I will try to take some of his advice and continue to work on this branch before it's excellent enough to be released.
