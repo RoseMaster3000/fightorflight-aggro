@@ -5,18 +5,20 @@ import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.Level;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class PokemonAttackEffect {
     public static SimpleParticleType getParticleFromType(String name) {
@@ -184,6 +186,39 @@ public class PokemonAttackEffect {
         String primaryType = pokemon.getPrimaryType().getName();
         calculateTypeEffect(pokemonEntity, hurtTarget, primaryType, pkmLevel);
     }
+    public static void applyOnHitEffect(PokemonEntity pokemonEntity,Entity hurtTarget,Move move){
+        if(move==null){return;}
+        int particleAmount=4;
+        boolean b1= Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().self_angry_moves).toList().contains(move.getName());
+        boolean b2= Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_fire_moves).toList().contains(move.getName());
+        boolean b3= Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_moves).toList().contains(move.getName());
+        if(b1){
+            PokemonUtils.makeParticle(particleAmount,pokemonEntity,ParticleTypes.ANGRY_VILLAGER);
+        }
+        if(b2){
+            PokemonUtils.makeParticle(particleAmount,pokemonEntity,ParticleTypes.SOUL_FIRE_FLAME);
+        }
+        if(b3){
+            PokemonUtils.makeParticle(particleAmount,pokemonEntity,ParticleTypes.SOUL);
+        }
+    }
+    public static void makeTypeEffectParticle(int particleAmount, Entity entity, String typeName){
+        if(typeName==null){return;}
+        PokemonUtils.makeParticle(particleAmount,entity,getParticleFromType(typeName));
+    }
+
+    public static void applyPostEffect(PokemonEntity pokemonEntity, Entity hurtTarget, Move move) {
+        if (move == null) {
+            return;
+        }
+        boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().switch_moves).toList().contains(move.getName());
+
+        if (b1) {
+            if (pokemonEntity.getOwner() != null) {
+                pokemonEntity.recallWithAnimation();
+            }
+        }
+    }
 
     public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {
         Pokemon pokemon = pokemonEntity.getPokemon();
@@ -192,12 +227,12 @@ public class PokemonAttackEffect {
         Move move = PokemonUtils.getMove(pokemonEntity, false);
         if (move != null) {
             applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
-            hurtDamage= calculatePokemonDamage(pokemonEntity,false, (float) move.getPower());
+            hurtDamage = calculatePokemonDamage(pokemonEntity, false, (float) move.getPower());
         } else {
             applyTypeEffect(pokemonEntity, hurtTarget);
-            hurtDamage=calculatePokemonDamage(pokemonEntity,false);
+            hurtDamage = calculatePokemonDamage(pokemonEntity, false);
         }
-
+        applyOnHitEffect(pokemonEntity,hurtTarget,move);
         boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
             if (hurtTarget instanceof LivingEntity) {
@@ -207,71 +242,8 @@ public class PokemonAttackEffect {
 
             pokemonEntity.setLastHurtMob(hurtTarget);
         }
+        applyPostEffect(pokemonEntity,hurtTarget,move);
         return flag;
-        /*
-        * if (hurtTarget instanceof LivingEntity livingHurtTarget) {
-            int effectStrength = Math.max(pkmLevel / 10, 1);
 
-            switch (primaryType.getName()) {
-                case "fire":
-                    livingHurtTarget.setSecondsOnFire(effectStrength);
-                    break;
-                case "ice":
-                    livingHurtTarget.setTicksFrozen(livingHurtTarget.getTicksFrozen() + effectStrength * 30);
-                    break;
-                case "poison":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.POISON, effectStrength * 20, 0), pokemonEntity);
-                    break;
-                case "psychic":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.LEVITATION, effectStrength * 20, 0), pokemonEntity);
-                    break;
-                case "fairy":
-                case "fighting":
-                case "steel":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, effectStrength * 20, 0), pokemonEntity);
-                    break;
-                case "ghost":
-                case "dark":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, (effectStrength + 2) * 25, 0), pokemonEntity);
-                    break;
-                case "ground":
-                case "rock":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
-                    break;
-                case "electric":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
-                    break;
-                case "bug":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.HUNGER, (effectStrength + 2) * 25, 0), pokemonEntity);
-                    break;
-                case "grass":
-                    pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (effectStrength + 2) * 20, 0), pokemonEntity);
-                    break;
-                case "dragon":
-                    hurtDamage = hurtDamage + 3;
-                    break;
-                case "flying":
-                    hurtKnockback = hurtKnockback * 2;
-                    break;
-                case "water":
-                    hurtKnockback = hurtKnockback * 2;
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
-                    break;
-
-                default:
-                    break;
-            }
-            boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
-            if (flag) {
-                if (hurtTarget instanceof LivingEntity) {
-                    ((LivingEntity) hurtTarget).knockback(hurtKnockback * 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
-                    pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
-                }
-
-                pokemonEntity.setLastHurtMob(hurtTarget);
-            }
-            return flag;
-        }
-        * */
     }
 }

@@ -202,37 +202,6 @@ public class PokemonRangedAttackGoal extends Goal {
         this.livingEntity.level().addFreshEntity(projectile);
     }
 
-    /*
-    * This function was moved to the PokemonAttackEffect class
-    * protected Move getMove() {
-        String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
-        Move move = null;
-        boolean flag = false;
-        for (Move m : pokemonEntity.getPokemon().getMoveSet().getMoves()) {
-            move = m;
-            if (m.getName().equals(moveName)) {
-                flag = true;
-                break;
-            }
-        }
-        if (!flag) {
-            move = pokemonEntity.getPokemon().getMoveSet().get(0);
-
-        }
-        if (move == null) {
-            return null;
-        }
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        if (isSpecial) {
-            ((PokemonInterface) (Object ) pokemonEntity).setCurrentMove(move);
-            return move;
-        }
-        return null;
-    }
-    *
-    * */
-
-
     public void performRangedAttack(LivingEntity target) {
         Move move = PokemonUtils.getMove(pokemonEntity, true);
         AbstractPokemonProjectile bullet;
@@ -281,5 +250,6 @@ public class PokemonRangedAttackGoal extends Goal {
             bullet.shoot(d, e + g * 0.2, f, 1.6F, 0.1f);
             addProjectileEntity(bullet);
         }
+        PokemonAttackEffect.applyPostEffect(pokemonEntity,target,move);
     }
 }

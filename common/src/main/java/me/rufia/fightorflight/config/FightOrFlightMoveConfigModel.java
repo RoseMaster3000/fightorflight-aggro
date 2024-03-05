@@ -71,4 +71,18 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "lusterpurge",
             "electroshot"
     };
+    @Comment("Moves that can switch your pokemon")
+    public String[] switch_moves={
+            "teleport",
+            "batonpass",
+            "uturn",
+            "partingshot",
+            "voltswitch",
+            "flipturn"
+    };
+    @ConfigEntry.Category("Status  moves")
+    @Comment("Moves that burns the pokemon")
+    public String[] burn_status_move={
+        "willowisp"
+    };
 }

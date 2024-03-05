@@ -54,6 +54,7 @@ public class PokemonBullet extends AbstractPokemonProjectile{
         double j = this.getY() + f;
         double k = this.getZ() + g;
         double l = vec3.horizontalDistance();
+
         if (this.noPhysics) {
             this.setYRot((float) (Mth.atan2(-e, -g) * 57.2957763671875));
         } else {

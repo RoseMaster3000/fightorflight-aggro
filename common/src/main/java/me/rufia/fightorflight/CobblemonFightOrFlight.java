@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
+import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.goals.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -29,19 +30,23 @@ public class CobblemonFightOrFlight {
     public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
     private static FightOrFlightCommonConfigModel commonConfig;
     private static FightOrFlightMoveConfigModel moveConfig;
+    private static FightOrFlightVisualEffectConfigModel visualEffectConfig;
     private static TriConsumer<PokemonEntity, Integer, Goal> goalAdder;
 
     public static FightOrFlightCommonConfigModel commonConfig() {
         return commonConfig;
     }
     public static FightOrFlightMoveConfigModel moveConfig(){return  moveConfig;}
+    public static FightOrFlightVisualEffectConfigModel visualEffectConfig(){return visualEffectConfig;}
 
     public static void init(TriConsumer<PokemonEntity, Integer, Goal> goalAdder) {
         CobblemonFightOrFlight.goalAdder = goalAdder;
         AutoConfig.register(FightOrFlightCommonConfigModel.class, JanksonConfigSerializer::new);
         AutoConfig.register(FightOrFlightMoveConfigModel.class,JanksonConfigSerializer::new);
+        AutoConfig.register(FightOrFlightVisualEffectConfigModel.class,JanksonConfigSerializer::new);
         commonConfig = AutoConfig.getConfigHolder(FightOrFlightCommonConfigModel.class).getConfig();
         moveConfig=AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
+	    visualEffectConfig=AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
 //		CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe(Priority.HIGHEST, event -> {
 //			//LogUtils.getLogger().info(((PokemonEntity)event.getEntity()).getPokemon().getSpecies().getName() + "spawn event");
 //			addPokemonGoal(event.getEntity());

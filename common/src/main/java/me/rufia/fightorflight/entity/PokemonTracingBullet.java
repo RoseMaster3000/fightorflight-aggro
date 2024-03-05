@@ -225,7 +225,6 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile {
         ProjectileUtil.rotateTowardsMovement(this, 0.5F);
         if (this.level().isClientSide) {
             makeParticle(4);
-            //this.level().addParticle(ParticleTypes.END_ROD, this.getX() - vec3.x, this.getY() - vec3.y + 0.15, this.getZ() - vec3.z, 0.0, 0.0, 0.0);
         } else if (this.finalTarget != null && !this.finalTarget.isRemoved()) {
             if (this.flightSteps > 0) {
                 --this.flightSteps;
@@ -249,21 +248,7 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile {
         }
 
     }
-    protected void makeParticle(int particleAmount) {
-        if (getElementalType() == null) {
-            return;
-        }
-        if (particleAmount > 0) {
-            double d = 0;
-            double e = 0;
-            double f = 0;
-            if (this.level().isClientSide) {
-                for (int j = 0; j < particleAmount; ++j) {
-                    this.level().addParticle(PokemonAttackEffect.getParticleFromType(getElementalType()), this.getRandomX(0.5), this.getRandomY(), this.getRandomZ(0.5), d, e, f);
-                }
-            }
-        }
-    }
+
     protected boolean canHitEntity(Entity target) {
         return super.canHitEntity(target) && !target.noPhysics;
     }

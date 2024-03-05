@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.Objects;
 
@@ -32,6 +33,7 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     public void tick() {
         super.tick();
+        makeParticle(4);
     }
 
     protected void readAdditionalSaveData(CompoundTag compound) {
@@ -40,7 +42,12 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         this.entityData.set(damage, compound.getFloat("Damage"));
 
     }
-
+    protected void makeParticle(int particleAmount) {
+        if (getElementalType() == null) {
+            return;
+        }
+        PokemonAttackEffect.makeTypeEffectParticle(particleAmount,this,getElementalType());
+    }
     public float getDamage() {
         return this.entityData.get(damage);
     }
@@ -68,5 +75,9 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
     protected void defineSynchedData() {
         this.entityData.define(type,"normal");
         this.entityData.define(damage,1f);
+    }
+    protected void onHitEntity(EntityHitResult result){
+        super.onHitEntity(result);
+
     }
 }
