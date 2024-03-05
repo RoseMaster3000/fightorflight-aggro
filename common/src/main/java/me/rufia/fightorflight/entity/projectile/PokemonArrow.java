@@ -1,6 +1,8 @@
-package me.rufia.fightorflight.entity;
+package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.entity.EntityFightOrFlight;
+import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +17,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
-import org.jetbrains.annotations.Nullable;
 
 public class PokemonArrow extends AbstractPokemonProjectile {
     protected int knockback;

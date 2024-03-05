@@ -1,9 +1,11 @@
-package me.rufia.fightorflight.entity;
+package me.rufia.fightorflight.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.entity.projectile.PokemonArrow;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;

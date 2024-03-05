@@ -17,6 +17,7 @@
 - Well, I do need some time to learn java.
 - Give more special effect to different moves.
 - Special effect for status moves. 
+- Special effect for abilities like aftermath and emergency exit.
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon  weak at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough)  
 ## Known Issues
 - Moves like electro ball can't calculate the damage correctly.  

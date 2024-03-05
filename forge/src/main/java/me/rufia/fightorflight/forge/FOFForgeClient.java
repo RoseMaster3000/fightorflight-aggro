@@ -2,9 +2,9 @@ package me.rufia.fightorflight.forge;
 
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
-import me.rufia.fightorflight.entity.PokemonArrowRenderer;
-import me.rufia.fightorflight.entity.PokemonBulletRenderer;
-import me.rufia.fightorflight.entity.PokemonTracingBulletRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonArrowRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonBulletRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonTracingBulletRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

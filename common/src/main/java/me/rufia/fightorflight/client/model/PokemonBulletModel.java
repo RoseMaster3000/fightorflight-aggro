@@ -1,4 +1,4 @@
-package me.rufia.fightorflight.entity;
+package me.rufia.fightorflight.client.model;
 
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;

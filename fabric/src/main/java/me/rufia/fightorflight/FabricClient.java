@@ -1,9 +1,9 @@
 package me.rufia.fightorflight;
 
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
-import me.rufia.fightorflight.entity.PokemonArrowRenderer;
-import me.rufia.fightorflight.entity.PokemonBulletRenderer;
-import me.rufia.fightorflight.entity.PokemonTracingBulletRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonArrowRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonBulletRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonTracingBulletRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 
