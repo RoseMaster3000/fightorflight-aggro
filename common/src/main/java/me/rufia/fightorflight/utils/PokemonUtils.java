@@ -13,21 +13,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class PokemonUtils {
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
         Move move = getMove(pokemonEntity, false);
         boolean b1 = pokemonEntity.getPokemon().getAttack() > pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
-        boolean b2 = pokemonEntity.getOwner() != null;//The pokemon has a trainer.
-        boolean b3 = move != null&&move.getDamageCategory()==DamageCategories.INSTANCE.getPHYSICAL();//The trainer selected a physical move.
-        if (!b2) {
-            return b1;//wild pokemon just choose the strongest way to attack
+        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has a trainer.
+        boolean b3 = move != null && move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();//The trainer selected a physical move.
+        if (b2) {
+            return b1 || !CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
         } else {
             return b3;
         }
     }
-    public static Move getMove(PokemonEntity pokemonEntity){
+
+    public static Move getMove(PokemonEntity pokemonEntity) {
         String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
         Move move = null;
         boolean flag = false;
@@ -47,9 +47,10 @@ public class PokemonUtils {
         }
         return move;
     }
+
     public static Move getMove(PokemonEntity pokemonEntity, boolean getSpecial) {
-        Move move=getMove(pokemonEntity);
-        if(move==null){
+        Move move = getMove(pokemonEntity);
+        if (move == null) {
             return null;
         }
         boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();

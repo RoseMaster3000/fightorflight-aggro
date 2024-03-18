@@ -58,9 +58,6 @@ public class PokemonRangedAttackGoal extends Goal {
     }
 
     public boolean canUse() {
-        if (!CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack && pokemonEntity.getOwner() == null) {
-            return false;
-        }
         if (PokemonUtils.shouldMelee(pokemonEntity)) {
             return false;
         }
