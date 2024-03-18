@@ -106,6 +106,13 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().single_beam_moves).toList().contains(getCurrentMove());
     }
+    @Override
+    public boolean usingSound(){
+        if(entityData.get(MOVE).equals("")){
+            return false;
+        }
+        return Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(getCurrentMove());
+    }
 
     @Override
     public void setCurrentMove(Move move) {
@@ -130,5 +137,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
     }
 
-
+    //TODO inject the PokemonEntity's drop function to allow pokemon to gain experience and ev(write a evcalculator first) from pokemon killed outside the battle
+    //you might need pokemon.form.evyield to get the ev yield of a pokemon.
 }

@@ -1,13 +1,17 @@
 package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -79,6 +83,10 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
     }
     protected void onHitEntity(EntityHitResult result){
         super.onHitEntity(result);
-
+        Entity owner=getOwner();
+        Entity target= result.getEntity();
+        if(owner instanceof PokemonEntity pokemonEntity){
+            PokemonUtils.setHurtByPlayer(pokemonEntity,target);
+        }
     }
 }

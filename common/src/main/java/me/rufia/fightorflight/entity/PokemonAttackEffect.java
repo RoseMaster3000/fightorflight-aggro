@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.entity;
 
 import com.cobblemon.mod.common.api.moves.Move;
+import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -8,7 +9,6 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -186,38 +186,84 @@ public class PokemonAttackEffect {
         String primaryType = pokemon.getPrimaryType().getName();
         calculateTypeEffect(pokemonEntity, hurtTarget, primaryType, pkmLevel);
     }
-    public static void applyOnHitEffect(PokemonEntity pokemonEntity,Entity hurtTarget,Move move){
-        if(move==null){return;}
-        int particleAmount=4;
-        boolean b1= Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().self_angry_moves).toList().contains(move.getName());
-        boolean b2= Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_fire_moves).toList().contains(move.getName());
-        boolean b3= Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_moves).toList().contains(move.getName());
-        if(b1){
-            PokemonUtils.makeParticle(particleAmount,pokemonEntity,ParticleTypes.ANGRY_VILLAGER);
+
+    public static void applyOnHitEffect(PokemonEntity pokemonEntity, Entity hurtTarget, Move move) {
+        if (move == null) {
+            return;
         }
-        if(b2){
-            PokemonUtils.makeParticle(particleAmount,pokemonEntity,ParticleTypes.SOUL_FIRE_FLAME);
+        int particleAmount = 4;
+        boolean b1 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().self_angry_moves).toList().contains(move.getName());
+        boolean b2 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_fire_moves).toList().contains(move.getName());
+        boolean b3 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_moves).toList().contains(move.getName());
+        if (b1) {
+            PokemonUtils.makeParticle(particleAmount, pokemonEntity, ParticleTypes.ANGRY_VILLAGER);
         }
-        if(b3){
-            PokemonUtils.makeParticle(particleAmount,pokemonEntity,ParticleTypes.SOUL);
+        if (b2) {
+            PokemonUtils.makeParticle(particleAmount, pokemonEntity, ParticleTypes.SOUL_FIRE_FLAME);
+        }
+        if (b3) {
+            PokemonUtils.makeParticle(particleAmount, pokemonEntity, ParticleTypes.SOUL);
         }
     }
-    public static void makeTypeEffectParticle(int particleAmount, Entity entity, String typeName){
-        if(typeName==null){return;}
-        PokemonUtils.makeParticle(particleAmount,entity,getParticleFromType(typeName));
+
+    public static void makeTypeEffectParticle(int particleAmount, Entity entity, String typeName) {
+        if (typeName == null) {
+            return;
+        }
+        PokemonUtils.makeParticle(particleAmount, entity, getParticleFromType(typeName));
     }
 
     public static void applyPostEffect(PokemonEntity pokemonEntity, Entity hurtTarget, Move move) {
+        Level level = hurtTarget.level();
         if (move == null) {
             return;
         }
         boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().switch_moves).toList().contains(move.getName());
-
+        boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(move.getName());
+        boolean b3= Arrays.stream(CobblemonFightOrFlight.moveConfig().recoil_moves_allHP).toList().contains(move.getName());
         if (b1) {
             if (pokemonEntity.getOwner() != null) {
                 pokemonEntity.recallWithAnimation();
             }
         }
+        if (b2) {
+            pokemonExplode(pokemonEntity, level, move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL());
+        }
+        if(b3){
+            pokemonRecoilSelf(pokemonEntity,1.0f);
+        }
+    }
+
+    public static void pokemonExplode(PokemonEntity entity, Level level, boolean isSpecial) {
+        if (!level.isClientSide) {
+            Pokemon pokemon = entity.getPokemon();
+            int power = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
+            level.explode(entity, level.damageSources().mobAttack(entity), null, entity.getX(), entity.getY(), entity.getZ(), getAoERadius(power), false, Level.ExplosionInteraction.MOB);
+            //entity.die(level.damageSources().generic()); //well,it doesn't work
+        }
+    }
+
+    public static void pokemonRecoilSelf(PokemonEntity pokemonEntity, float percent) {
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        float curHealth = pokemonEntity.getHealth();
+        float maxHealth = pokemonEntity.getMaxHealth();
+        float health = curHealth - maxHealth * percent;
+        if (health > 0) {
+            pokemonEntity.setHealth(curHealth);
+        } else {
+            pokemonEntity.setHealth(0);
+        }
+
+        if (pokemonEntity.getHealth() == 0f) {
+            pokemon.setCurrentHealth(0);
+        }
+    }
+
+    public static float getAoERadius(float power) {
+        float min = CobblemonFightOrFlight.moveConfig().min_AoE_radius;
+        float max = CobblemonFightOrFlight.moveConfig().max_AoE_radius;
+        return Math.min(Mth.lerp(power / 180, min, max), max);
+
     }
 
     public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {
@@ -225,14 +271,21 @@ public class PokemonAttackEffect {
         float hurtDamage;
         float hurtKnockback = 1f;
         Move move = PokemonUtils.getMove(pokemonEntity, false);
+        boolean b1 = PokemonUtils.isExplosiveMove(move.getName());
         if (move != null) {
-            applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
-            hurtDamage = calculatePokemonDamage(pokemonEntity, false, (float) move.getPower());
+            if (b1){
+                hurtDamage=0f;
+
+            }else {
+                applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
+                hurtDamage = calculatePokemonDamage(pokemonEntity, false, (float) move.getPower());
+            }
         } else {
             applyTypeEffect(pokemonEntity, hurtTarget);
             hurtDamage = calculatePokemonDamage(pokemonEntity, false);
         }
-        applyOnHitEffect(pokemonEntity,hurtTarget,move);
+        applyOnHitEffect(pokemonEntity, hurtTarget, move);
+        PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
         boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
             if (hurtTarget instanceof LivingEntity) {
@@ -242,7 +295,7 @@ public class PokemonAttackEffect {
 
             pokemonEntity.setLastHurtMob(hurtTarget);
         }
-        applyPostEffect(pokemonEntity,hurtTarget,move);
+        applyPostEffect(pokemonEntity, hurtTarget, move);
         return flag;
 
     }

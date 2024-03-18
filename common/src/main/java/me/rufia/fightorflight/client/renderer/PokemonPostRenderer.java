@@ -39,7 +39,11 @@ public class PokemonPostRenderer {
         boolean enabled = ((PokemonInterface) (Object) entity).usingBeam();
         if (livingEntity != null) {
             if (livingEntity.isAlive() && attackTime > 5 && enabled) {
-                Move move = PokemonUtils.getMove(entity, true);
+                Move move = PokemonUtils.getMove(entity);
+                if(move==null){
+                    //CobblemonFightOrFlight.LOGGER.info("Trying to use a null move");
+                    return;//the solar beam move was recognized as a physical move on the client side but it was recognized as a special move on the server side
+                }
                 //float f = 0.2F;//entity.getAttackAnimationScale(partialTicks);
                 float g = 40 + partialTicks + attackTime;//entity.getClientSideAttackTime() + partialTicks;
                 Color color = Color.white;
