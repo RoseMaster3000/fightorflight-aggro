@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.utils;
 
 import com.cobblemon.mod.common.api.moves.Move;
+import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
@@ -31,8 +32,8 @@ public class PokemonUtils {
         String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
         Move move = null;
         boolean flag = false;
-        for (Move m : pokemonEntity.getPokemon().getMoveSet().getMoves()) {
-            move = m;
+        for (MoveTemplate m : pokemonEntity.getPokemon().getAllAccessibleMoves()) {
+            move = m.create();
             if (m.getName().equals(moveName)) {
                 flag = true;
                 break;
