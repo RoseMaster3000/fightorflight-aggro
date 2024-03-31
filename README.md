@@ -15,6 +15,7 @@
 - - Player's pokemon will be recalled automatically when using moves like U-turn and hitting the target(melee)/shooting(range)
 - - Explosive moves can cause an explosion.
 - **Mobs killed by your pokemon will drop items and experience like it was killed by a tamed wolf.**
+- Your pokemon can gain experience and ev by killing pokemon without starting a pokemon battle(needs to be **the last mob** that deals the damage,can be disabled in the config)
 ## TODO
 - Give more special effects to different moves.
 - Special effect for status moves. 

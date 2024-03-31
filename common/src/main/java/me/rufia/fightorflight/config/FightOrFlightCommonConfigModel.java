@@ -45,6 +45,11 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_player_pokemon = false;
 
+    @ConfigEntry.Category("Pokemon yield")
+    @Comment("The exp. a pokemon can get by killing a pokemon without a battle")
+    public float experience_multiplier=0.5f;
+    @Comment("Your pokemon can gain ev by killing a pokemon without a battle")
+    public boolean can_gain_ev=true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
     @Comment("The amount of damage a pokemon would do on contact if it had 0 ATK and Sp.ATK.")
     public float minimum_attack_damage = 1.0f;

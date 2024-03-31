@@ -33,5 +33,4 @@ public class FOFEVCalculator {
         }
         return total;
     }
-
 }
