@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.requirements.LevelRequirement;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
+import me.rufia.fightorflight.item.ItemFightOrFlight;
 
 public class FOFExpCalculator {
     public static int calculate(Pokemon battlePokemon,Pokemon opponentPokemon){
@@ -29,7 +30,8 @@ public class FOFExpCalculator {
         float term1 = (float) ((baseExp * opponentLevel) / 5.0);
         float victorLevel= battlePokemon.getLevel();
         float term2= (float) Math.pow ( ((2.0 * opponentLevel) + 10) / (opponentLevel + victorLevel + 10),2.5);
-        float luckyEggMultiplier= battlePokemon.heldItemNoCopy$common().is(CobblemonItemTags.LUCKY_EGG)? (float) Cobblemon.config.getLuckyEggMultiplier() :1.0f;
+        boolean hasLuckyEgg=battlePokemon.heldItemNoCopy$common().is(CobblemonItemTags.LUCKY_EGG)||battlePokemon.heldItemNoCopy$common().is(ItemFightOrFlight.ORANLUCKYEGG.get());
+        float luckyEggMultiplier= hasLuckyEgg? (float) Cobblemon.config.getLuckyEggMultiplier() :1.0f;
         float evolutionMultiplier=battlePokemon.getEvolutionProxy().server().stream().anyMatch(evolution -> {
             var requirements=evolution.getRequirements();
             return requirements.stream().anyMatch(evolutionRequirement -> evolutionRequirement instanceof LevelRequirement )&&requirements.stream().allMatch(evolutionRequirement -> evolutionRequirement.check(battlePokemon));

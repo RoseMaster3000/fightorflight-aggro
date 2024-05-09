@@ -136,13 +136,13 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
 
     public boolean pokemonDoHurtTarget(Entity hurtTarget) {
+        //TODO play the physical attack animation when cobblemon is updated
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
             if (isTargetInBattle()) {
                 return false;
             }
         }
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
-        Pokemon pokemon = pokemonEntity.getPokemon();
 
         if (!pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
             return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget);

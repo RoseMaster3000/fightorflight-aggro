@@ -4,7 +4,8 @@
   "item.fightorflight.pokestaff.desc2":"招式位置: %d",
   "item.fightorflight.pokestaff.mode.send":"给你的宝可梦发送命令",
   "item.fightorflight.pokestaff.mode.selectmoveslot":"选择技能",
-  "item.fightorflight.pokestaff.send.result":"当前选择技能: "
+  "item.fightorflight.pokestaff.send.result":"当前选择技能: ",
+  "item.fightorflight.oran_lucky_egg":"橙橙幸运蛋"
 
 
 }

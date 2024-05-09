@@ -9,13 +9,14 @@
 - - Wild pokemon are not allowed to use the range attack.(can be enabled in the config)
 - **Different ways of range attack:** If a pokemon has some special moves,they will shoot different bullet.
 - - The moves' type and power will influence the projectile's if the moves is a special move.However, if your pokemon doesn't have these moves, the type of the projectile will be based on the pokemon's primary type and the power will be set to 60(can be changed in the config).
-- - You can use the Poke Staff to select the move you want to choose, even forcing a special attacker to melee!(use JEI to check the recipe)
+- - You can use the Poke Staff to select the move you want to use, even forcing a special attacker to melee!(use JEI to check the recipe)
 - **Special effect for moves** 
 - - The panicked pokemon can teleport to a nearby position if it learns the teleport move.(can be disabled in the config)
 - - Player's pokemon will be recalled automatically when using moves like U-turn and hitting the target(melee)/shooting(range)
 - - Explosive moves can cause an explosion.
 - **Mobs killed by your pokemon will drop items and experience like it was killed by a tamed wolf.**
 - Your pokemon can gain experience and ev by killing pokemon without starting a pokemon battle(needs to be **the last mob** that deals the damage,can be disabled in the config)
+- Adds the Oran Lucky Egg(held item) to gain more experience from pokemon killed by your pokemon,right-click your pokemon while sneaking to give the item to the pokemon.(**The Oran Lucky Egg won't give you extra xp from any other ways!**)
 ## TODO
 - Give more special effects to different moves.
 - Special effect for status moves. 
