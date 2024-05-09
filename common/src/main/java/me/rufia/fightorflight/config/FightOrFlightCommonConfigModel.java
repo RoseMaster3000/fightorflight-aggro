@@ -12,7 +12,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Do more aggressive Pokemon fight back when provoked?")
     public boolean do_pokemon_attack = true;
     @Comment("Do especially aggressive Pokemon attack unprovoked?")
-    public boolean do_pokemon_attack_unprovoked = true;
+    public boolean do_pokemon_attack_unprovoked = false;
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
@@ -51,9 +51,9 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Your pokemon can gain ev by killing a pokemon without a battle")
     public boolean can_gain_ev=true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
-    @Comment("The amount of damage a pokemon would do on contact if it had 0 ATK and Sp.ATK.")
+    @Comment("The  damage a pokemon would do on hit if it had 0 ATK and Sp.ATK.")
     public float minimum_attack_damage = 1.0f;
-    @Comment("The amount of damage a pokemon would do on contact if it had 255 ATK or Sp.ATK.")
+    @Comment("The  damage a pokemon would do on hit if it had 255 ATK or Sp.ATK.")
     public float maximum_attack_damage = 7.0f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
     public float minimum_movement_speed = 1.0f;

@@ -121,7 +121,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "mistyexplosion"
     };
     //TODO
-    @ConfigEntry.Category("Status  moves")
+    @ConfigEntry.Category("Status  moves(To do)")
     @Comment("Moves that burns the pokemon")
     public String[] burn_status_move = {
             "willowisp"

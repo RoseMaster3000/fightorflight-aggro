@@ -1,6 +1,7 @@
 # What this branch do?
 - In this branch, I made some changes to the original Fight or Flight mod to make it more interesting.  
-- This branch is still WIP, and it's my first time to participate in the development of a mod so something may not go smoothly as I had expected. This mod still needs to be polished before releasing.
+- This branch is still WIP, and it's my first time to participate in the mod development so something may not go smoothly as I had expected. 
+- Well,I had used this mod in my save for hours,it won't crash your game at least.
 ## Features&Changes
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
