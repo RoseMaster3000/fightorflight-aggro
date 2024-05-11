@@ -20,8 +20,11 @@
 - Adds the Oran Lucky Egg(held item) to gain more experience from pokemon killed by your pokemon,right-click your pokemon while sneaking to give the item to the pokemon.(**The Oran Lucky Egg won't give you extra xp from any other ways!**)
 ## TODO
 - Give more special effects to different moves.
-- Special effect for status moves. 
+- Special effect for status moves. (Status moves has no effect currently,they can be used as a way to make your pokemon passive while in the pasture)
 - Special effect for abilities like aftermath and emergency exit.
+- More config options for fight of flight choices.
+- The defensive stat will reduce the damage a pokemon take(not sure how to design the algorithm)
+- Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon  weak at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough)
 ## Known Issues
 - Damage of moves like electro ball can't be calculated properly.  

@@ -31,7 +31,18 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "primeape"
     };
     @Comment("Pokemon that will never be aggressive")
-    public String[] never_aggro = {};
+    public String[] never_aggro = {
+            "slowpoke",
+            "pyukumuku"
+    };
+    @Comment("Pokemon that will be aggressive only when provoked(WIP)")
+    public String[] provoke_only_aggro={
+
+    };
+    @Comment("Pokemon that will always flee away from the player")
+    public String[] always_flee={
+            "wimpod"
+    };
     @Comment("Allow the Pokemon to use the teleport move to flee if the Pokemon had learnt it.")
     public boolean allow_teleport_to_flee = true;
 

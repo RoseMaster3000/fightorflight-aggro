@@ -283,10 +283,12 @@ public class PokemonAttackEffect {
             } else {
                 CobblemonFightOrFlight.LOGGER.info(move.getType().getName());
                 applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
+                makeTypeEffectParticle(10,hurtTarget,move.getType().getName());
                 hurtDamage = calculatePokemonDamage(pokemonEntity, false, (float) move.getPower());
             }
         } else {
             applyTypeEffect(pokemonEntity, hurtTarget);
+            makeTypeEffectParticle(6,hurtTarget,pokemonEntity.getPokemon().getPrimaryType().getName());
             hurtDamage = calculatePokemonDamage(pokemonEntity, false);
         }
         applyOnHitEffect(pokemonEntity, hurtTarget, move);

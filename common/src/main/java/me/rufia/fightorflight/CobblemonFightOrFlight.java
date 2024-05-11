@@ -23,6 +23,8 @@ import org.apache.logging.log4j.util.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
@@ -108,12 +110,12 @@ public class CobblemonFightOrFlight {
         }
 
         Pokemon pokemon = pokemonEntity.getPokemon();
-
-        if (SpeciesAlwaysAggro(pokemon.getSpecies().getName().toLowerCase())) {
+        String speciesName=pokemon.getSpecies().getName().toLowerCase();
+        if (SpeciesAlwaysAggro(speciesName)) {
             //LogUtils.getLogger().info(pokemon.getSpecies().getName() + " Always Aggro");
             return 100;
         }
-        if (SpeciesNeverAggro(pokemon.getSpecies().getName().toLowerCase())) {
+        if (SpeciesNeverAggro(speciesName)||SpeciesAlwaysFlee(speciesName)) {
             //LogUtils.getLogger().info(pokemon.getSpecies().getName() + " Never Aggro");
             return -100;
         }
@@ -215,7 +217,9 @@ public class CobblemonFightOrFlight {
         }
         return false;
     }
-
+    public static boolean SpeciesAlwaysFlee(String speciesName){
+        return Arrays.stream(commonConfig().always_flee).toList().contains(speciesName);
+    }
     public static void PokemonEmoteAngry(Mob mob) {
         double particleSpeed = Math.random();
         double particleAngle = Math.random() * 2 * Math.PI;

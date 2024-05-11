@@ -5,25 +5,17 @@ import com.cobblemon.mod.common.api.tags.CobblemonItemTags;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.requirements.LevelRequirement;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
-
+/*
+ * Copyright (C) 2023 Cobblemon Contributors
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+//This class is a rewritten version of the ExperienceCalculator interface from Cobblemon
 public class FOFExpCalculator {
     public static int calculate(Pokemon battlePokemon,Pokemon opponentPokemon){
-        /*
-        * val baseExp = opponentPokemon.originalPokemon.form.baseExperienceYield
-        val luckyEggMultiplier = if (battlePokemon.effectedPokemon.heldItemNoCopy().isIn(CobblemonItemTags.LUCKY_EGG)) Cobblemon.config.luckyEggMultiplier else 1.0
-        val evolutionMultiplier = if (battlePokemon.effectedPokemon.evolutionProxy.server().any { evolution ->
-            val requirements = evolution.requirements.asSequence()
-            requirements.any { it is LevelRequirement } && requirements.all { it.check(battlePokemon.effectedPokemon) }
-        }) 1.2 else 1.0
-        val affectionMultiplier = if (battlePokemon.effectedPokemon.friendship >= 220) 1.2 else 1.0
-        // that's us!
-        val gimmickBoost = Cobblemon.config.experienceMultiplier
-        val term4 = term1 * term2 * term3 + 1
-        return (term4 * nonOtBonus * luckyEggMultiplier * evolutionMultiplier * affectionMultiplier * gimmickBoost).roundToInt()
-        *
-        * */
         float FOFExpMultiplier= CobblemonFightOrFlight.commonConfig().experience_multiplier;
         int baseExp=opponentPokemon.getForm().getBaseExperienceYield();
         int opponentLevel=opponentPokemon.getLevel();

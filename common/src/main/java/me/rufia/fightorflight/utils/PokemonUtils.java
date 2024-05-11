@@ -19,13 +19,26 @@ public class PokemonUtils {
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
         Move move = getMove(pokemonEntity, false);
         boolean b1 = pokemonEntity.getPokemon().getAttack() > pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
-        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has a trainer.
+        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
         boolean b3 = move != null && move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();//The trainer selected a physical move.
         if (b2) {
             return b1 || !CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
         } else {
             return b3;
         }
+    }
+
+    public static boolean shouldShoot(PokemonEntity pokemonEntity) {
+        Move move = getMove(pokemonEntity, true);
+        boolean b1 = pokemonEntity.getPokemon().getAttack() < pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
+        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
+        boolean b3 = move != null && move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();//The trainer selected a physical move.
+        if (b2) {
+            return b1 && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
+        } else {
+            return b3;
+        }
+
     }
 
     public static Move getMove(PokemonEntity pokemonEntity) {
