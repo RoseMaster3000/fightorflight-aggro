@@ -222,6 +222,13 @@ public class PokemonRangedAttackGoal extends Goal {
         projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, true));
         this.livingEntity.level().addFreshEntity(projectile);
     }
+    protected void shootProjectileEntity(AbstractPokemonProjectile projectile){
+        double d = target.getX() - this.livingEntity.getX();
+        double e = target.getY(0.3333333333333333) - projectile.getY();
+        double f = target.getZ() - this.livingEntity.getZ();
+        double g = Math.sqrt(d * d + f * f);
+        projectile.shoot(d, e + g * 0.2, f, 1.6F, 0.1f);
+    }
 
     protected void performRangedAttack(LivingEntity target) {
         Move move = PokemonUtils.getMove(pokemonEntity, true);
@@ -246,11 +253,7 @@ public class PokemonRangedAttackGoal extends Goal {
             } else if (b1 || b2) {
                 for (int i = 0; i < (b1 ? 1 : rand.nextInt(3) + 1); ++i) {
                     bullet = new PokemonBullet(livingEntity.level(), pokemonEntity, target);
-                    double d = target.getX() - this.livingEntity.getX();
-                    double e = target.getY(0.3333333333333333) - bullet.getY();
-                    double f = target.getZ() - this.livingEntity.getZ();
-                    double g = Math.sqrt(d * d + f * f);
-                    bullet.shoot(d, e + g * 0.2, f, 1.6F, 0.1f);
+                    shootProjectileEntity(bullet);
                     addProjectileEntity(bullet, move);
                 }
             } else if (b5||b7) {
@@ -260,20 +263,12 @@ public class PokemonRangedAttackGoal extends Goal {
                 //Nothing to do now.
             } else {
                 bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
-                double d = target.getX() - this.livingEntity.getX();
-                double e = target.getY(0.3333333333333333) - bullet.getY();
-                double f = target.getZ() - this.livingEntity.getZ();
-                double g = Math.sqrt(d * d + f * f);
-                bullet.shoot(d, e + g * 0.2, f, 1.6F, 0.1f);
+                shootProjectileEntity(bullet);
                 addProjectileEntity(bullet, move);
             }
         } else {
             bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
-            double d = target.getX() - this.livingEntity.getX();
-            double e = target.getY(0.3333333333333333) - bullet.getY();
-            double f = target.getZ() - this.livingEntity.getZ();
-            double g = Math.sqrt(d * d + f * f);
-            bullet.shoot(d, e + g * 0.2, f, 1.6F, 0.1f);
+            shootProjectileEntity(bullet);
             addProjectileEntity(bullet);
         }
         PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);

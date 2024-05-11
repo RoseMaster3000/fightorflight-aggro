@@ -107,7 +107,7 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         this.setDeltaMovement(vec3.scale((double) m));
         if (!this.isNoGravity() && !this.noPhysics) {
             Vec3 vec34 = this.getDeltaMovement();
-            this.setDeltaMovement(vec34.x, vec34.y - 0.05000000074505806, vec34.z);
+            this.setDeltaMovement(vec34.x, vec34.y - 0.05, vec34.z);
         }
 
         this.setPos(h, j, k);

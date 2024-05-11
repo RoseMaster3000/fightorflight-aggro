@@ -60,7 +60,9 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
     public void setDamage(float Damage) {
         this.entityData.set(damage, Damage);
     }
+    public void shoot(){
 
+    }
     public String getElementalType() {
         return this.entityData.get(type);
     }

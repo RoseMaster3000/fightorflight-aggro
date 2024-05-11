@@ -26,4 +26,11 @@ public class FightOrFlightVisualEffectConfigModel implements ConfigData {
             "nightshade",
             "astralbarrage"
     };
+    @Comment("")
+    public String[] slicing_moves={
+        "cut","razorleaf","slash","furycutter","aircutter","aerialace","leafblade","nightslash",
+            "airslash","x-scissor","psychocut","crosspoison","sacredsword","razorshell","secretsword",
+            "solarblade","behemothblade","stoneaxe","ceaselessedge","populationbomb","kowtowcleave",
+            "psyblade","bitterblade","aquacutter","mightycleave","tachyoncutter"
+    };
 }

@@ -25,7 +25,7 @@
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon  weak at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough)
 ## Known Issues
 - Damage of moves like electro ball can't be calculated properly.  
-
+- Small pokemon like mawile is hard to be aimed at by the pokemon's projectiles(the projectile flies over the pokemon's head.)
 ## How to use the Poke Staff
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  
