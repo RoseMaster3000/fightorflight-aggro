@@ -153,12 +153,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
         if (!pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
             //Not working currently
-            if (!mob.level().isClientSide) {
-                var pkt = new PlayPoseableAnimationPacket(mob.getId(), Set.of("physical"), Set.of());
-                mob.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(mob.position(), 64.0, 64.0, 64.0), (livingEntity) -> {
-                    return true;
-                }).forEach((pkt::sendToPlayer));
-            }
+            PokemonUtils.sendAnimationPacket(pokemonEntity,"physical");
             return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget);
         }
 

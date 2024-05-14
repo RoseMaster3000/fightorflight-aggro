@@ -238,7 +238,7 @@ public class PokemonRangedAttackGoal extends Goal {
     protected void performRangedAttack(LivingEntity target) {
         Move move = PokemonUtils.getMove(pokemonEntity, true);
         AbstractPokemonProjectile bullet;
-        pokemonEntity.cry();//TODO replace it with the special attack animation when cobblemon is updated
+        PokemonUtils.sendAnimationPacket(pokemonEntity,"special");
         if (move != null) {
             String moveName = move.getName();
             CobblemonFightOrFlight.LOGGER.info(moveName);

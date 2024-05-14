@@ -4,16 +4,20 @@ import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Arrays;
+import java.util.Set;
 
 public class PokemonUtils {
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
@@ -105,5 +109,13 @@ public class PokemonUtils {
 
     public static boolean isExplosiveMove(String moveName) {
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(moveName);
+    }
+    public static void sendAnimationPacket(PokemonEntity pokemonEntity,String mode){
+        if (!((LivingEntity) pokemonEntity).level().isClientSide) {
+            var pkt = new PlayPoseableAnimationPacket(pokemonEntity.getId(), Set.of(mode), Set.of());
+            pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> {
+                return true;
+            }).forEach((pkt::sendToPlayer));
+        }
     }
 }

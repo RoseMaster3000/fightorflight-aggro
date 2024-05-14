@@ -73,7 +73,9 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "hydropump",
             "prismaticlaser",
             "lusterpurge",
-            "electroshot"
+            "electroshot",
+
+            "flamethrower"
     };
     @Comment("Moves that start an explode")
     public String[] explosive_moves = {
