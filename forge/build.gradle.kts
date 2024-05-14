@@ -47,11 +47,10 @@ dependencies {
     "common"(project(":common", "namedElements")) { isTransitive = false }
     "shadowCommon"(project(":common", "transformProductionForge")) { isTransitive = false }
 
-    modImplementation("com.cobblemon:forge:1.4.0+1.20.1-SNAPSHOT")
-
     runtimeOnly("maven.modrinth:ordsPcFz:CZYJI3gh") //kotlinforforge
 
     include(modApi("me.shedaniel.cloth:cloth-config-forge:11.1.106")!!)
+    modImplementation("com.cobblemon:forge:${project.properties["cobblemon_version"]}")
 
 }
 

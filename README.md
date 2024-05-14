@@ -1,3 +1,5 @@
+## Attention!
+The Cobblemon mod just releases the 1.5 upgrade,I fix the bug that crashes the game when you enter the save but there might still be others,report it to me if you have any other issue.
 # What this branch do?
 - In this branch, I made some changes to the original Fight or Flight mod to make it more interesting.  
 - This branch is still WIP, and it's my first time to participate in the mod development so something may not go smoothly as I had expected. 

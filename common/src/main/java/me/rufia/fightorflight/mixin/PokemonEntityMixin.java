@@ -73,16 +73,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         return super.getTarget();
     }
-
-    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-        super.onSyncedDataUpdated(key);
+    @Inject(method = "onSyncedDataUpdated",at=@At("TAIL"))
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key,CallbackInfo ci) {
         if (DATA_ID_ATTACK_TARGET.equals(key)) {
             this.fightorflight$clientSideCachedAttackTarget = null;
         }
     }
-
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    @Inject(method = "defineSynchedData",at=@At("TAIL"))
+    protected void defineSynchedData(CallbackInfo info) {
         this.entityData.define(DATA_ID_ATTACK_TARGET, 0);
         this.entityData.define(ATTACK_TIME, 0);
         this.entityData.define(MOVE, "");
