@@ -20,6 +20,7 @@ The Cobblemon mod just releases the 1.5 upgrade,I fix the bug that crashes the g
 - **Mobs killed by your pokemon will drop items and experience like it was killed by a tamed wolf.**
 - Your pokemon can gain experience and ev by killing pokemon without starting a pokemon battle(needs to be **the last mob** that deals the damage,can be disabled in the config)
 - Adds the Oran Lucky Egg(held item) to gain more experience from pokemon killed by your pokemon,right-click your pokemon while sneaking to give the item to the pokemon.(**The Oran Lucky Egg won't give you extra xp from any other ways!**)
+- Support for animations from cobblemon mod when attacking(only for melee attack now,will be updated in a short period of time.)
 ## TODO
 - Give more special effects to different moves.
 - Special effect for status moves. (Status moves has no effect currently,they can be used as a way to make your pokemon passive while in the pasture)

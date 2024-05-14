@@ -37,6 +37,7 @@ public class PokemonAvoidGoal extends Goal {
         this.sprintSpeedModifier = sprintSpeedModifier;
         this.pathNav = this.mob.getNavigation();
         this.avoidEntityTargeting = TargetingConditions.forCombat().range((double) maxDist);
+
     }
 
     public boolean canUse() {
@@ -47,19 +48,26 @@ public class PokemonAvoidGoal extends Goal {
         if (pokemonEntity.isBusy()) {
             return false;
         }
-        if (this.mob.getTarget() != null) {
-            if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) {
-                return false;
-            }
+        String species = pokemonEntity.getPokemon().getSpecies().getName().toLowerCase();
 
-            if (this.mob.getTarget().distanceToSqr(this.mob) < maxDist) {
-                toAvoid = this.mob.getTarget();
+        if (CobblemonFightOrFlight.SpeciesAlwaysFlee(species)) {
+            //These pokemon won't run away from creative mode player,I thought I had to switch it on manually so I spent an hour debugging...
+            this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(Player.class, this.mob.getBoundingBox().inflate((double) this.maxDist, 3.0, (double) this.maxDist), (livingEntity) -> {
+                return true;
+            }), this.avoidEntityTargeting, this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
+        } else {
+            if (this.mob.getTarget() != null) {
+                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) {
+                    pokemonEntity.cry();
+                    return false;
+                }
+
+                if (this.mob.getTarget().distanceToSqr(this.mob) < maxDist) {
+                    toAvoid = this.mob.getTarget();
+                }
             }
         }
 
-        if (CobblemonFightOrFlight.SpeciesAlwaysFlee(pokemonEntity.getPokemon().getSpecies().getName().toLowerCase())) {
-            findAvoidTarget();
-        }
 
         if (this.toAvoid == null) {
             return false;
@@ -68,6 +76,7 @@ public class PokemonAvoidGoal extends Goal {
             if (vec3 == null) {
                 return false;
             } else if (this.toAvoid.distanceToSqr(vec3.x, vec3.y, vec3.z) < this.toAvoid.distanceToSqr(this.mob)) {
+
                 return false;
             } else {
                 this.path = this.pathNav.createPath(vec3.x, vec3.y, vec3.z, 0);
@@ -76,11 +85,6 @@ public class PokemonAvoidGoal extends Goal {
         }
     }
 
-    public void findAvoidTarget() {
-        this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(Player.class, this.mob.getBoundingBox().inflate((double) this.maxDist, 3.0, (double) this.maxDist), (livingEntity) -> {
-            return true;
-        }), this.avoidEntityTargeting, this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
-    }
 
     public boolean canContinueToUse() {
         return !this.pathNav.isDone();

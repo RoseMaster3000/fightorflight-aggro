@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.battles.BattleBuilder;
 import com.cobblemon.mod.common.battles.BattleFormat;
 import com.cobblemon.mod.common.battles.BattleRegistry;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
@@ -16,6 +17,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+
+import java.util.Set;
 
 
 public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
@@ -26,7 +30,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
     public PokemonMeleeAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
-        this.speedModifier=speedModifier;
+        this.speedModifier = speedModifier;
     }
 
     public void tick() {
@@ -53,7 +57,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
             if (isTargetInBattle()) {
                 this.mob.getNavigation().setSpeedModifier(0);
-            }else{
+            } else {
                 this.mob.getNavigation().setSpeedModifier(this.speedModifier);
             }
         }
@@ -140,7 +144,6 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
 
     public boolean pokemonDoHurtTarget(Entity hurtTarget) {
-        //TODO play the physical attack animation when cobblemon is updated
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
             if (isTargetInBattle()) {
                 return false;
@@ -149,6 +152,13 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
 
         if (!pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
+            //Not working currently
+            if (!mob.level().isClientSide) {
+                var pkt = new PlayPoseableAnimationPacket(mob.getId(), Set.of("physical"), Set.of());
+                mob.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(mob.position(), 64.0, 64.0, 64.0), (livingEntity) -> {
+                    return true;
+                }).forEach((pkt::sendToPlayer));
+            }
             return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget);
         }
 
