@@ -187,8 +187,8 @@ public class PokemonRangedAttackGoal extends Goal {
             if (!bl) {
                 return;
             }
-            float speedModifier = Math.max(0.1f, 1 - this.pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
-            float f = (float) Math.sqrt(d) / this.attackRadius * speedModifier;
+            float attackSpeedModifier = Math.max(0.1f, 1 - this.pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
+            float f = (float) Math.sqrt(d) / this.attackRadius * attackSpeedModifier;
             //float g = Mth.clamp(f, 0.1F, 1.0F);
             this.performRangedAttack(this.target);
             ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);

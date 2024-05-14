@@ -22,9 +22,11 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     public int ticksUntilNewAngerParticle = 0;
 
     public int ticksUntilNewAngerCry = 0;
+    private final double speedModifier;
 
     public PokemonMeleeAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
+        this.speedModifier=speedModifier;
     }
 
     public void tick() {
@@ -51,6 +53,8 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
             if (isTargetInBattle()) {
                 this.mob.getNavigation().setSpeedModifier(0);
+            }else{
+                this.mob.getNavigation().setSpeedModifier(this.speedModifier);
             }
         }
     }

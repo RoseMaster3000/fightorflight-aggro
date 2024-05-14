@@ -67,7 +67,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The  damage a pokemon would do on hit if it had 255 ATK or Sp.ATK.")
     public float maximum_attack_damage = 7.0f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
-    public float minimum_movement_speed = 1.0f;
+    public float minimum_movement_speed = 1.1f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon reaches the value in the config.")
     public float maximum_movement_speed = 2.0f;
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")

@@ -1,6 +1,7 @@
 package me.rufia.fightorflight;
 
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -12,6 +13,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -71,22 +73,11 @@ public class CobblemonFightOrFlight {
         float maximum_movement_speed = CobblemonFightOrFlight.commonConfig().maximum_movement_speed;
         float speed_limit= CobblemonFightOrFlight.commonConfig().speed_stat_limit;
         float speed = pokemonEntity.getPokemon().getSpeed();
-        float speedMultiplier = minimum_movement_speed + (maximum_movement_speed - minimum_movement_speed) * speed/speed_limit;
+        float speedMultiplier = Mth.lerp(speed/speed_limit,minimum_movement_speed,maximum_movement_speed);
+
         float fleeSpeed = 1.5f * speedMultiplier;
-
         float pursuitSpeed = 1.2f * speedMultiplier;
-        /*
-        *
-        *         boolean should_melee= shouldMelee(pokemonEntity);
-
-        if(should_melee){
-            goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
-        }else{
-            goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,1.0f,16));
-        }
-        *
-        *
-        * */
+        
         goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
         goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,1.0f,16));
 
