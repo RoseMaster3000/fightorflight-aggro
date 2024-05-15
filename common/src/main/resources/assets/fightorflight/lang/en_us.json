@@ -1,0 +1,11 @@
+{
+  "item.fightorflight.pokestaff":"Poke Staff",
+  "item.fightorflight.pokestaff.desc1":"Mode: ",
+  "item.fightorflight.pokestaff.desc2":"Move slot: %d",
+  "item.fightorflight.pokestaff.mode.send":"Send command to your Pokemon",
+  "item.fightorflight.pokestaff.mode.selectmoveslot":"Select move slot",
+  "item.fightorflight.pokestaff.send.result":"Selected move: ",
+  "item.fightorflight.oran_lucky_egg":"Oran Lucky Egg"
+
+
+}

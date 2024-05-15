@@ -5,10 +5,8 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
 import java.util.function.Predicate;
 
 public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
@@ -25,7 +23,7 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
     }
 
     public boolean canUse() {
-        if (!CobblemonFightOrFlight.config().do_pokemon_defend_proactive) { return false; }
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_proactive) { return false; }
         PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
         if (!pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
 

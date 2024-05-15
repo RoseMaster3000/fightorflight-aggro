@@ -18,12 +18,12 @@ public class PokemonNearestAttackableTargetGoal<T extends LivingEntity> extends 
 
     public boolean canUse() {
         //if (this.mob.getTarget() != null) { return false; }
-        if (!CobblemonFightOrFlight.config().do_pokemon_attack_unprovoked) { return false; }
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_unprovoked) { return false; }
 
         PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
 
 
-        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.config().minimum_attack_unprovoked_level) { return false; }
+        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.commonConfig().minimum_attack_unprovoked_level) { return false; }
 
         if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
         if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD)

@@ -5,7 +5,8 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.animal.PolarBear;
+
+import java.util.Arrays;
 
 public class PokemonPanicGoal extends PanicGoal {
     public PokemonPanicGoal(PathfinderMob mob, double speedModifier) {
@@ -27,7 +28,7 @@ public class PokemonPanicGoal extends PanicGoal {
             return true;
         }
         if (this.mob.getLastHurtByMob() != null) {
-            return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0);
+            return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0)|| Arrays.stream(CobblemonFightOrFlight.commonConfig().always_flee).toList().contains(pokemonEntity.getPokemon().getSpecies().getName().toLowerCase());
         }
         return false;
         //return super.shouldPanic();
