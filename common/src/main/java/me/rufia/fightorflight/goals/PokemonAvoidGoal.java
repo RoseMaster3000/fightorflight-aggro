@@ -58,7 +58,7 @@ public class PokemonAvoidGoal extends Goal {
         } else {
             if (this.mob.getTarget() != null) {
                 if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) {
-                    pokemonEntity.cry();
+                    //pokemonEntity.cry();
                     return false;
                 }
 

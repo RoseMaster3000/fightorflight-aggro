@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,6 +39,9 @@ import java.util.Map;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
+    @Shadow
+    public abstract void cry();
+
     @Unique
     @Nullable
     private LivingEntity fightorflight$clientSideCachedAttackTarget;
@@ -47,11 +51,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<Integer> ATTACK_TIME;
     @Unique
     private static final EntityDataAccessor<String> MOVE;
+    @Unique
+    private static final EntityDataAccessor<Boolean> IS_ANGERED;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
+        IS_ANGERED = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.BOOLEAN);
     }
 
     protected PokemonEntityMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
@@ -73,17 +80,20 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         return super.getTarget();
     }
-    @Inject(method = "onSyncedDataUpdated",at=@At("TAIL"))
-    public void onSyncedDataUpdated(EntityDataAccessor<?> key,CallbackInfo ci) {
+
+    @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
         if (DATA_ID_ATTACK_TARGET.equals(key)) {
             this.fightorflight$clientSideCachedAttackTarget = null;
         }
     }
-    @Inject(method = "defineSynchedData",at=@At("TAIL"))
+
+    @Inject(method = "defineSynchedData", at = @At("TAIL"))
     protected void defineSynchedData(CallbackInfo info) {
         this.entityData.define(DATA_ID_ATTACK_TARGET, 0);
         this.entityData.define(ATTACK_TIME, 0);
         this.entityData.define(MOVE, "");
+        this.entityData.define(IS_ANGERED, false);
     }
 
     public void setTarget(LivingEntity target) {
@@ -127,6 +137,30 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public String getCurrentMove() {
         return entityData.get(MOVE);
+    }
+
+    @Override
+    public boolean isAngered() {
+        return this.entityData.get(IS_ANGERED);
+    }
+
+    @Override
+    public void setAngered(boolean b) {
+        this.entityData.set(IS_ANGERED, b);
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void tick(CallbackInfo ci) {
+        var targetEntity = getTarget();
+        if (targetEntity != null && targetEntity.isAlive()) {
+            if (!isAngered()) {
+                this.cry();
+                setAngered(true);
+            }
+        } else {
+            setAngered(false);
+        }
+
     }
 
     //Don't use @Override for this function or you will find that you can't change your pokemon's held item

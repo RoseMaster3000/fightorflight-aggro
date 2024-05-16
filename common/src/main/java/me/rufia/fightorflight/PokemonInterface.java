@@ -12,4 +12,6 @@ public interface PokemonInterface {
     default boolean usingSound(){return false;}
     default void setCurrentMove(Move move){};
     default String getCurrentMove(){return null;};
+    default boolean isAngered(){return false;}
+    default void setAngered(boolean b){return;}
 }
