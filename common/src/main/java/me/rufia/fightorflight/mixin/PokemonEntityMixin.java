@@ -52,13 +52,13 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     private static final EntityDataAccessor<String> MOVE;
     @Unique
-    private static final EntityDataAccessor<Boolean> IS_ANGERED;
+    private static final EntityDataAccessor<Integer> CRY_CD;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
-        IS_ANGERED = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.BOOLEAN);
+        CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
     }
 
     protected PokemonEntityMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
@@ -93,7 +93,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         this.entityData.define(DATA_ID_ATTACK_TARGET, 0);
         this.entityData.define(ATTACK_TIME, 0);
         this.entityData.define(MOVE, "");
-        this.entityData.define(IS_ANGERED, false);
+        this.entityData.define(CRY_CD, 0);
     }
 
     public void setTarget(LivingEntity target) {
@@ -140,25 +140,32 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Override
-    public boolean isAngered() {
-        return this.entityData.get(IS_ANGERED);
+    public int getNextCryTime() {
+        return this.entityData.get(CRY_CD);
     }
 
     @Override
-    public void setAngered(boolean b) {
-        this.entityData.set(IS_ANGERED, b);
+    public void setNextCryTime(int time) {
+        this.entityData.set(CRY_CD, time);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
         var targetEntity = getTarget();
         if (targetEntity != null && targetEntity.isAlive()) {
-            if (!isAngered()) {
+            if (getNextCryTime() == 0) {
                 this.cry();
-                setAngered(true);
+                if (CobblemonFightOrFlight.commonConfig().multiple_cries) {
+                    setNextCryTime(CobblemonFightOrFlight.commonConfig().time_to_cry_again);
+                } else {
+                    setNextCryTime(-1);
+                }
             }
         } else {
-            setAngered(false);
+            setNextCryTime(0);
+        }
+        if(getNextCryTime()>=0){
+            setNextCryTime(getNextCryTime()-1);
         }
 
     }

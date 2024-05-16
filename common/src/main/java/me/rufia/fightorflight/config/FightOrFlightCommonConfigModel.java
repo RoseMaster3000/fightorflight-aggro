@@ -55,7 +55,10 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean do_player_pokemon_attack_other_players = false;
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_player_pokemon = false;
-
+    @Comment("Will the wild pokemon cries for several times when angered,set to false so the pokemon will only cry one time when it's angered")
+    public boolean multiple_cries=true;
+    @Comment("Tick(1/20s by default) needed for the pokemon to cry again(it will only work when the multiple_cries is set to true)")
+    public int time_to_cry_again=100;
     @ConfigEntry.Category("Pokemon yield")
     @Comment("The exp. a pokemon can get by killing a pokemon without a battle")
     public float experience_multiplier=0.5f;
