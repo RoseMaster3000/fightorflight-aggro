@@ -164,8 +164,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         } else {
             setNextCryTime(0);
         }
-        if(getNextCryTime()>=0){
-            setNextCryTime(getNextCryTime()-1);
+        if (getNextCryTime() >= 0) {
+            setNextCryTime(getNextCryTime() - 1);
         }
 
     }

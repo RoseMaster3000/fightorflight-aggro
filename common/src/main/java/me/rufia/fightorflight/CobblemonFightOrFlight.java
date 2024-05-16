@@ -80,12 +80,13 @@ public class CobblemonFightOrFlight {
         
         goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
         goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,1.0f,16));
-
+        //goalAdder.accept(pokemonEntity,3,new PokemonPassiveAbilityGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, 48.0f, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
 
         goalAdder.accept(pokemonEntity, 1, new PokemonOwnerHurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 2, new PokemonOwnerHurtTargetGoal(pokemonEntity));
+        goalAdder.accept(pokemonEntity,2,new PokemonTauntedTargetGoal<>(pokemonEntity,PokemonEntity.class,false));
         goalAdder.accept(pokemonEntity, 3, new HurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 4, new CaughtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, 48.0f, true, true));
