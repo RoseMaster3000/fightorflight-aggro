@@ -1,5 +1,3 @@
-## Attention!
-The Cobblemon mod just releases the 1.5 upgrade,I fix the bug that crashes the game when you enter the save but there might still be others,report it to me if you have any other issue.
 ## Features&Changes
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -19,17 +17,16 @@ The Cobblemon mod just releases the 1.5 upgrade,I fix the bug that crashes the g
 - Support for animations from cobblemon mod when attacking(These animations are not designed for this mod so it might be weird)
 - Your pokemon can taunt the pokemon that attacks you.(Your pokemon can't be taunted.)
 - - Moves(taunt,follow me,rage powder,torment) are needed to taunt the wild pokemon(can be disabled in the config)
+- Pokemon with higher defense stat can lower the damage it take.(configurable)
 ## TODO
 - Give more special effects to different moves.
 - Special effect for status moves. (Status moves has no effect currently,they can be used as a way to make your pokemon passive while in the pasture)
 - Special effect for abilities like aftermath and emergency exit.
 - More config options for fight of flight choices.
-- The defensive stat will reduce the damage a pokemon take(not sure how to design the algorithm)
 - Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon  weak at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough)
 ## Known Issues
-- Damage of moves like electro ball can't be calculated properly.  
-- Small pokemon like mawile is hard to be aimed at by the pokemon's projectiles(the projectile flies over the pokemon's head.)
+- Damage of moves like electro ball can't be calculated properly.
 ## How to use the Poke Staff
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  

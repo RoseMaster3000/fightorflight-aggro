@@ -91,7 +91,6 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
         this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
         float m = 0.99F;
-        float n = 0.05F;
         if (this.isInWater()) {
             for (int o = 0; o < 4; ++o) {
                 float p = 0.25F;
@@ -107,7 +106,7 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         this.setDeltaMovement(vec3.scale((double) m));
         if (!this.isNoGravity() && !this.noPhysics) {
             Vec3 vec34 = this.getDeltaMovement();
-            this.setDeltaMovement(vec34.x, vec34.y - 0.05, vec34.z);
+            this.setDeltaMovement(vec34.x, vec34.y - getGravity(), vec34.z);
         }
 
         this.setPos(h, j, k);
@@ -170,5 +169,10 @@ public class PokemonArrow extends AbstractPokemonProjectile {
     }
     protected float getWaterInertia() {
         return 0.6F;
+    }
+
+    @Override
+    protected float getGravity() {
+        return 0.05f;
     }
 }

@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
@@ -14,6 +15,7 @@ import me.rufia.fightorflight.utils.FOFExpCalculator;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,6 +33,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -41,6 +44,9 @@ import java.util.Map;
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
     @Shadow
     public abstract void cry();
+
+    @Shadow
+    public abstract Pokemon getPokemon();
 
     @Unique
     @Nullable
@@ -148,6 +154,15 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     public void setNextCryTime(int time) {
         this.entityData.set(CRY_CD, time);
     }
+
+    @ModifyVariable(method = "hurt", at = @At("HEAD"))
+    private float hurtDamageTweak(float amount) {
+        Pokemon pokemon = getPokemon();
+        float def = Math.max(pokemon.getDefence(), pokemon.getSpecialDefence());
+        return amount * (1 - Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
+        //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
+    }
+
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {

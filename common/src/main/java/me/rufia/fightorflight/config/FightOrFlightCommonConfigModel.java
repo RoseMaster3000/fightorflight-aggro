@@ -68,13 +68,17 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The  damage a pokemon would do on hit if it had 0 ATK and Sp.ATK.")
     public float minimum_attack_damage = 1.0f;
     @Comment("The  damage a pokemon would do on hit if it had 255 ATK or Sp.ATK.")
-    public float maximum_attack_damage = 7.0f;
+    public float maximum_attack_damage = 6.0f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
     public float minimum_movement_speed = 1.1f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon reaches the value in the config.")
     public float maximum_movement_speed = 2.0f;
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")
     public int speed_stat_limit = 548;
+    @Comment("The maximum damage reduction a pokemon can get from its defense/special defense(uses the highest one)")
+    public float max_damage_reduction_multiplier=0.15f;
+    @Comment("The highest defense stat needed to get the highest damage reduction.")
+    public int defense_stat_limit=161;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
     public boolean force_wild_battle_on_pokemon_hurt = false;
     @Comment("When a player owned Pokemon hurts or is hurt by another player's pokemon, should a pokemon battle be started? (EXPERIMENTAL)")

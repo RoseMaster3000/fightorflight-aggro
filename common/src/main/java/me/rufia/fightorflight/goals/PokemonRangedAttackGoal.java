@@ -171,7 +171,7 @@ public class PokemonRangedAttackGoal extends Goal {
             this.seeTime = 0;
         }
 
-        if (!(d > (double) this.attackRadiusSqr) && this.seeTime >= 5&&bl) {
+        if (!(d > (double) this.attackRadiusSqr) && this.seeTime >= 5 && bl) {
             this.pokemonEntity.getNavigation().stop();
         } else {
             this.pokemonEntity.getNavigation().moveTo(this.target, this.speedModifier);
@@ -229,16 +229,17 @@ public class PokemonRangedAttackGoal extends Goal {
 
     protected void shootProjectileEntity(AbstractPokemonProjectile projectile) {
         double d = target.getX() - this.livingEntity.getX();
-        double e = target.getY(0.3333333333333333) - projectile.getY();
+        double e = target.getY(0.3333333) - projectile.getY();
         double f = target.getZ() - this.livingEntity.getZ();
-        double g = Math.sqrt(d * d + f * f);
-        projectile.shoot(d, e + g * 0.2, f, 1.6F, 0.1f);
+        float velocity = 1.6f;
+        projectile.accurateShoot(d, e, f, velocity, 0.1f);
+
     }
 
     protected void performRangedAttack(LivingEntity target) {
         Move move = PokemonUtils.getMove(pokemonEntity, true);
         AbstractPokemonProjectile bullet;
-        PokemonUtils.sendAnimationPacket(pokemonEntity,"special");
+        PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
         if (move != null) {
             String moveName = move.getName();
             CobblemonFightOrFlight.LOGGER.info(moveName);

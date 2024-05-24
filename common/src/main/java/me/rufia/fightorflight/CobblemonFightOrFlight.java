@@ -75,11 +75,11 @@ public class CobblemonFightOrFlight {
         float speed = pokemonEntity.getPokemon().getSpeed();
         float speedMultiplier = Mth.lerp(speed/speed_limit,minimum_movement_speed,maximum_movement_speed);
 
-        float fleeSpeed = 1.5f * speedMultiplier;
+        float fleeSpeed = 1.3f * speedMultiplier;
         float pursuitSpeed = 1.2f * speedMultiplier;
         
         goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
-        goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,1.0f,16));
+        goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,pursuitSpeed,16));
         //goalAdder.accept(pokemonEntity,3,new PokemonPassiveAbilityGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, 48.0f, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
