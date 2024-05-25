@@ -3,8 +3,10 @@ package me.rufia.fightorflight.utils;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
+import com.cobblemon.mod.common.api.net.NetworkPacket;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
+import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacket;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -60,7 +62,7 @@ public class PokemonUtils {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
         if (move == null) {
-            CobblemonFightOrFlight.LOGGER.info("Returning a null move for no reason");
+            CobblemonFightOrFlight.LOGGER.warn("Returning a null move for no reason");
             return null;
         }
         return move;

@@ -18,6 +18,7 @@
 - Your pokemon can taunt the pokemon that attacks you.(Your pokemon can't be taunted.)
 - - Moves(taunt,follow me,rage powder,torment) are needed to taunt the wild pokemon(can be disabled in the config)
 - Pokemon with higher defense stat can lower the damage it take.(configurable)
+- A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you
 ## TODO
 - Give more special effects to different moves.
 - Special effect for status moves. (Status moves has no effect currently,they can be used as a way to make your pokemon passive while in the pasture)

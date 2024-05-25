@@ -1,0 +1,74 @@
+package me.rufia.fightorflight.mixin;
+
+import com.cobblemon.mod.common.CobblemonNetwork;
+import com.cobblemon.mod.common.client.CobblemonClient;
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.net.messages.server.BattleChallengePacket;
+import com.cobblemon.mod.common.net.messages.server.RequestPlayerInteractionsPacket;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(Minecraft.class)
+public abstract class MinecraftClientInject {
+    @Shadow
+    public static Minecraft getInstance() {
+        return null;
+    }
+
+    @Shadow
+    @Nullable
+    public LocalPlayer player;
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void postTick(CallbackInfo ci) {
+        if (KeybindFightOrFlight.START_BATTLE.isDown()) {
+            startBattle();
+        }
+    }
+
+    private void startBattle() {
+
+        var player = getInstance().player;
+        if (player.isSpectator()) {
+            return;
+        }
+
+        if (CobblemonClient.INSTANCE.getBattle() != null) {
+            return;
+        }
+
+        if (!(CobblemonClient.INSTANCE.getStorage().getSelectedSlot() != -1 && getInstance().screen == null)) {
+            return;
+        }
+
+        var pokemon = CobblemonClient.INSTANCE.getStorage().getMyParty().get(CobblemonClient.INSTANCE.getStorage().getSelectedSlot());
+        if (pokemon != null && pokemon.getHp() > 0) {
+            var entities = player.clientLevel.getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.getPosition(player.tickCount), 8, 8, 8),
+                    (pokemonEntity) -> pokemonEntity.getTarget() == player
+            );
+            for (PokemonEntity pokemonEntity : entities) {
+                if (pokemonEntity.getOwner() == null && pokemonEntity.canBattle(player)) {
+                    CobblemonNetwork.INSTANCE.sendPacketToServer(new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid()));
+                    break;
+                } else if (pokemonEntity.getOwner() != player) {
+                    if (pokemonEntity.getOwner() instanceof Player player1) {
+                        CobblemonNetwork.INSTANCE.sendPacketToServer(new RequestPlayerInteractionsPacket(pokemonEntity.getUUID(), pokemonEntity.getId(), pokemon.getUuid()));
+                        break;
+                    }
+                } else {
+                    CobblemonFightOrFlight.LOGGER.info("Oh gosh,you must be joking");
+                }
+            }
+        }
+    }
+}

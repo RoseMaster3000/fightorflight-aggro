@@ -5,7 +5,9 @@
   "item.fightorflight.pokestaff.mode.send":"Send command to your Pokemon",
   "item.fightorflight.pokestaff.mode.selectmoveslot":"Select move slot",
   "item.fightorflight.pokestaff.send.result":"Selected move: ",
-  "item.fightorflight.oran_lucky_egg":"Oran Lucky Egg"
+  "item.fightorflight.oran_lucky_egg":"Oran Lucky Egg",
+  "key.fightorflight.startbattle": "Start a battle with an angered pokemon",
+  "key.fightorflight.categories.fightorflight":"Cobblemon Fight of Flight"
 
 
 }
