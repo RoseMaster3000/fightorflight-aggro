@@ -18,7 +18,13 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public float min_AoE_radius = 2.0f;
     @Comment("The maximum radius of the AoE moves")
     public float max_AoE_radius = 3.0f;
-    @Comment("Moves that shoots multiple bullet")
+    @Comment("The radius of the status moves")
+    public float status_move_radius=8.0f;
+    @Comment("Taunting moves are needed to taunt the aggressive wild pokemon")
+    public boolean taunt_moves_needed=true;
+    @Comment("Wild pokemon can taunt your pokemon(WIP)")
+    public  boolean wild_pokemon_taunt=false;
+    @Comment("Moves that shoots multiple bullet")//TODO
     public String[] multiple_bullet_moves = {
             "powergem"
     };
@@ -84,7 +90,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "mindblown",
             "mistyexplosion"
     };
-    @Comment("")
+    @Comment("Moves that use sound to attack")
     public String[] sound_based_moves = {
             "snore",
             "uproar",
@@ -124,7 +130,14 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     //TODO
     @ConfigEntry.Category("Status  moves(To do)")
-    @Comment("Moves that burns the pokemon")
+    @Comment("Moves that taunt other pokemon")
+    public String[] taunting_moves={
+            "taunt",
+            "followme",
+            "ragepowder",
+            "torment"
+    };
+    @Comment("Moves that burns the pokemon(WIP)")
     public String[] burn_status_move = {
             "willowisp"
     };

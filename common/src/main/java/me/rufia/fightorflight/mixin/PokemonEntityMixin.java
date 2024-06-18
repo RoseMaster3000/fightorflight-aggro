@@ -5,15 +5,18 @@ import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.utils.FOFEVCalculator;
 import me.rufia.fightorflight.utils.FOFExpCalculator;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,9 +30,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -38,6 +43,12 @@ import java.util.Map;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
+    @Shadow
+    public abstract void cry();
+
+    @Shadow
+    public abstract Pokemon getPokemon();
+
     @Unique
     @Nullable
     private LivingEntity fightorflight$clientSideCachedAttackTarget;
@@ -47,11 +58,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<Integer> ATTACK_TIME;
     @Unique
     private static final EntityDataAccessor<String> MOVE;
+    @Unique
+    private static final EntityDataAccessor<Integer> CRY_CD;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
+        CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
     }
 
     protected PokemonEntityMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
@@ -73,19 +87,29 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         return super.getTarget();
     }
-    @Inject(method = "onSyncedDataUpdated",at=@At("TAIL"))
-    public void onSyncedDataUpdated(EntityDataAccessor<?> key,CallbackInfo ci) {
+
+    @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
         if (DATA_ID_ATTACK_TARGET.equals(key)) {
             this.fightorflight$clientSideCachedAttackTarget = null;
         }
     }
-    @Inject(method = "defineSynchedData",at=@At("TAIL"))
+
+    @Inject(method = "defineSynchedData", at = @At("TAIL"))
     protected void defineSynchedData(CallbackInfo info) {
         this.entityData.define(DATA_ID_ATTACK_TARGET, 0);
         this.entityData.define(ATTACK_TIME, 0);
         this.entityData.define(MOVE, "");
+        this.entityData.define(CRY_CD, 0);
     }
-
+    @Inject(method = "saveWithoutId",at=@At("HEAD"))
+    private void writeAdditionalNbt(CompoundTag compoundTag, CallbackInfoReturnable<Boolean> ci){
+        compoundTag.putInt(CRY_CD.toString(),0);
+    }
+    @Inject(method = "load",at=@At("TAIL"))
+    private void readAdditionalNbt(CompoundTag compoundTag,CallbackInfo ci){
+        entityData.set(CRY_CD,compoundTag.getInt(CRY_CD.toString()));
+    }
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
         if (target != null) {
@@ -127,6 +151,47 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public String getCurrentMove() {
         return entityData.get(MOVE);
+    }
+
+    @Override
+    public int getNextCryTime() {
+        return this.entityData.get(CRY_CD);
+    }
+
+    @Override
+    public void setNextCryTime(int time) {
+        this.entityData.set(CRY_CD, time);
+    }
+
+
+    @ModifyVariable(method = "hurt", at = @At("HEAD"))
+    private float hurtDamageTweak(float amount) {
+        Pokemon pokemon = getPokemon();
+        float def = Math.max(pokemon.getDefence(), pokemon.getSpecialDefence());
+        return amount * (1 - Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
+        //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
+    }
+
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void tick(CallbackInfo ci) {
+        var targetEntity = getTarget();
+        if (targetEntity != null && targetEntity.isAlive()) {
+            if (getNextCryTime() == 0) {
+                this.cry();
+                if (CobblemonFightOrFlight.commonConfig().multiple_cries) {
+                    setNextCryTime(CobblemonFightOrFlight.commonConfig().time_to_cry_again);
+                } else {
+                    setNextCryTime(-1);
+                }
+            }
+        } else {
+            setNextCryTime(0);
+        }
+        if (getNextCryTime() >= 0) {
+            setNextCryTime(getNextCryTime() - 1);
+        }
+
     }
 
     //Don't use @Override for this function or you will find that you can't change your pokemon's held item

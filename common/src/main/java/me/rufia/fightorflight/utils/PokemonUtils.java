@@ -60,7 +60,7 @@ public class PokemonUtils {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
         if (move == null) {
-            CobblemonFightOrFlight.LOGGER.info("Returning a null move for no reason");
+            CobblemonFightOrFlight.LOGGER.warn("Returning a null move for no reason");
             return null;
         }
         return move;
@@ -107,10 +107,26 @@ public class PokemonUtils {
         }
     }
 
+    public static boolean canTaunt(PokemonEntity pokemonEntity) {
+        if (!CobblemonFightOrFlight.moveConfig().taunt_moves_needed) {
+            return true;
+        }
+        boolean result = false;
+        var moveSet = pokemonEntity.getPokemon().getMoveSet();
+        for (Move move : moveSet) {
+            if (Arrays.stream(CobblemonFightOrFlight.moveConfig().taunting_moves).toList().contains(move.getName())) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
     public static boolean isExplosiveMove(String moveName) {
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(moveName);
     }
-    public static void sendAnimationPacket(PokemonEntity pokemonEntity,String mode){
+
+    public static void sendAnimationPacket(PokemonEntity pokemonEntity, String mode) {
         if (!((LivingEntity) pokemonEntity).level().isClientSide) {
             var pkt = new PlayPoseableAnimationPacket(pokemonEntity.getId(), Set.of(mode), Set.of());
             pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> {
