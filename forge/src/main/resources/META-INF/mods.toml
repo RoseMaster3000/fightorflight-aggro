@@ -6,7 +6,7 @@ license = "MIT License"
 modId = "fightorflight"
 version = "0.6.0"
 displayName = "Cobblemon Fight or Flight"
-authors = "rufia"
+authors = "rufia,LyquidQrystal"
 description = '''
 Makes Cobblemon run away or fight back in response to a player attack or failed capture
 '''

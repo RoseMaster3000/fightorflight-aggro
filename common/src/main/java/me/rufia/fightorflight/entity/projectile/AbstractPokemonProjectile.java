@@ -43,7 +43,6 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         super.readAdditionalSaveData(compound);
         this.entityData.set(type, compound.getString("Type"));
         this.entityData.set(damage, compound.getFloat("Damage"));
-
     }
 
     protected void makeParticle(int particleAmount) {
@@ -61,10 +60,6 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         this.entityData.set(damage, Damage);
     }
 
-    public void shoot() {
-
-    }
-
     public String getElementalType() {
         return this.entityData.get(type);
     }
@@ -79,7 +74,6 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         } else {
             PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget);
         }
-
     }
 
     @Override

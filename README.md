@@ -19,12 +19,12 @@
 - - Moves(taunt,follow me,rage powder,torment) are needed to taunt the wild pokemon(can be disabled in the config)
 - Pokemon with higher defense stat can lower the damage it take.(configurable)
 - A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you
+- Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro
 ## TODO
 - Give more special effects to different moves.
 - Special effect for status moves. (Status moves has no effect currently,they can be used as a way to make your pokemon passive while in the pasture)
 - Special effect for abilities like aftermath and emergency exit.
 - More config options for fight of flight choices.
-- Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon  weak at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough)
 ## Known Issues
 - Damage of moves like electro ball can't be calculated properly.

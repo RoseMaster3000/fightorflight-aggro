@@ -1,7 +1,6 @@
 package me.rufia.fightorflight;
 
 
-import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -21,6 +20,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,17 +40,23 @@ public class CobblemonFightOrFlight {
     public static FightOrFlightCommonConfigModel commonConfig() {
         return commonConfig;
     }
-    public static FightOrFlightMoveConfigModel moveConfig(){return  moveConfig;}
-    public static FightOrFlightVisualEffectConfigModel visualEffectConfig(){return visualEffectConfig;}
+
+    public static FightOrFlightMoveConfigModel moveConfig() {
+        return moveConfig;
+    }
+
+    public static FightOrFlightVisualEffectConfigModel visualEffectConfig() {
+        return visualEffectConfig;
+    }
 
     public static void init(TriConsumer<PokemonEntity, Integer, Goal> goalAdder) {
         CobblemonFightOrFlight.goalAdder = goalAdder;
         AutoConfig.register(FightOrFlightCommonConfigModel.class, JanksonConfigSerializer::new);
-        AutoConfig.register(FightOrFlightMoveConfigModel.class,JanksonConfigSerializer::new);
-        AutoConfig.register(FightOrFlightVisualEffectConfigModel.class,JanksonConfigSerializer::new);
+        AutoConfig.register(FightOrFlightMoveConfigModel.class, JanksonConfigSerializer::new);
+        AutoConfig.register(FightOrFlightVisualEffectConfigModel.class, JanksonConfigSerializer::new);
         commonConfig = AutoConfig.getConfigHolder(FightOrFlightCommonConfigModel.class).getConfig();
-        moveConfig=AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
-	    visualEffectConfig=AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
+        moveConfig = AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
+        visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
 //		CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe(Priority.HIGHEST, event -> {
 //			//LogUtils.getLogger().info(((PokemonEntity)event.getEntity()).getPokemon().getSpecies().getName() + "spawn event");
 //			addPokemonGoal(event.getEntity());
@@ -71,22 +77,22 @@ public class CobblemonFightOrFlight {
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {
         float minimum_movement_speed = CobblemonFightOrFlight.commonConfig().minimum_movement_speed;
         float maximum_movement_speed = CobblemonFightOrFlight.commonConfig().maximum_movement_speed;
-        float speed_limit= CobblemonFightOrFlight.commonConfig().speed_stat_limit;
+        float speed_limit = CobblemonFightOrFlight.commonConfig().speed_stat_limit;
         float speed = pokemonEntity.getPokemon().getSpeed();
-        float speedMultiplier = Mth.lerp(speed/speed_limit,minimum_movement_speed,maximum_movement_speed);
+        float speedMultiplier = Mth.lerp(speed / speed_limit, minimum_movement_speed, maximum_movement_speed);
 
         float fleeSpeed = 1.3f * speedMultiplier;
         float pursuitSpeed = 1.2f * speedMultiplier;
-        
+
         goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
-        goalAdder.accept(pokemonEntity,3,new PokemonRangedAttackGoal(pokemonEntity,pursuitSpeed,16));
+        goalAdder.accept(pokemonEntity, 3, new PokemonRangedAttackGoal(pokemonEntity, pursuitSpeed, 16));
         //goalAdder.accept(pokemonEntity,3,new PokemonPassiveAbilityGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, 48.0f, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
 
         goalAdder.accept(pokemonEntity, 1, new PokemonOwnerHurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 2, new PokemonOwnerHurtTargetGoal(pokemonEntity));
-        goalAdder.accept(pokemonEntity,2,new PokemonTauntedTargetGoal<>(pokemonEntity,PokemonEntity.class,false));
+        goalAdder.accept(pokemonEntity, 2, new PokemonTauntedTargetGoal<>(pokemonEntity, PokemonEntity.class, false));
         goalAdder.accept(pokemonEntity, 3, new HurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 4, new CaughtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, 48.0f, true, true));
@@ -102,23 +108,21 @@ public class CobblemonFightOrFlight {
         }
 
         Pokemon pokemon = pokemonEntity.getPokemon();
-        String speciesName=pokemon.getSpecies().getName().toLowerCase();
+        String speciesName = pokemon.getSpecies().getName().toLowerCase();
         if (SpeciesAlwaysAggro(speciesName)) {
-            //LogUtils.getLogger().info(pokemon.getSpecies().getName() + " Always Aggro");
             return 100;
         }
-        if (SpeciesNeverAggro(speciesName)||SpeciesAlwaysFlee(speciesName)) {
-            //LogUtils.getLogger().info(pokemon.getSpecies().getName() + " Never Aggro");
+        if (SpeciesNeverAggro(speciesName) || SpeciesAlwaysFlee(speciesName)) {
             return -100;
         }
         float levelMultiplier = CobblemonFightOrFlight.commonConfig().aggression_level_multiplier;
         double pkmnLevel = levelMultiplier * pokemon.getLevel();
-        //double levelAggressionCoefficient = (pokemon.getLevel() - 20);
         double lowStatPenalty = (pkmnLevel * 1.5) + 30;
         double levelAggressionCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - lowStatPenalty;
         double atkDefRatioCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - (pokemon.getDefence() + pokemon.getSpecialDefence());
         double natureAggressionCoefficient = 0;
         double darknessAggressionCoefficient = 0;
+        double intimidateCoefficient = 0;
         switch (pokemon.getNature().getDisplayName().toLowerCase()) {
             case "cobblemon.nature.docile":
             case "cobblemon.nature.timid":
@@ -151,6 +155,11 @@ public class CobblemonFightOrFlight {
                 break;
         }
 
+        var pokemons = pokemonEntity.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(pokemonEntity.position(), 18, 18, 18), (pokemonEntity1) -> pokemonEntity1.getOwner() != null && Arrays.stream(CobblemonFightOrFlight.commonConfig().aggro_reducing_abilities).toList().contains(pokemonEntity1.getPokemon().getAbility().getName()));
+
+        if (!pokemons.isEmpty()) {
+            intimidateCoefficient = -30;
+        }
         ElementalType typePrimary = pokemon.getPrimaryType();
         ElementalType typeSecondary = pokemon.getSecondaryType();
         if (typeSecondary == null) {
@@ -176,18 +185,8 @@ public class CobblemonFightOrFlight {
         levelAggressionCoefficient = Math.max(-(pkmnLevel + 5), Math.min(pkmnLevel, 1.5d * levelAggressionCoefficient));//5.0d * levelAggressionCoefficient;
         atkDefRatioCoefficient = Math.max(-pkmnLevel, 1.0d * atkDefRatioCoefficient);
         natureAggressionCoefficient = (pkmnLevel * 0.5) * natureAggressionCoefficient;//25.0d * natureAggressionCoefficient;
+        double finalResult = levelAggressionCoefficient + atkDefRatioCoefficient + natureAggressionCoefficient + darknessAggressionCoefficient + intimidateCoefficient;
 
-        double finalResult = levelAggressionCoefficient + atkDefRatioCoefficient + natureAggressionCoefficient + darknessAggressionCoefficient;
-
-//        var pkmnString = "[" + pokemon.getSpecies().getName() + "]";
-//        LOGGER.info(pkmnString + " levelAggressionCoefficient: " + levelAggressionCoefficient);
-//        LOGGER.info(pkmnString + " atkDefRatioCoefficient: " + atkDefRatioCoefficient);
-//        LOGGER.info(pkmnString + " natureAggressionCoefficient: " + natureAggressionCoefficient
-//                + " (" + pokemon.getNature().getDisplayName().toLowerCase() + ")");
-//
-//        LOGGER.info("final FightOrFlightCoefficient: "
-//                + levelAggressionCoefficient + "+" + atkDefRatioCoefficient + "+" + natureAggressionCoefficient
-//                + " = " + finalResult);
         return finalResult;
     }
 
@@ -209,9 +208,11 @@ public class CobblemonFightOrFlight {
         }
         return false;
     }
-    public static boolean SpeciesAlwaysFlee(String speciesName){
+
+    public static boolean SpeciesAlwaysFlee(String speciesName) {
         return Arrays.stream(commonConfig().always_flee).toList().contains(speciesName);
     }
+
     public static void PokemonEmoteAngry(Mob mob) {
         double particleSpeed = Math.random();
         double particleAngle = Math.random() * 2 * Math.PI;

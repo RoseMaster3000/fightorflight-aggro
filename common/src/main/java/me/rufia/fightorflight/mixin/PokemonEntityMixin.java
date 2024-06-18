@@ -12,6 +12,7 @@ import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.utils.FOFEVCalculator;
 import me.rufia.fightorflight.utils.FOFExpCalculator;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -101,7 +102,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         this.entityData.define(MOVE, "");
         this.entityData.define(CRY_CD, 0);
     }
-
+    @Inject(method = "saveWithoutId",at=@At("HEAD"))
+    private void writeAdditionalNbt(CompoundTag compoundTag, CallbackInfoReturnable<Boolean> ci){
+        compoundTag.putInt(CRY_CD.toString(),0);
+    }
+    @Inject(method = "load",at=@At("TAIL"))
+    private void readAdditionalNbt(CompoundTag compoundTag,CallbackInfo ci){
+        entityData.set(CRY_CD,compoundTag.getInt(CRY_CD.toString()));
+    }
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
         if (target != null) {
@@ -154,6 +162,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     public void setNextCryTime(int time) {
         this.entityData.set(CRY_CD, time);
     }
+
 
     @ModifyVariable(method = "hurt", at = @At("HEAD"))
     private float hurtDamageTweak(float amount) {

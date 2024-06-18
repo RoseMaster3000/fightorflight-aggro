@@ -5,7 +5,6 @@ import com.cobblemon.mod.common.battles.BattleBuilder;
 import com.cobblemon.mod.common.battles.BattleFormat;
 import com.cobblemon.mod.common.battles.BattleRegistry;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
@@ -17,9 +16,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
-
-import java.util.Set;
 
 
 public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
@@ -142,7 +138,6 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         }
     }
 
-
     public boolean pokemonDoHurtTarget(Entity hurtTarget) {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
             if (isTargetInBattle()) {
@@ -152,8 +147,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
 
         if (!pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
-            //Not working currently
-            PokemonUtils.sendAnimationPacket(pokemonEntity,"physical");
+            PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
             return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget);
         }
 

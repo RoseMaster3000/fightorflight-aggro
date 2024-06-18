@@ -43,6 +43,12 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public String[] always_flee={
             "wimpod"
     };
+    @Comment("Abilities that will reduce wild pokemon's aggro")
+    public String[] aggro_reducing_abilities={
+            "intimidate",
+            "unnerve",
+            "pressure"
+    };
     @Comment("Allow the Pokemon to use the teleport move to flee if the Pokemon had learnt it.")
     public boolean allow_teleport_to_flee = true;
 

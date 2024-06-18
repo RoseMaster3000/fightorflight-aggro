@@ -37,23 +37,17 @@ public abstract class MinecraftClientInject {
     }
 
     private void startBattle() {
-
         var player = getInstance().player;
-        if (player.isSpectator()) {
-            return;
-        }
-
-        if (CobblemonClient.INSTANCE.getBattle() != null) {
-            return;
-        }
-
-        if (!(CobblemonClient.INSTANCE.getStorage().getSelectedSlot() != -1 && getInstance().screen == null)) {
+        boolean isSpectator=player.isSpectator();
+        boolean playerIsAvailable=CobblemonClient.INSTANCE.getBattle() != null;
+        boolean otherConditions=!(CobblemonClient.INSTANCE.getStorage().getSelectedSlot() != -1 && getInstance().screen == null);
+        if (isSpectator||playerIsAvailable||otherConditions) {
             return;
         }
 
         var pokemon = CobblemonClient.INSTANCE.getStorage().getMyParty().get(CobblemonClient.INSTANCE.getStorage().getSelectedSlot());
         if (pokemon != null && pokemon.getHp() > 0) {
-            var entities = player.clientLevel.getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.getPosition(player.tickCount), 8, 8, 8),
+            var entities = player.clientLevel.getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.getPosition(player.tickCount), 20, 20, 20),
                     (pokemonEntity) -> pokemonEntity.getTarget() == player
             );
             for (PokemonEntity pokemonEntity : entities) {
