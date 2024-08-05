@@ -5,6 +5,8 @@ import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
+import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -132,6 +134,19 @@ public class PokemonUtils {
             pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> {
                 return true;
             }).forEach((pkt::sendToPlayer));
+        }
+    }
+
+    public static void updateMoveEvolutionProgress(Pokemon pokemon, MoveTemplate move) {
+        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move)) {
+            UseMoveEvolutionProgress progress = pokemon.getEvolutionProxy().current().progressFirstOrCreate(evolutionProgress -> {
+                        if (evolutionProgress instanceof UseMoveEvolutionProgress umep) {
+                            return umep.currentProgress().getMove().equals(move);
+                        }
+                        return false;
+                    }
+                    , UseMoveEvolutionProgress::new);
+            progress.updateProgress(new UseMoveEvolutionProgress.Progress(move,progress.currentProgress().getAmount()+1));
         }
     }
 }

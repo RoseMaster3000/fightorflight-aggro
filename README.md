@@ -13,6 +13,7 @@
 - - Explosive moves can cause an explosion.
 - **Mobs killed by your pokemon will drop items and experience like it was killed by a tamed wolf.**
 - Your pokemon can gain experience and ev by killing pokemon without starting a pokemon battle(needs to be **the last mob** that deals the damage,can be disabled in the config)
+- Your pokemon can evolve by using the move to hit other mobs instead of starting a Pokemon Battle(e.g. Primeape needs to use Rage Fist 20 times to evolve,now you can do it without a traditional Pokemon Battle)(Configurable).
 - Adds the Oran Lucky Egg(held item) to gain more experience from pokemon killed by your pokemon,right-click your pokemon while sneaking to give the item to the pokemon.(**The Oran Lucky Egg won't give you extra xp from any other ways!**)
 - Support for animations from cobblemon mod when attacking(These animations are not designed for this mod so it might be weird)
 - Your pokemon can taunt the pokemon that attacks you.(Your pokemon can't be taunted.)

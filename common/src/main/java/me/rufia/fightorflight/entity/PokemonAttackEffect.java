@@ -2,9 +2,11 @@ package me.rufia.fightorflight.entity;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
+import com.cobblemon.mod.common.api.pokemon.evolution.progress.EvolutionProgress;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -107,7 +109,7 @@ public class PokemonAttackEffect {
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial, float movePower) {
         float attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         attack = Math.min(attack, 255.0f) / 255.0f;
-        float moveModifier = isSpecial ? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier : 1;//TODO Currently the physical moves has no special effect.
+        float moveModifier = isSpecial ? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier : 1;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
 
@@ -293,6 +295,7 @@ public class PokemonAttackEffect {
         }
         applyOnHitEffect(pokemonEntity, hurtTarget, move);
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
+        PokemonUtils.updateMoveEvolutionProgress(pokemon,move.getTemplate());
         boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
             if (hurtTarget instanceof LivingEntity) {
