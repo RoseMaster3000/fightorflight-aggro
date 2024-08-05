@@ -36,15 +36,15 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "pyukumuku"
     };
     @Comment("Pokemon that will be aggressive only when provoked(WIP)")
-    public String[] provoke_only_aggro={
+    public String[] provoke_only_aggro = {
 
     };
     @Comment("Pokemon that will always flee away from the player")
-    public String[] always_flee={
+    public String[] always_flee = {
             "wimpod"
     };
     @Comment("Abilities that will reduce wild pokemon's aggro")
-    public String[] aggro_reducing_abilities={
+    public String[] aggro_reducing_abilities = {
             "intimidate",
             "unnerve",
             "pressure"
@@ -62,14 +62,16 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_player_pokemon = false;
     @Comment("Will the wild pokemon cries for several times when angered,set to false so the pokemon will only cry one time when it's angered")
-    public boolean multiple_cries=true;
+    public boolean multiple_cries = true;
     @Comment("Tick(1/20s by default) needed for the pokemon to cry again(it will only work when the multiple_cries is set to true)")
-    public int time_to_cry_again=100;
+    public int time_to_cry_again = 100;
     @ConfigEntry.Category("Pokemon yield")
     @Comment("The exp. a pokemon can get by killing a pokemon without a battle")
-    public float experience_multiplier=0.5f;
+    public float experience_multiplier = 0.5f;
     @Comment("Your pokemon can gain ev by killing a pokemon without a battle")
-    public boolean can_gain_ev=true;
+    public boolean can_gain_ev = true;
+    @Comment("If the Pokemon can evolve by using the move out of a Pokemo Battle")
+    public boolean can_progress_use_move_evoluiton = true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
     @Comment("The  damage a pokemon would do on hit if it had 0 ATK and Sp.ATK.")
     public float minimum_attack_damage = 1.0f;
@@ -82,20 +84,20 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")
     public int speed_stat_limit = 548;
     @Comment("The maximum damage reduction a pokemon can get from its defense/special defense(uses the highest one)")
-    public float max_damage_reduction_multiplier=0.15f;
+    public float max_damage_reduction_multiplier = 0.15f;
     @Comment("The highest defense stat needed to get the highest damage reduction.")
-    public int defense_stat_limit=161;
+    public int defense_stat_limit = 161;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
     public boolean force_wild_battle_on_pokemon_hurt = false;
     @Comment("When a player owned Pokemon hurts or is hurt by another player's pokemon, should a pokemon battle be started? (EXPERIMENTAL)")
     public boolean force_player_battle_on_pokemon_hurt = false;
     @ConfigEntry.Category("Pokemon Ranged Attack")
     @Comment("If wild pokemon can use the ranged attack.")
-    public boolean wild_pokemon_ranged_attack=false;
+    public boolean wild_pokemon_ranged_attack = false;
     @Comment("The minimum time for pokemon to prepare(s).")
-    public float minimum_ranged_attack_interval=1.0f;
+    public float minimum_ranged_attack_interval = 1.0f;
     @Comment("The maximum time for pokemon to prepare(s).")
-    public float maximum_ranged_attack_interval=3.0f;
+    public float maximum_ranged_attack_interval = 3.0f;
     @Comment("The amount of damage a pokemon would do on contact if it had 0 Sp.ATK.")
     public float minimum_ranged_attack_damage = 1.0f;
     @Comment("The amount of damage a pokemon would do on contact if it had 255 Sp.ATK.")

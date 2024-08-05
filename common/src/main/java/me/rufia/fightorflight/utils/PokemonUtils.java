@@ -9,6 +9,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -138,7 +139,7 @@ public class PokemonUtils {
     }
 
     public static void updateMoveEvolutionProgress(Pokemon pokemon, MoveTemplate move) {
-        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move)) {
+        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move)&& CobblemonFightOrFlight.commonConfig().can_progress_use_move_evoluiton) {
             UseMoveEvolutionProgress progress = pokemon.getEvolutionProxy().current().progressFirstOrCreate(evolutionProgress -> {
                         if (evolutionProgress instanceof UseMoveEvolutionProgress umep) {
                             return umep.currentProgress().getMove().equals(move);
