@@ -80,8 +80,15 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "prismaticlaser",
             "lusterpurge",
             "electroshot",
+            "photongeyser",
 
             "flamethrower"
+    };
+    @Comment("Moves that ignores abilities(unused)")
+    public String[] mold_breaker_like_moves={
+            "sunsteelstrike",
+            "moongeistbeam",
+            "photongeyser"
     };
     @Comment("Moves that start an explode")
     public String[] explosive_moves = {

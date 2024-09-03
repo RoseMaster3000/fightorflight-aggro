@@ -44,7 +44,7 @@ public class PokemonPostRenderer {
                     CobblemonFightOrFlight.LOGGER.info("Trying to use a null move");
                     return;
                 }
-                CobblemonFightOrFlight.LOGGER.info(move.getName());
+                //CobblemonFightOrFlight.LOGGER.info(move.getName());
                 //float f = 0.2F;//entity.getAttackAnimationScale(partialTicks);
                 float g = 40 + partialTicks + attackTime;//entity.getClientSideAttackTime() + partialTicks;
                 Color color = Color.white;

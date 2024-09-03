@@ -8,6 +8,8 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.mixin.PokemonEntityMixin;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -112,8 +114,11 @@ public class PokemonAttackEffect {
         float moveModifier = isSpecial ? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier : 1;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
-
-        return Math.min(Mth.lerp(attack * moveModifier, minDmg, maxDmg), maxDmg);
+        float multiplier=1f;
+        if(((PokemonInterface)(Object)pokemonEntity).usingBeam()){
+            multiplier*=CobblemonFightOrFlight.moveConfig().beam_move_power_multiplier;
+        }
+        return Math.min( Mth.lerp(attack * moveModifier, minDmg, maxDmg), maxDmg);
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
@@ -283,7 +288,7 @@ public class PokemonAttackEffect {
             if (b1) {
                 hurtDamage = 0f;
             } else {
-                CobblemonFightOrFlight.LOGGER.info(move.getType().getName());
+                //CobblemonFightOrFlight.LOGGER.info(move.getType().getName());
                 applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
                 makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
                 hurtDamage = calculatePokemonDamage(pokemonEntity, false, (float) move.getPower());

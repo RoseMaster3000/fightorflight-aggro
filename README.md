@@ -1,3 +1,4 @@
+### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## Features&Changes
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.

@@ -28,12 +28,7 @@ public class PokemonArrow extends AbstractPokemonProjectile {
 
     public PokemonArrow(Level level, LivingEntity shooter, Entity finalTarget) {
         super(EntityFightOrFlight.ARROW_PROJECTILE.get(), level);
-        this.setOwner(shooter);
-        BlockPos blockPos = shooter.blockPosition();
-        double d = (double) blockPos.getX() + 0.5;
-        double e = (double) blockPos.getY() + Math.max(0.5f, shooter.getBbHeight() / 2);
-        double f = (double) blockPos.getZ() + 0.5;
-        this.moveTo(d, e, f, this.getYRot(), this.getXRot());
+        initPosition(shooter);
     }
 
     @Override
@@ -68,8 +63,8 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         Vec3 vec3 = this.getDeltaMovement();
         if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
             double d = vec3.horizontalDistance();
-            this.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * 57.2957763671875));
-            this.setXRot((float)(Mth.atan2(vec3.y, d) * 57.2957763671875));
+            this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * 57.2957763671875));
+            this.setXRot((float) (Mth.atan2(vec3.y, d) * 57.2957763671875));
             this.yRotO = this.getYRot();
             this.xRotO = this.getXRot();
         }
@@ -167,6 +162,7 @@ public class PokemonArrow extends AbstractPokemonProjectile {
     protected boolean canHitEntity(Entity target) {
         return super.canHitEntity(target);
     }
+
     protected float getWaterInertia() {
         return 0.6F;
     }

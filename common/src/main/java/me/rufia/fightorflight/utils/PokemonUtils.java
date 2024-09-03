@@ -2,9 +2,11 @@ package me.rufia.fightorflight.utils;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
+import com.cobblemon.mod.common.api.moves.animations.ActionEffectContext;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
+import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
@@ -64,7 +66,6 @@ public class PokemonUtils {
         }
         if (move == null) {
             CobblemonFightOrFlight.LOGGER.warn("Returning a null move for no reason");
-            return null;
         }
         return move;
     }
@@ -78,7 +79,7 @@ public class PokemonUtils {
         boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
 
         if ((isSpecial && getSpecial) || (isPhysical && !getSpecial)) {
-            ((PokemonInterface) (Object) pokemonEntity).setCurrentMove(move);
+            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -105,7 +106,7 @@ public class PokemonUtils {
         if (owner instanceof Player player) {
             if (target instanceof LivingEntity livingEntity) {
                 livingEntity.setLastHurtByPlayer(player);
-                CobblemonFightOrFlight.LOGGER.info("Hurt by player attack");
+                //CobblemonFightOrFlight.LOGGER.info("Hurt by player's cobblemon");
             }
         }
     }
@@ -149,5 +150,13 @@ public class PokemonUtils {
                     , UseMoveEvolutionProgress::new);
             progress.updateProgress(new UseMoveEvolutionProgress.Progress(move,progress.currentProgress().getAmount()+1));
         }
+    }
+
+    public static void makeCobblemonParticle(Entity entity,String particleName){
+        if(entity!=null){
+            var packet=new RunPosableMoLangPacket(entity.getId(),Set.of(String.format("q.particle('cobblemon:%s', 'target')",particleName) ));
+            packet.sendToPlayersAround(entity.getX(),entity.getY(),entity.getZ(),50,entity.level().dimension(),(serverPlayer)-> false);
+        }
+        //todo I still need to find a way to update the locator or the particle can't be spawned at the target's location.
     }
 }

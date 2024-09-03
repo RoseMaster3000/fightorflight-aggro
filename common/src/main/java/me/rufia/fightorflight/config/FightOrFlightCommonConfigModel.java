@@ -49,6 +49,12 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "unnerve",
             "pressure"
     };
+    @Comment("Abilities that works like Mold Breaker(unused)")
+    public String[] mold_breaker_like_ablilities={
+            "moldbreaker",
+            "turboblaze",
+            "teravolt"
+    };
     @Comment("Allow the Pokemon to use the teleport move to flee if the Pokemon had learnt it.")
     public boolean allow_teleport_to_flee = true;
 

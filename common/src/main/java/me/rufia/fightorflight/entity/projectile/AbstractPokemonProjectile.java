@@ -1,8 +1,10 @@
 package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,8 +23,20 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     public AbstractPokemonProjectile(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
-
     }
+
+    protected void initPosition(LivingEntity shooter) {
+        this.setOwner(shooter);
+        BlockPos blockPos = shooter.blockPosition();
+        float angle = shooter.getYRot();
+        //CobblemonFightOrFlight.LOGGER.info(String.valueOf(angle));
+        double radius = 0.5 * shooter.getBbWidth();
+        double d = (double) blockPos.getX() + 0.5 - radius * Math.sin(angle);
+        double e = (double) blockPos.getY() + Math.max(0.3f, shooter.getBbHeight() * 0.67);
+        double f = (double) blockPos.getZ() + 0.5 + radius * Math.cos(angle);
+        this.moveTo(d, e, f, this.getYRot(), this.getXRot());
+    }
+
 
     private static final EntityDataAccessor<String> type = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.STRING);
 
@@ -88,20 +102,17 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         Entity target = result.getEntity();
         if (owner instanceof PokemonEntity pokemonEntity) {
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
+            PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity));
         }
     }
 
     public void accurateShoot(double x, double y, double z, float velocity, float inaccuracy) {
         double horizontalDistance = Math.sqrt(x * x + z * z);
         float g = getGravity();
-        double a = velocity * velocity - g;
-        double delta = a * a - 0.5 * g * (horizontalDistance * horizontalDistance + y * y);
-        double b = a - Math.sqrt(delta);
-        double t = Math.sqrt(b) / Math.sqrt(g * g / 2);
-        double result = Math.sqrt(velocity * velocity - horizontalDistance / t);
-        if (y < 0) {
-            result = -result;
-        }
+        double v2 = velocity * velocity;
+        double delta = Math.sqrt(2 * v2 * g * y + v2 * v2 - g * g * horizontalDistance * horizontalDistance);
+        double t = Math.sqrt(2 * (g * y + v2 - delta)) / g;
+        double result = y + 0.5 * g * t * t;
         this.shoot(x, result, z, velocity, inaccuracy);
     }
 }

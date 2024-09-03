@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import net.minecraft.core.BlockPos;
@@ -19,31 +20,29 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class PokemonBullet extends AbstractPokemonProjectile{
+public class PokemonBullet extends AbstractPokemonProjectile {
     public PokemonBullet(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
         this.noPhysics = true;
     }
+
     public PokemonBullet(Level level, LivingEntity shooter, Entity finalTarget) {
         super(EntityFightOrFlight.BULLET.get(), level);
-        this.setOwner(shooter);
-        BlockPos blockPos = shooter.blockPosition();
-        double d = (double) blockPos.getX() + 0.5;
-        double e = (double) blockPos.getY() + Math.max(0.3f, shooter.getBbHeight() / 2);
-        double f = (double) blockPos.getZ() + 0.5;
-        this.moveTo(d, e, f, this.getYRot(), this.getXRot());
+        initPosition(shooter);
     }
+
     public void lerpTo(double x, double y, double z, float yRot, float xRot, int lerpSteps, boolean teleport) {
         this.setPos(x, y, z);
         this.setRot(yRot, xRot);
     }
+
     public void tick() {
         super.tick();
         Vec3 vec3 = this.getDeltaMovement();
         if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
             double d = vec3.horizontalDistance();
-            this.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * 57.2957763671875));
-            this.setXRot((float)(Mth.atan2(vec3.y, d) * 57.2957763671875));
+            this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * 57.2957763671875));
+            this.setXRot((float) (Mth.atan2(vec3.y, d) * 57.2957763671875));
             this.yRotO = this.getYRot();
             this.xRotO = this.getXRot();
         }
@@ -85,6 +84,7 @@ public class PokemonBullet extends AbstractPokemonProjectile{
         this.setPos(h, j, k);
         this.checkInsideBlocks();
     }
+
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         Entity target = result.getEntity();
@@ -104,9 +104,9 @@ public class PokemonBullet extends AbstractPokemonProjectile{
             if (bl) {
                 return;
             }
-            if(target instanceof LivingEntity livingEntity){
-                if(entity2 instanceof  PokemonEntity pokemonEntity){
-                    applyTypeEffect(pokemonEntity,livingEntity);
+            if (target instanceof LivingEntity livingEntity) {
+                if (entity2 instanceof PokemonEntity pokemonEntity) {
+                    applyTypeEffect(pokemonEntity, livingEntity);
                 }
             }
             this.discard();

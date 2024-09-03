@@ -265,6 +265,7 @@ public class PokemonRangedAttackGoal extends Goal {
             } else if (b5 || b7) {
                 target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, true, (float) move.getPower()));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
+                PokemonAttackEffect.applyOnHitEffect(pokemonEntity,target,move);
             } else if (b6) {
                 //Nothing to do now.
             } else {

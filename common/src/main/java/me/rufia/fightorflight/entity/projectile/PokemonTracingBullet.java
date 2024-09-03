@@ -51,12 +51,7 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile {
 
     public PokemonTracingBullet(Level level, LivingEntity shooter, Entity finalTarget, Direction.Axis axis) {
         super(EntityFightOrFlight.TRACING_BULLET.get(), level);
-        this.setOwner(shooter);
-        BlockPos blockPos = shooter.blockPosition();
-        double d = (double) blockPos.getX() + 0.5;
-        double e = (double) blockPos.getY() + Math.max(0.5f, shooter.getBbHeight() / 2);
-        double f = (double) blockPos.getZ() + 0.5;
-        this.moveTo(d, e, f, this.getYRot(), this.getXRot());
+        initPosition(shooter);
         this.finalTarget = finalTarget;
         this.currentMoveDirection = Direction.UP;
         this.selectNextMoveDirection(axis);
