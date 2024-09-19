@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class PokemonTracingBullet extends AbstractPokemonProjectile {
+public class PokemonTracingBullet extends AbstractPokemonProjectile implements ExplosivePokemonProjectile {
     private static final double SPEED = 0.3;
     private static final int min_interval = 3;
     private static final int random_interval = 2;
@@ -262,17 +262,6 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile {
 
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        Entity entity = result.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity) entity2 : null;
-        boolean bl = entity.hurt(this.damageSources().mobProjectile(this, livingEntity), getDamage());
-        if (bl) {
-            if (entity instanceof LivingEntity) {
-                LivingEntity livingEntity2 = (LivingEntity) entity;
-                applyTypeEffect((PokemonEntity) livingEntity, livingEntity2);
-                //livingEntity2.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200), (Entity) MoreObjects.firstNonNull(entity2, this));
-            }
-        }
     }
 
     protected void onHitBlock(BlockHitResult result) {

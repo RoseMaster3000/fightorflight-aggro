@@ -14,8 +14,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
@@ -101,10 +105,57 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         Entity owner = getOwner();
         Entity target = result.getEntity();
         if (owner instanceof PokemonEntity pokemonEntity) {
+            if (this instanceof ExplosivePokemonProjectile) {
+                explode(pokemonEntity);
+                return;
+            }
+
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
             PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity));
         }
     }
+
+    protected void onHitBlock(BlockHitResult result) {
+        if (this instanceof ExplosivePokemonProjectile) {
+            BlockPos blockPos = new BlockPos(result.getBlockPos());
+            this.level().getBlockState(blockPos).entityInside(this.level(), blockPos, this);
+            if (!this.level().isClientSide() && getOwner() instanceof PokemonEntity pokemonEntity) {
+                this.explode(pokemonEntity);
+            }
+        }
+        super.onHitBlock(result);
+    }
+
+    private void explode(PokemonEntity owner) {
+        level().broadcastEntityEvent(this, (byte) 17);
+        this.gameEvent(GameEvent.EXPLODE, this.getOwner());
+        this.dealExplosionDamage(owner);
+        this.discard();
+    }
+
+    private void dealExplosionDamage(PokemonEntity owner) {
+        double radiusMultiplier = 5.0;
+        //Vec3 vec3 = this.position();
+        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(radiusMultiplier));
+        Iterator<LivingEntity> it = list.iterator();
+        while (true) {
+            LivingEntity livingEntity;
+            do {
+                if (!it.hasNext()) {
+                    return;
+                }
+                livingEntity = it.next();
+            } while (this.distanceToSqr(livingEntity) > 25.0);
+            //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
+            boolean bl = livingEntity.hurt(this.damageSources().mobProjectile(this, owner), getDamage());
+            if (bl) {
+                applyTypeEffect(owner, livingEntity);
+            }
+            PokemonUtils.setHurtByPlayer(owner, livingEntity);
+            PokemonAttackEffect.applyOnHitEffect(owner, livingEntity, PokemonUtils.getMove(owner));
+        }
+    }
+
 
     public void accurateShoot(double x, double y, double z, float velocity, float inaccuracy) {
         double horizontalDistance = Math.sqrt(x * x + z * z);

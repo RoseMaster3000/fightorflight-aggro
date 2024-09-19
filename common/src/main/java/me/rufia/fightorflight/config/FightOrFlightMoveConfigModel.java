@@ -45,7 +45,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "zapcannon",
             "mistball",
             "syrupbomb",
-            "armorcanon",
+            "armorcannon",
 
             "sludge",
             "technoblast"

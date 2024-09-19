@@ -20,7 +20,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class PokemonBullet extends AbstractPokemonProjectile {
+public class PokemonBullet extends AbstractPokemonProjectile implements ExplosivePokemonProjectile{
     public PokemonBullet(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
         this.noPhysics = true;
@@ -87,30 +87,6 @@ public class PokemonBullet extends AbstractPokemonProjectile {
 
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        Entity target = result.getEntity();
-        Entity entity2 = this.getOwner();
-        DamageSource damageSource;
-
-        if (entity2 instanceof LivingEntity livingEntity) {
-            damageSource = this.damageSources().mobAttack(livingEntity);
-            livingEntity.setLastHurtMob(target);
-        } else {
-            damageSource = this.damageSources().generic();
-        }
-
-        boolean bl = target.getType() == EntityType.ENDERMAN;
-
-        if (target.hurt(damageSource, getDamage())) {
-            if (bl) {
-                return;
-            }
-            if (target instanceof LivingEntity livingEntity) {
-                if (entity2 instanceof PokemonEntity pokemonEntity) {
-                    applyTypeEffect(pokemonEntity, livingEntity);
-                }
-            }
-            this.discard();
-        }
     }
 
     private void destroy() {

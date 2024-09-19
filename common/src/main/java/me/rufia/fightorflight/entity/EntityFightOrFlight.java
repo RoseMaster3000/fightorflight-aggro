@@ -25,7 +25,7 @@ public interface EntityFightOrFlight {
     RegistrySupplier<EntityType<PokemonArrow>> ARROW_PROJECTILE = registerProjectile("arrow_projectile",
             EntityType.Builder.<PokemonArrow>of(PokemonArrow::new
                     , MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
-    RegistrySupplier<EntityType<PokemonBullet>> BULLET=registerProjectile("",
+    RegistrySupplier<EntityType<PokemonBullet>> BULLET=registerProjectile("bullet_projectile",
             EntityType.Builder.<PokemonBullet>of(PokemonBullet::new,MobCategory.MISC).sized(0.3125f,0.3125f));
     static void bootstrap() {
         ENTITY_TYPES.register();
