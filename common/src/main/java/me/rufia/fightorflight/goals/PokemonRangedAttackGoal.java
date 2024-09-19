@@ -242,7 +242,7 @@ public class PokemonRangedAttackGoal extends Goal {
         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
         if (move != null) {
             String moveName = move.getName();
-            CobblemonFightOrFlight.LOGGER.info(moveName);
+            //CobblemonFightOrFlight.LOGGER.info(moveName);
             Random rand = new Random();
             boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName);
             boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName);

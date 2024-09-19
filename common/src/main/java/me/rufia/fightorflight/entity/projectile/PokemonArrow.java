@@ -167,8 +167,5 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         return 0.6F;
     }
 
-    @Override
-    protected float getGravity() {
-        return 0.05f;
-    }
+
 }

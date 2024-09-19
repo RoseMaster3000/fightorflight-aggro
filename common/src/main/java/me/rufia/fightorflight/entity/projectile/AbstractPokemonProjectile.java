@@ -134,7 +134,7 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
     }
 
     private void dealExplosionDamage(PokemonEntity owner) {
-        double radiusMultiplier = 5.0;
+        double radiusMultiplier = 2.0;
         //Vec3 vec3 = this.position();
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(radiusMultiplier));
         Iterator<LivingEntity> it = list.iterator();
@@ -146,8 +146,15 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
                 }
                 livingEntity = it.next();
             } while (this.distanceToSqr(livingEntity) > 25.0);
+            float fullDamageRadius = 0.4f;
+            float dmgMultiplier;
+            if (this.distanceToSqr(livingEntity) < 0.4f) {
+                dmgMultiplier = 1.0f;
+            } else {
+                dmgMultiplier = 1 - (float) (distanceTo(livingEntity) / getBbWidth() * radiusMultiplier);
+            }
             //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
-            boolean bl = livingEntity.hurt(this.damageSources().mobProjectile(this, owner), getDamage());
+            boolean bl = livingEntity.hurt(this.damageSources().mobProjectile(this, owner), getDamage() * dmgMultiplier);
             if (bl) {
                 applyTypeEffect(owner, livingEntity);
             }
@@ -165,5 +172,10 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         double t = Math.sqrt(2 * (g * y + v2 - delta)) / g;
         double result = y + 0.5 * g * t * t;
         this.shoot(x, result, z, velocity, inaccuracy);
+    }
+
+    @Override
+    protected float getGravity() {
+        return 0.05f;
     }
 }
