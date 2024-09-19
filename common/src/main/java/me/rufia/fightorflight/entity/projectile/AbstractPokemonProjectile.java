@@ -148,10 +148,10 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
             } while (this.distanceToSqr(livingEntity) > 25.0);
             float fullDamageRadius = 0.4f;
             float dmgMultiplier;
-            if (this.distanceToSqr(livingEntity) < 0.4f) {
+            if (this.distanceToSqr(livingEntity) < fullDamageRadius) {
                 dmgMultiplier = 1.0f;
             } else {
-                dmgMultiplier = 1 - (float) (distanceTo(livingEntity) / getBbWidth() * radiusMultiplier);
+                dmgMultiplier = 1 - (float) (distanceTo(livingEntity) / (getBbWidth() * radiusMultiplier));
             }
             //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
             boolean bl = livingEntity.hurt(this.damageSources().mobProjectile(this, owner), getDamage() * dmgMultiplier);

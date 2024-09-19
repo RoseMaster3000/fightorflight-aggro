@@ -24,11 +24,21 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public boolean taunt_moves_needed=true;
     @Comment("Wild pokemon can taunt your pokemon(WIP)")
     public  boolean wild_pokemon_taunt=false;
-    @Comment("Moves that shoots multiple bullet")//TODO
-    public String[] multiple_bullet_moves = {
-            "powergem"
+    @Comment("Special moves that makes contact,these moves will let the Pokemon melee while using the Special Attack stat to calculate the damage.")
+    public String[] special_contact_moves={
+            "electrodrift",
+            "infestation",
+            "drainingkiss",
+            "grassknot",
+            "wringout",
+            "trumpcard",
+            "petaldance"
     };
-    @Comment("Moves that shoots single bullet")
+    @Comment("Moves that shoots multiple bullet")
+    public String[] multiple_bullet_moves = {
+            "bulletseed"
+    };
+    @Comment("Moves that shoots single bullet.Physical moves still shoots the bullet and uses the Attack stat to calculate the damage.")
     public String[] single_bullet_moves = {
             "electroball",
             "focusblast",
@@ -46,6 +56,10 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "mistball",
             "syrupbomb",
             "armorcannon",
+            "seedbomb",
+            "magnetbomb",
+            "powergem",
+            "rockwrecker",
 
             "sludge",
             "technoblast"
@@ -136,7 +150,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "mistyexplosion"
     };
     //TODO
-    @ConfigEntry.Category("Status  moves(To do)")
+    @ConfigEntry.Category("Status  moves(WIP)")
     @Comment("Moves that taunt other pokemon")
     public String[] taunting_moves={
             "taunt",

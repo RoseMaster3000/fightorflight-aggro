@@ -26,10 +26,10 @@ import java.util.Set;
 
 public class PokemonUtils {
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
-        Move move = getMove(pokemonEntity, false);
+        Move move = getMeleeMove(pokemonEntity);
         boolean b1 = pokemonEntity.getPokemon().getAttack() > pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
         boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
-        boolean b3 = move != null && move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();//The trainer selected a physical move.
+        boolean b3 = move != null;//The trainer selected a physical move.
         if (b2) {
             return b1 || !CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
         } else {
@@ -38,16 +38,15 @@ public class PokemonUtils {
     }
 
     public static boolean shouldShoot(PokemonEntity pokemonEntity) {
-        Move move = getMove(pokemonEntity, true);
+        Move move = getRangeAttackMove(pokemonEntity);
         boolean b1 = pokemonEntity.getPokemon().getAttack() < pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
         boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
-        boolean b3 = move != null && move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();//The trainer selected a physical move.
+        boolean b3 = move != null;//The trainer selected a physical move.
         if (b2) {
             return b1 && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
         } else {
             return b3;
         }
-
     }
 
     public static Move getMove(PokemonEntity pokemonEntity) {
@@ -80,6 +79,34 @@ public class PokemonUtils {
 
         if ((isSpecial && getSpecial) || (isPhysical && !getSpecial)) {
             ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+            return move;
+        }
+        return null;
+    }
+
+    public static Move getMeleeMove(PokemonEntity pokemonEntity) {
+        Move move = getMove(pokemonEntity);
+        if (move == null) {
+            return null;
+        }
+        String moveName=move.getName();
+        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        if((isPhysical && !Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName))||(isSpecial&& Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName))){
+            return move;
+        }
+        return null;
+    }
+
+    public static Move getRangeAttackMove(PokemonEntity pokemonEntity) {
+        Move move = getMove(pokemonEntity);
+        if (move == null) {
+            return null;
+        }
+        String moveName = move.getName();
+        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        if ((isSpecial&& !Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName)) || (isPhysical && Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName))) {
             return move;
         }
         return null;
@@ -140,7 +167,7 @@ public class PokemonUtils {
     }
 
     public static void updateMoveEvolutionProgress(Pokemon pokemon, MoveTemplate move) {
-        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move)&& CobblemonFightOrFlight.commonConfig().can_progress_use_move_evoluiton) {
+        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move) && CobblemonFightOrFlight.commonConfig().can_progress_use_move_evoluiton) {
             UseMoveEvolutionProgress progress = pokemon.getEvolutionProxy().current().progressFirstOrCreate(evolutionProgress -> {
                         if (evolutionProgress instanceof UseMoveEvolutionProgress umep) {
                             return umep.currentProgress().getMove().equals(move);
@@ -148,14 +175,14 @@ public class PokemonUtils {
                         return false;
                     }
                     , UseMoveEvolutionProgress::new);
-            progress.updateProgress(new UseMoveEvolutionProgress.Progress(move,progress.currentProgress().getAmount()+1));
+            progress.updateProgress(new UseMoveEvolutionProgress.Progress(move, progress.currentProgress().getAmount() + 1));
         }
     }
 
-    public static void makeCobblemonParticle(Entity entity,String particleName){
-        if(entity!=null){
-            var packet=new RunPosableMoLangPacket(entity.getId(),Set.of(String.format("q.particle('cobblemon:%s', 'target')",particleName) ));
-            packet.sendToPlayersAround(entity.getX(),entity.getY(),entity.getZ(),50,entity.level().dimension(),(serverPlayer)-> false);
+    public static void makeCobblemonParticle(Entity entity, String particleName) {
+        if (entity != null) {
+            var packet = new RunPosableMoLangPacket(entity.getId(), Set.of(String.format("q.particle('cobblemon:%s', 'target')", particleName)));
+            packet.sendToPlayersAround(entity.getX(), entity.getY(), entity.getZ(), 50, entity.level().dimension(), (serverPlayer) -> false);
         }
         //todo I still need to find a way to update the locator or the particle can't be spawned at the target's location.
     }

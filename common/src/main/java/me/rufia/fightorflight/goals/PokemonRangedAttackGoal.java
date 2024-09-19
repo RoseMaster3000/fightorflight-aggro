@@ -93,10 +93,7 @@ public class PokemonRangedAttackGoal extends Goal {
 
         LivingEntity owner = pokemonEntity.getOwner();
         if (owner != null) {
-            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner) {
-                return false;
-            }
-            if (this.pokemonEntity.getTarget() == null || this.pokemonEntity.getTarget() == owner) {
+            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || (this.pokemonEntity.getTarget() == null || this.pokemonEntity.getTarget() == owner)) {
                 return false;
             }
 
@@ -168,7 +165,8 @@ public class PokemonRangedAttackGoal extends Goal {
         if (bl) {
             ++this.seeTime;
         } else {
-            this.seeTime = 0;
+            seeTime=0;
+            resetAttackTime(d);
         }
 
         if (!(d > (double) this.attackRadiusSqr) && this.seeTime >= 5 && bl) {
@@ -187,15 +185,19 @@ public class PokemonRangedAttackGoal extends Goal {
             if (!bl) {
                 return;
             }
-            float attackSpeedModifier = Math.max(0.1f, 1 - this.pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
-            float f = (float) Math.sqrt(d) / this.attackRadius * attackSpeedModifier;
-            //float g = Mth.clamp(f, 0.1F, 1.0F);
+            resetAttackTime(d);
             this.performRangedAttack(this.target);
-            ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);
-            this.attackTime = Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
         } else if (this.attackTime < 0) {
-            this.attackTime = Mth.floor(Mth.lerp(Math.sqrt(d) / (double) this.attackRadius, 20 * CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, 20 * CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
+            resetAttackTime(d);
         }
+    }
+
+    protected void resetAttackTime(double d) {
+        ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);
+        float attackSpeedModifier = Math.max(0.1f, 1 - this.pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
+        float f = (float) Math.sqrt(d) / this.attackRadius * attackSpeedModifier;
+        ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);
+        this.attackTime = Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
     }
 
     protected void createSonicBoomParticle() {
@@ -217,7 +219,7 @@ public class PokemonRangedAttackGoal extends Goal {
 
     protected void addProjectileEntity(AbstractPokemonProjectile projectile, Move move) {
         projectile.setElementalType(move.getType().getName());
-        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, true, (float) move.getPower()));
+        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, move));
         this.livingEntity.level().addFreshEntity(projectile);
     }
 
@@ -237,12 +239,14 @@ public class PokemonRangedAttackGoal extends Goal {
     }
 
     protected void performRangedAttack(LivingEntity target) {
-        Move move = PokemonUtils.getMove(pokemonEntity, true);
+        //Move move = PokemonUtils.getMove(pokemonEntity, true);
+        Move move=PokemonUtils.getRangeAttackMove(pokemonEntity);
         AbstractPokemonProjectile bullet;
         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
+
         if (move != null) {
             String moveName = move.getName();
-            //CobblemonFightOrFlight.LOGGER.info(moveName);
+            CobblemonFightOrFlight.LOGGER.info(moveName);
             Random rand = new Random();
             boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName);
             boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName);
@@ -265,7 +269,7 @@ public class PokemonRangedAttackGoal extends Goal {
             } else if (b5 || b7) {
                 target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, true, (float) move.getPower()));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-                PokemonAttackEffect.applyOnHitEffect(pokemonEntity,target,move);
+                PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, move);
             } else if (b6) {
                 //Nothing to do now.
             } else {

@@ -114,11 +114,29 @@ public class PokemonAttackEffect {
         float moveModifier = isSpecial ? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier : 1;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
-        float multiplier=1f;
-        if(((PokemonInterface)(Object)pokemonEntity).usingBeam()){
-            multiplier*=CobblemonFightOrFlight.moveConfig().beam_move_power_multiplier;
+        float multiplier = 1f;
+
+        if (((PokemonInterface) (Object) pokemonEntity).usingBeam()) {
+            multiplier *= CobblemonFightOrFlight.moveConfig().beam_move_power_multiplier;
         }
-        return Math.min( Mth.lerp(attack * moveModifier, minDmg, maxDmg), maxDmg);
+        return Math.min(Mth.lerp(attack * moveModifier * multiplier, minDmg, maxDmg), maxDmg);
+    }
+
+    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Move move) {
+        //TODO Special effect for Photon Geyser
+        boolean isSpecial = DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory());
+        float STAB;
+        var primaryType = pokemonEntity.getPokemon().getPrimaryType();
+        var secondaryType = pokemonEntity.getPokemon().getSecondaryType();
+        if (secondaryType == null) {
+            secondaryType = primaryType;
+        }
+        if (primaryType.equals(move.getType()) || secondaryType.equals(move.getType())) {
+            STAB = 1.5f;
+        } else {
+            STAB = 1.0f;
+        }
+        return calculatePokemonDamage(pokemonEntity,isSpecial, (float) (move.getPower()*STAB));
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
@@ -300,7 +318,7 @@ public class PokemonAttackEffect {
         }
         applyOnHitEffect(pokemonEntity, hurtTarget, move);
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
-        PokemonUtils.updateMoveEvolutionProgress(pokemon,move.getTemplate());
+        PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
         boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
             if (hurtTarget instanceof LivingEntity) {
