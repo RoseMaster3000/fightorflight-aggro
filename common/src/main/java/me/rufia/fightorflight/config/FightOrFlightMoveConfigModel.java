@@ -15,9 +15,11 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     @Comment("If a pokemon doesn't have the correct moves to use,the base power will be used to calculate the damage.")
     public int base_power = 60;
     @Comment("The minimum radius of the AoE moves")
-    public float min_AoE_radius = 2.0f;
+    public float min_AoE_radius = 1.0f;
     @Comment("The maximum radius of the AoE moves")
-    public float max_AoE_radius = 3.0f;
+    public float max_AoE_radius = 2.0f;
+    @Comment("The AoE damage will be lower to the target away from the center,this value sets the lowest damage multiplier of the AOE damage")
+    public float min_AoE_damage_multiplier=0.6f;
     @Comment("The radius of the status moves")
     public float status_move_radius=8.0f;
     @Comment("Taunting moves are needed to taunt the aggressive wild pokemon")

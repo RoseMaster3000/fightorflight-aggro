@@ -76,7 +76,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float experience_multiplier = 0.5f;
     @Comment("Your pokemon can gain ev by killing a pokemon without a battle")
     public boolean can_gain_ev = true;
-    @Comment("If the Pokemon can evolve by using the move out of a Pokemo Battle")
+    @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle")
     public boolean can_progress_use_move_evoluiton = true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
     @Comment("The  damage a pokemon would do on hit if it had 0 ATK and Sp.ATK.")
@@ -84,7 +84,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The  damage a pokemon would do on hit if it had 255 ATK or Sp.ATK.")
     public float maximum_attack_damage = 6.0f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
-    public float minimum_movement_speed = 1.1f;
+    public float minimum_movement_speed = 1.3f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon reaches the value in the config.")
     public float maximum_movement_speed = 2.0f;
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")

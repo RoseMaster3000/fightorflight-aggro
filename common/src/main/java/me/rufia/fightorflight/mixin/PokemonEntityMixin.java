@@ -129,7 +129,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Override
     public boolean usingBeam() {
-        if (entityData.get(MOVE).equals("")) {
+        if (entityData.get(MOVE).isEmpty()) {
             return false;
         }
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().single_beam_moves).toList().contains(getCurrentMove());
@@ -137,7 +137,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Override
     public boolean usingSound() {
-        if (entityData.get(MOVE).equals("")) {
+        if (entityData.get(MOVE).isEmpty()) {
             return false;
         }
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(getCurrentMove());

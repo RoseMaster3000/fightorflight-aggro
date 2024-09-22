@@ -50,6 +50,10 @@ public class PokemonUtils {
     }
 
     public static Move getMove(PokemonEntity pokemonEntity) {
+        if(pokemonEntity==null){
+            CobblemonFightOrFlight.LOGGER.info("PokemonEntity is null");//This will be shown if the projectile hits the target and the pokemon is recalled
+            return null;
+        }
         String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
         Move move = null;
         boolean flag = false;
