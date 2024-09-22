@@ -310,6 +310,7 @@ public class PokemonAttackEffect {
                 applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
                 makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
                 hurtDamage = calculatePokemonDamage(pokemonEntity, false, (float) move.getPower());
+                PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
             }
         } else {
             applyTypeEffect(pokemonEntity, hurtTarget);
@@ -318,7 +319,6 @@ public class PokemonAttackEffect {
         }
         applyOnHitEffect(pokemonEntity, hurtTarget, move);
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
-        PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
         boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
             if (hurtTarget instanceof LivingEntity) {
