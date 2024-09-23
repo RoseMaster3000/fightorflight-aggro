@@ -98,7 +98,26 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "electroshot",
             "photongeyser",
 
-            "flamethrower"
+            "flamethrower",
+            "oblivionwing"
+    };
+    @Comment("Moves that drains HP(50% of the damage dealt)")
+    public String[] hp_draining_moves_50 ={
+            "absorb",
+            "bitterblade",
+            "bouncybubble",
+            "drainpunch",
+            "gigadrain",
+            "hornleech",
+            "leechlife",
+            "megadrain",
+            "matchagotcha",
+            "paraboliccharge"
+    };
+    @Comment("Moves that drains HP(75% of the damage dealt)")
+    public String[] hp_draining_moves_75 ={
+            "drainingkiss",
+            "oblivionwing"
     };
     @Comment("Moves that ignores abilities(unused)")
     public String[] mold_breaker_like_moves={

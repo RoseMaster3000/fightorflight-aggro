@@ -136,7 +136,7 @@ public class PokemonAttackEffect {
         } else {
             STAB = 1.0f;
         }
-        return calculatePokemonDamage(pokemonEntity,isSpecial, (float) (move.getPower()*STAB));
+        return calculatePokemonDamage(pokemonEntity, isSpecial, (float) (move.getPower() * STAB));
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
@@ -247,9 +247,12 @@ public class PokemonAttackEffect {
         if (move == null) {
             return;
         }
+        //These effects might stack, so a chain of ifs might be needed.
         boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().switch_moves).toList().contains(move.getName());
         boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(move.getName());
         boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().recoil_moves_allHP).toList().contains(move.getName());
+        boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
+        boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
         if (b1) {
             if (pokemonEntity.getOwner() != null) {
                 pokemonEntity.recallWithAnimation();
@@ -260,6 +263,11 @@ public class PokemonAttackEffect {
         }
         if (b3) {
             pokemonRecoilSelf(pokemonEntity, 1.0f);
+        }
+        if (b4 || b5) {
+            float dmg = calculatePokemonDamage(pokemonEntity, move);
+            float percent = b4 ? 0.5f : 0.75f;
+            pokemonEntity.heal(dmg*percent);
         }
     }
 
@@ -299,7 +307,7 @@ public class PokemonAttackEffect {
         Pokemon pokemon = pokemonEntity.getPokemon();
         float hurtDamage;
         float hurtKnockback = 1f;
-        Move move = PokemonUtils.getMove(pokemonEntity, false);
+        Move move = PokemonUtils.getMeleeMove(pokemonEntity);
 
         if (move != null) {
             boolean b1 = PokemonUtils.isExplosiveMove(move.getName());
@@ -309,8 +317,9 @@ public class PokemonAttackEffect {
                 //CobblemonFightOrFlight.LOGGER.info(move.getType().getName());
                 applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
                 makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
-                hurtDamage = calculatePokemonDamage(pokemonEntity, false, (float) move.getPower());
+                hurtDamage = calculatePokemonDamage(pokemonEntity, move);
                 PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
+                applyPostEffect(pokemonEntity, hurtTarget, move);
             }
         } else {
             applyTypeEffect(pokemonEntity, hurtTarget);
@@ -328,7 +337,6 @@ public class PokemonAttackEffect {
 
             pokemonEntity.setLastHurtMob(hurtTarget);
         }
-        applyPostEffect(pokemonEntity, hurtTarget, move);
         return flag;
     }
 }
