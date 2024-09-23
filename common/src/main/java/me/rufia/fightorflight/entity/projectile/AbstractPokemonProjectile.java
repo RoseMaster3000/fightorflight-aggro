@@ -159,7 +159,7 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
             if (this.distanceToSqr(livingEntity) <= fullDamageRadius) {
                 dmgMultiplier = 1.0f;
             } else {
-                dmgMultiplier = Math.min(1 - (float) (distanceTo(livingEntity) / (radius)), CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier);
+                dmgMultiplier = Math.max(1 - (float) (distanceTo(livingEntity) / (radius)), CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier);
             }
             //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
             boolean bl = livingEntity.hurt(this.damageSources().mobProjectile(this, owner), getDamage() * dmgMultiplier);
@@ -175,7 +175,8 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         Pokemon pokemon = owner.getPokemon();
         boolean isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
         int stat = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
-        return Math.min(Mth.lerp((float) stat / 255, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);
+        int requiredStat= isSpecial? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat:CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
+        return Math.min(Mth.lerp((float) stat / requiredStat, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);
     }
 
     public void accurateShoot(double x, double y, double z, float velocity, float inaccuracy) {

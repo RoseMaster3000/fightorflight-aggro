@@ -109,8 +109,9 @@ public class PokemonAttackEffect {
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial, float movePower) {
-        float attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
-        attack = Math.min(attack, 255.0f) / 255.0f;
+        int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
+        int maxStat= isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat:CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
+        attack = Math.min(attack, maxStat) / maxStat;
         float moveModifier = isSpecial ? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier : 1;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
@@ -124,6 +125,10 @@ public class PokemonAttackEffect {
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Move move) {
         //TODO Special effect for Photon Geyser
+        if(move==null){
+            CobblemonFightOrFlight.LOGGER.info("");
+            return CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage;
+        }
         boolean isSpecial = DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory());
         float STAB;
         var primaryType = pokemonEntity.getPokemon().getPrimaryType();

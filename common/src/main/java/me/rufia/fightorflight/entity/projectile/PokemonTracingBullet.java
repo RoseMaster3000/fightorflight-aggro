@@ -278,7 +278,6 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile implements E
 
     protected void onHit(HitResult result) {
         super.onHit(result);
-        this.destroy();
     }
 
     public boolean isPickable() {

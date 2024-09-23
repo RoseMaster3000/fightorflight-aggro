@@ -88,14 +88,8 @@ public class PokemonBullet extends AbstractPokemonProjectile implements Explosiv
         super.onHitEntity(result);
     }
 
-    private void destroy() {
-        this.discard();
-        this.level().gameEvent(GameEvent.ENTITY_DAMAGE, this.position(), GameEvent.Context.of(this));
-    }
-
     protected void onHit(HitResult result) {
         super.onHit(result);
-        this.destroy();
     }
 
     protected void onHitBlock(BlockHitResult result) {

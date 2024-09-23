@@ -1,6 +1,6 @@
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## Features&Changes
-- **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
+- **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use config to set the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
 - **Faster Pokemon:** Pokemon with a higher speed stat can run faster.(can be changed in the config)
 - **Range attack!:** Added a range attack for pokemon whose Sp.ATK is higher than its ATK.

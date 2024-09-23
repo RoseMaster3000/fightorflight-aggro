@@ -79,10 +79,12 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle")
     public boolean can_progress_use_move_evoluiton = true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
-    @Comment("The  damage a pokemon would do on hit if it had 0 ATK and Sp.ATK.")
+    @Comment("The  damage a pokemon would do on hit if it had 0 ATK")
     public float minimum_attack_damage = 1.0f;
-    @Comment("The  damage a pokemon would do on hit if it had 255 ATK or Sp.ATK.")
+    @Comment("The  damage a pokemon would do on hit if it had reached the max stat")
     public float maximum_attack_damage = 6.0f;
+    @Comment("Attack stat required to reach the maximum damage,the default value is calculated with 50 level, 120 stat, 252 EVs, IVs of 31, and a helpful nature.")
+    public int maximum_attack_stat=189;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
     public float minimum_movement_speed = 1.3f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon reaches the value in the config.")
@@ -106,6 +108,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float maximum_ranged_attack_interval = 3.0f;
     @Comment("The amount of damage a pokemon would do on contact if it had 0 Sp.ATK.")
     public float minimum_ranged_attack_damage = 1.0f;
-    @Comment("The amount of damage a pokemon would do on contact if it had 255 Sp.ATK.")
+    @Comment("The amount of damage a pokemon would do on contact if it had reached the max stat")
     public float maximum_ranged_attack_damage = 6.0f;
+    @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 120 stat, 252 EVs, IVs of 31, and a helpful nature.")
+    public int maximum_special_attack_stat=189;
 }
