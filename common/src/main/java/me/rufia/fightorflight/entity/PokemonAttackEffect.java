@@ -2,14 +2,11 @@ package me.rufia.fightorflight.entity;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
-import com.cobblemon.mod.common.api.pokemon.evolution.progress.EvolutionProgress;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import me.rufia.fightorflight.mixin.PokemonEntityMixin;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -105,28 +102,30 @@ public class PokemonAttackEffect {
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial) {
-        return calculatePokemonDamage(pokemonEntity, isSpecial, CobblemonFightOrFlight.moveConfig().base_power);
+        return calculatePokemonDamage(pokemonEntity, isSpecial, (float) CobblemonFightOrFlight.moveConfig().base_power);
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial, float movePower) {
         int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
-        int maxStat= isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat:CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
-        attack = Math.min(attack, maxStat) / maxStat;
-        float moveModifier = isSpecial ? movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier : 1;
+        int maxStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
+        float attackModifier = (float) Math.min(attack, maxStat) / maxStat;
+        float moveModifier = movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
         float multiplier = 1f;
 
-        if (((PokemonInterface) (Object) pokemonEntity).usingBeam()) {
-            multiplier *= CobblemonFightOrFlight.moveConfig().beam_move_power_multiplier;
+        if (((PokemonInterface) (Object) pokemonEntity).usingBeam() || ((PokemonInterface) (Object) pokemonEntity).usingSound()) {
+            multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
-        return Math.min(Mth.lerp(attack * moveModifier * multiplier, minDmg, maxDmg), maxDmg);
+        float value = Math.min(Mth.lerp(attackModifier * moveModifier * multiplier, minDmg, maxDmg), maxDmg);
+        CobblemonFightOrFlight.LOGGER.info("value:{} minDmg:{} maxDmg:{} attack:{} attackModifier:{} moveModifier:{} multiplier:{}", value, minDmg, maxDmg, attack, attackModifier, moveModifier, multiplier);
+        return value;
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Move move) {
         //TODO Special effect for Photon Geyser
-        if(move==null){
-            CobblemonFightOrFlight.LOGGER.info("");
+        if (move == null) {
+            CobblemonFightOrFlight.LOGGER.info("Null move detected");
             return CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage;
         }
         boolean isSpecial = DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory());
@@ -259,9 +258,7 @@ public class PokemonAttackEffect {
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
         if (b1) {
-            if (pokemonEntity.getOwner() != null) {
-                pokemonEntity.recallWithAnimation();
-            }
+            pokemonRecallWithAnimation(pokemonEntity);
         }
         if (b2) {
             pokemonExplode(pokemonEntity, level, move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL());
@@ -272,7 +269,13 @@ public class PokemonAttackEffect {
         if (b4 || b5) {
             float dmg = calculatePokemonDamage(pokemonEntity, move);
             float percent = b4 ? 0.5f : 0.75f;
-            pokemonEntity.heal(dmg*percent);
+            pokemonEntity.heal(dmg * percent);
+        }
+    }
+
+    public static void pokemonRecallWithAnimation(PokemonEntity pokemonEntity){
+        if (pokemonEntity.getOwner() != null) {
+            pokemonEntity.recallWithAnimation();
         }
     }
 
@@ -280,8 +283,7 @@ public class PokemonAttackEffect {
         if (!level.isClientSide) {
             Pokemon pokemon = entity.getPokemon();
             int power = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
-            level.explode(entity, level.damageSources().mobAttack(entity), null, entity.getX(), entity.getY(), entity.getZ(), getAoERadius(power), false, Level.ExplosionInteraction.MOB);
-            //entity.die(level.damageSources().generic()); //well,it doesn't work
+            level.explode(entity, level.damageSources().mobAttack(entity), null, entity.getX(), entity.getY(), entity.getZ(), getAoERadius(power) + 1, false, Level.ExplosionInteraction.MOB);
         }
     }
 
@@ -301,6 +303,8 @@ public class PokemonAttackEffect {
         }
     }
 
+
+
     public static float getAoERadius(float power) {
         float min = CobblemonFightOrFlight.moveConfig().min_AoE_radius;
         float max = CobblemonFightOrFlight.moveConfig().max_AoE_radius;
@@ -318,14 +322,14 @@ public class PokemonAttackEffect {
             boolean b1 = PokemonUtils.isExplosiveMove(move.getName());
             if (b1) {
                 hurtDamage = 0f;
+
             } else {
-                //CobblemonFightOrFlight.LOGGER.info(move.getType().getName());
-                applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
-                makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
                 hurtDamage = calculatePokemonDamage(pokemonEntity, move);
-                PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
-                applyPostEffect(pokemonEntity, hurtTarget, move);
             }
+            applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
+            makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
+            PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
+            applyPostEffect(pokemonEntity, hurtTarget, move);
         } else {
             applyTypeEffect(pokemonEntity, hurtTarget);
             makeTypeEffectParticle(6, hurtTarget, pokemonEntity.getPokemon().getPrimaryType().getName());

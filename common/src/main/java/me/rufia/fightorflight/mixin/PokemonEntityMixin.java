@@ -8,10 +8,12 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.utils.FOFEVCalculator;
 import me.rufia.fightorflight.utils.FOFExpCalculator;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -102,14 +104,17 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         this.entityData.define(MOVE, "");
         this.entityData.define(CRY_CD, 0);
     }
-    @Inject(method = "saveWithoutId",at=@At("HEAD"))
-    private void writeAdditionalNbt(CompoundTag compoundTag, CallbackInfoReturnable<Boolean> ci){
-        compoundTag.putInt(CRY_CD.toString(),0);
+
+    @Inject(method = "saveWithoutId", at = @At("HEAD"))
+    private void writeAdditionalNbt(CompoundTag compoundTag, CallbackInfoReturnable<Boolean> ci) {
+        compoundTag.putInt(CRY_CD.toString(), 0);
     }
-    @Inject(method = "load",at=@At("TAIL"))
-    private void readAdditionalNbt(CompoundTag compoundTag,CallbackInfo ci){
-        entityData.set(CRY_CD,compoundTag.getInt(CRY_CD.toString()));
+
+    @Inject(method = "load", at = @At("TAIL"))
+    private void readAdditionalNbt(CompoundTag compoundTag, CallbackInfo ci) {
+        entityData.set(CRY_CD, compoundTag.getInt(CRY_CD.toString()));
     }
+
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
         if (target != null) {
@@ -129,7 +134,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Override
     public boolean usingBeam() {
-        if (entityData.get(MOVE).isEmpty()) {
+        if (getCurrentMove().isEmpty()) {
             return false;
         }
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().single_beam_moves).toList().contains(getCurrentMove());
@@ -137,7 +142,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Override
     public boolean usingSound() {
-        if (entityData.get(MOVE).isEmpty()) {
+        if (getCurrentMove().isEmpty()) {
             return false;
         }
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(getCurrentMove());
@@ -166,6 +171,10 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @ModifyVariable(method = "hurt", at = @At("HEAD"))
     private float hurtDamageTweak(float amount) {
+        if (PokemonUtils.shouldRetreat((PokemonEntity) (Object) this)) {
+            PokemonAttackEffect.pokemonRecallWithAnimation((PokemonEntity) (Object) this);
+            return 0;
+        }
         Pokemon pokemon = getPokemon();
         float def = Math.max(pokemon.getDefence(), pokemon.getSpecialDefence());
         return amount * (1 - Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));

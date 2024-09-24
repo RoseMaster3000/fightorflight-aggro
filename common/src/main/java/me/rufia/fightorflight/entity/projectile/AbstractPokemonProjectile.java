@@ -109,74 +109,13 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         Entity owner = getOwner();
         Entity target = result.getEntity();
         if (owner instanceof PokemonEntity pokemonEntity) {
-            if (this instanceof ExplosivePokemonProjectile) {
-                explode(pokemonEntity);
-                return;
-            }
-
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
             PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity));
         }
     }
 
     protected void onHitBlock(BlockHitResult result) {
-        if (this instanceof ExplosivePokemonProjectile) {
-            BlockPos blockPos = new BlockPos(result.getBlockPos());
-            this.level().getBlockState(blockPos).entityInside(this.level(), blockPos, this);
-            if (!this.level().isClientSide() && getOwner() instanceof PokemonEntity pokemonEntity) {
-                this.explode(pokemonEntity);
-            }
-        }
         super.onHitBlock(result);
-    }
-
-    private void explode(PokemonEntity owner) {
-        level().broadcastEntityEvent(this, (byte) 17);
-        this.gameEvent(GameEvent.EXPLODE, this.getOwner());
-        this.dealExplosionDamage(owner);
-        this.discard();
-    }
-
-    private void dealExplosionDamage(PokemonEntity owner) {
-        Move move = PokemonUtils.getRangeAttackMove(owner);
-        if (move == null) {
-            return;
-        }
-        double radius = getRadius(owner, move);
-        //Vec3 vec3 = this.position();
-        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(radius - getBbWidth() / 2));
-        Iterator<LivingEntity> it = list.iterator();
-        while (true) {
-            LivingEntity livingEntity;
-            do {
-                if (!it.hasNext()) {
-                    return;
-                }
-                livingEntity = it.next();
-            } while (this.distanceToSqr(livingEntity) > 25.0);
-            float fullDamageRadius = 0.8f;
-            float dmgMultiplier;
-            if (this.distanceToSqr(livingEntity) <= fullDamageRadius) {
-                dmgMultiplier = 1.0f;
-            } else {
-                dmgMultiplier = Math.max(1 - (float) (distanceTo(livingEntity) / (radius)), CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier);
-            }
-            //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
-            boolean bl = livingEntity.hurt(this.damageSources().mobProjectile(this, owner), getDamage() * dmgMultiplier);
-            if (bl) {
-                applyTypeEffect(owner, livingEntity);
-            }
-            PokemonUtils.setHurtByPlayer(owner, livingEntity);
-            PokemonAttackEffect.applyOnHitEffect(owner, livingEntity, move);
-        }
-    }
-
-    private double getRadius(PokemonEntity owner, Move move) {
-        Pokemon pokemon = owner.getPokemon();
-        boolean isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
-        int stat = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
-        int requiredStat= isSpecial? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat:CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
-        return Math.min(Mth.lerp((float) stat / requiredStat, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);
     }
 
     public void accurateShoot(double x, double y, double z, float velocity, float inaccuracy) {

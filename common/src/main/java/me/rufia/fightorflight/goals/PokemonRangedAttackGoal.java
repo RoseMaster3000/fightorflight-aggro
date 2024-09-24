@@ -196,7 +196,6 @@ public class PokemonRangedAttackGoal extends Goal {
         ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);
         float attackSpeedModifier = Math.max(0.1f, 1 - this.pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
         float f = (float) Math.sqrt(d) / this.attackRadius * attackSpeedModifier;
-        ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);
         this.attackTime = Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
     }
 
@@ -239,14 +238,13 @@ public class PokemonRangedAttackGoal extends Goal {
     }
 
     protected void performRangedAttack(LivingEntity target) {
-        //Move move = PokemonUtils.getMove(pokemonEntity, true);
         Move move=PokemonUtils.getRangeAttackMove(pokemonEntity);
         AbstractPokemonProjectile bullet;
         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
 
         if (move != null) {
             String moveName = move.getName();
-            CobblemonFightOrFlight.LOGGER.info(moveName);
+            //CobblemonFightOrFlight.LOGGER.info(moveName);
             Random rand = new Random();
             boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName);
             boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName);
@@ -267,7 +265,7 @@ public class PokemonRangedAttackGoal extends Goal {
                     addProjectileEntity(bullet, move);
                 }
             } else if (b5 || b7) {
-                target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, true, (float) move.getPower()));
+                target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, move));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                 PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, move);
             } else if (b6) {

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class PokemonTracingBullet extends AbstractPokemonProjectile implements ExplosivePokemonProjectile {
+public class PokemonTracingBullet extends ExplosivePokemonProjectile {
     private static final double SPEED = 0.3;
     private static final int min_interval = 3;
     private static final int random_interval = 2;
@@ -266,9 +266,6 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile implements E
 
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
-        if (!this.level().isClientSide) {
-            ((ServerLevel) this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 2, 0.2, 0.2, 0.2, 0.0);
-        }//this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
     }
 
     private void destroy() {
@@ -286,7 +283,6 @@ public class PokemonTracingBullet extends AbstractPokemonProjectile implements E
 
     public boolean hurt(DamageSource source, float amount) {
         if (!this.level().isClientSide) {
-            //this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
             ((ServerLevel) this.level()).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2, 0.2, 0.2, 0.0);
             this.destroy();
         }

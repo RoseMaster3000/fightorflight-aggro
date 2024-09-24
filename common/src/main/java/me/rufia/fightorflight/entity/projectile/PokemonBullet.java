@@ -20,7 +20,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class PokemonBullet extends AbstractPokemonProjectile implements ExplosivePokemonProjectile{
+public class PokemonBullet extends ExplosivePokemonProjectile{
     public PokemonBullet(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
         this.noPhysics = true;
@@ -94,8 +94,5 @@ public class PokemonBullet extends AbstractPokemonProjectile implements Explosiv
 
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
-        if (!this.level().isClientSide) {
-            ((ServerLevel) this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 2, 0.2, 0.2, 0.2, 0.0);
-        }
     }
 }

@@ -2,7 +2,6 @@ package me.rufia.fightorflight.utils;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
-import com.cobblemon.mod.common.api.moves.animations.ActionEffectContext;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
@@ -11,7 +10,6 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,7 +48,7 @@ public class PokemonUtils {
     }
 
     public static Move getMove(PokemonEntity pokemonEntity) {
-        if(pokemonEntity==null){
+        if (pokemonEntity == null) {
             CobblemonFightOrFlight.LOGGER.info("PokemonEntity is null");//This will be shown if the projectile hits the target and the pokemon is recalled
             return null;
         }
@@ -73,6 +71,7 @@ public class PokemonUtils {
         return move;
     }
 
+    @Deprecated
     public static Move getMove(PokemonEntity pokemonEntity, boolean getSpecial) {
         Move move = getMove(pokemonEntity);
         if (move == null) {
@@ -93,10 +92,11 @@ public class PokemonUtils {
         if (move == null) {
             return null;
         }
-        String moveName=move.getName();
+        String moveName = move.getName();
         boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
         boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
-        if((isPhysical && !Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName))||(isSpecial&& Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName))){
+        if ((isPhysical && !Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName)) || (isSpecial && Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName))) {
+            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -110,7 +110,8 @@ public class PokemonUtils {
         String moveName = move.getName();
         boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
         boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
-        if ((isSpecial&& !Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName)) || (isPhysical && Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName))) {
+        if ((isSpecial && !Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName)) || (isPhysical && Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName))) {
+            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -181,6 +182,10 @@ public class PokemonUtils {
                     , UseMoveEvolutionProgress::new);
             progress.updateProgress(new UseMoveEvolutionProgress.Progress(move, progress.currentProgress().getAmount() + 1));
         }
+    }
+
+    public static boolean shouldRetreat(PokemonEntity pokemonEntity){
+        return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 
     public static void makeCobblemonParticle(Entity entity, String particleName) {

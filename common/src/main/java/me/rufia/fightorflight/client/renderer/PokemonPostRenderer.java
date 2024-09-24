@@ -36,7 +36,7 @@ public class PokemonPostRenderer {
     public static void postRender(PokemonEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         LivingEntity livingEntity = entity.getTarget();
         int attackTime = ((PokemonInterface) (Object) entity).getAttackTime();
-        boolean enabled = ((PokemonInterface) (Object) entity).usingBeam() || entity.isBattling();
+        boolean enabled = ((PokemonInterface) (Object) entity).usingBeam() && !entity.isBattling();
         if (livingEntity != null) {
             if (livingEntity.isAlive() && attackTime > 5 && enabled) {
                 Move move = PokemonUtils.getMove(entity);

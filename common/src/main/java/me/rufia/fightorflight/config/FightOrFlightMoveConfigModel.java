@@ -10,8 +10,8 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     @ConfigEntry.Category("Special attack moves")
     @Comment("The multiplier of the move power in calculating damage(The final damage can't be higher than the value in the config)")
     public float move_power_multiplier = 1.0f;
-    @Comment("The multiplier for the moves that shoots a beam when calculating damage(The final damage can't be higher than the value in the config.These moves are hard to avoid in an open area so the damage should be slightly lower than the others)")
-    public float beam_move_power_multiplier = 0.8f;
+    @Comment("The multiplier for the moves that don't make contacts or shoot projectiles when calculating damage(The final damage can't be higher than the value in the config.These moves are hard to avoid in an open area so the damage should be slightly lower than the others)")
+    public float indirect_attack_move_power_multiplier = 0.9f;
     @Comment("If a pokemon doesn't have the correct moves to use,the base power will be used to calculate the damage.")
     public int base_power = 60;
     @Comment("The minimum radius of the AoE moves")
@@ -20,11 +20,11 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public float max_AoE_radius = 2.0f;
     @Comment("The AoE damage will be lower to the target away from the center,this value sets the lowest damage multiplier of the AOE damage")
     public float min_AoE_damage_multiplier=0.6f;
-    @Comment("The radius of the status moves")
+    @Comment("The radius of the status moves(unused)")
     public float status_move_radius=8.0f;
     @Comment("Taunting moves are needed to taunt the aggressive wild pokemon")
     public boolean taunt_moves_needed=true;
-    @Comment("Wild pokemon can taunt your pokemon(WIP)")
+    @Comment("Wild pokemon can taunt your pokemon")
     public  boolean wild_pokemon_taunt=false;
     @Comment("Special moves that makes contact,these moves will let the Pokemon melee while using the Special Attack stat to calculate the damage.")
     public String[] special_contact_moves={
@@ -163,6 +163,11 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "voltswitch",
             "flipturn"
     };
+    @Comment("Abilities that forces your Pokemon to switch when it is below 50% HP")
+    public String[] emergency_exit_like_abilities={
+            "emergencyexit",
+            "wimpout"
+    };
     @Comment()
     public String[] recoil_moves_allHP = {
             "self-destruct",
@@ -171,7 +176,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "mistyexplosion"
     };
     //TODO
-    @ConfigEntry.Category("Status  moves(WIP)")
+    @ConfigEntry.Category("Status moves(WIP)")
     @Comment("Moves that taunt other pokemon")
     public String[] taunting_moves={
             "taunt",
@@ -179,7 +184,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "ragepowder",
             "torment"
     };
-    @Comment("Moves that burns the pokemon(WIP)")
+    @Comment("Moves that burns the pokemon(unused)")
     public String[] burn_status_move = {
             "willowisp"
     };
