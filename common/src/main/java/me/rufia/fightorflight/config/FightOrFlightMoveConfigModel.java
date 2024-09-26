@@ -11,7 +11,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     @Comment("The multiplier of the move power in calculating damage(The final damage can't be higher than the value in the config)")
     public float move_power_multiplier = 1.0f;
     @Comment("The multiplier for the moves that don't make contacts or shoot projectiles when calculating damage(The final damage can't be higher than the value in the config.These moves are hard to avoid in an open area so the damage should be slightly lower than the others)")
-    public float indirect_attack_move_power_multiplier = 0.9f;
+    public float indirect_attack_move_power_multiplier = 0.8f;
     @Comment("If a pokemon doesn't have the correct moves to use,the base power will be used to calculate the damage.")
     public int base_power = 60;
     @Comment("The minimum radius of the AoE moves")
@@ -64,12 +64,14 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "rockwrecker",
 
             "sludge",
-            "technoblast"
+            "technoblast",
+            "fusionflare"
     };
     @Comment("Moves that shoots multiple tracing bullet")
     public String[] multiple_tracing_bullet_moves = {
             "dracometeor",
-            "ancientpower"
+            "ancientpower",
+            "infernalparade"
     };
     @Comment("Moves that shoots single tracing bullet")
     public String[] single_tracing_bullet_moves = {
@@ -91,15 +93,38 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "terrainpulse",
             "healpulse",
 
+            "freezingglare",
+
             "watergun",
             "hydropump",
             "prismaticlaser",
             "lusterpurge",
             "electroshot",
             "photongeyser",
+            "flashcannon",
 
             "flamethrower",
-            "oblivionwing"
+            "oblivionwing",
+            "snipeshot"
+    };
+    @Comment("Moves that hurt a target without any projectiles or blast.(The AOE moves will be implemented in another way)")
+    public String[] magic_attack_moves={
+            "absorb",
+            "gigadrain",
+            "megadrain",
+            "confusion",
+            "psychic",
+            "freezedry",
+            "earthpower",
+            "nightdaze",
+            "iceburn",
+            "luminacrash",
+            "extrasensory",
+            "hex",
+            "seedflare",
+            "psyshock",
+            "psystrike",
+            "psychoboost"
     };
     @Comment("Moves that drains HP(50% of the damage dealt)")
     public String[] hp_draining_moves_50 ={
@@ -152,7 +177,8 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "eeriespell",
             "torchsong",
             "alluringvoice",
-            "psychicnoise"
+            "psychicnoise",
+            "roaroftime"
     };
     @Comment("Moves that can switch your pokemon")
     public String[] switch_moves = {

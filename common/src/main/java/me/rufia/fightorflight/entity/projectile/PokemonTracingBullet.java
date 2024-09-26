@@ -1,6 +1,5 @@
 package me.rufia.fightorflight.entity.projectile;
 
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.google.common.collect.Lists;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import net.minecraft.core.BlockPos;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -31,7 +31,7 @@ import java.util.UUID;
 
 public class PokemonTracingBullet extends ExplosivePokemonProjectile {
     private static final double SPEED = 0.3;
-    private static final int min_interval = 3;
+    private static final int min_interval = 5;
     private static final int random_interval = 2;
     @Nullable
     private Entity finalTarget;
@@ -70,7 +70,7 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
         if (this.finalTarget != null) {
             compound.putUUID("Target", this.finalTarget.getUUID());
         }
-        if (this.currentMoveDirection != null) {
+        if (getMoveDirection() != null) {
             compound.putInt("Dir", this.currentMoveDirection.get3DDataValue());
         }
         compound.putInt("Steps", this.flightSteps);
@@ -146,12 +146,14 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
             }
 
             direction = Direction.getRandom(this.random);
-            if (list.isEmpty()) {
-                for (int i = 5; !this.level().isEmptyBlock(blockPos2.relative(direction)) && i > 0; --i) {
-                    direction = Direction.getRandom(this.random);
-                }
-            } else {
+            if (!list.isEmpty()) {
                 direction = (Direction) list.get(this.random.nextInt(list.size()));
+            }
+            for (int i = 5; !this.level().isEmptyBlock(blockPos2.relative(direction)) && i > 0; --i) {
+                direction = Direction.getRandom(this.random);
+            }
+            if (finalTarget == null && getOwner() != null) {
+                direction = Direction.DOWN;
             }
 
             e = this.getX() + (double) direction.getStepX();
@@ -224,14 +226,14 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
             if (this.flightSteps > 0) {
                 --this.flightSteps;
                 if (this.flightSteps == 0) {
-                    this.selectNextMoveDirection(this.currentMoveDirection == null ? null : this.currentMoveDirection.getAxis());
+                    this.selectNextMoveDirection(getMoveDirection() == null ? null : getMoveDirection().getAxis());
                 }
             }
 
-            if (this.currentMoveDirection != null) {
+            if (getMoveDirection() != null) {
                 BlockPos blockPos = this.blockPosition();
-                Direction.Axis axis = this.currentMoveDirection.getAxis();
-                if (this.level().loadedAndEntityCanStandOn(blockPos.relative(this.currentMoveDirection), this)) {
+                Direction.Axis axis = getMoveDirection().getAxis();
+                if (this.level().loadedAndEntityCanStandOn(blockPos.relative(getMoveDirection()), this)) {
                     this.selectNextMoveDirection(axis);
                 } else {
                     BlockPos blockPos2 = this.finalTarget.blockPosition();
@@ -261,7 +263,16 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
     }
 
     protected void onHitEntity(EntityHitResult result) {
-        super.onHitEntity(result);
+        Entity target = result.getEntity();
+        Entity owner = getOwner();
+        if (!target.equals(owner)) {
+            if (target instanceof Projectile projectile && owner != null) {
+                if (owner.equals(projectile.getOwner())) {
+                    return;
+                }
+            }
+            super.onHitEntity(result);
+        }
     }
 
     protected void onHitBlock(BlockHitResult result) {
@@ -275,10 +286,6 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
 
     protected void onHit(HitResult result) {
         super.onHit(result);
-    }
-
-    public boolean isPickable() {
-        return true;
     }
 
     public boolean hurt(DamageSource source, float amount) {

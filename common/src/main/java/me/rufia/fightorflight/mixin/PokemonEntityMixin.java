@@ -149,6 +149,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Override
+    public boolean usingMagic(){
+        if (getCurrentMove().isEmpty()) {
+            return false;
+        }
+        return Arrays.stream(CobblemonFightOrFlight.moveConfig().magic_attack_moves).toList().contains(getCurrentMove());
+    }
+
+    @Override
     public void setCurrentMove(Move move) {
         entityData.set(MOVE, move.getName());
     }

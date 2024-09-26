@@ -10,6 +10,7 @@ public interface PokemonInterface {
     default void setAttackTime(int val){};
     default boolean usingBeam(){return false;};
     default boolean usingSound(){return false;}
+    default boolean usingMagic(){return false;}
     default void setCurrentMove(Move move){};
     default String getCurrentMove(){return null;};
     default int getNextCryTime(){return 0;}

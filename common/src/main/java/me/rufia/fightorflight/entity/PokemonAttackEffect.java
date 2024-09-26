@@ -113,8 +113,8 @@ public class PokemonAttackEffect {
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
         float multiplier = 1f;
-
-        if (((PokemonInterface) (Object) pokemonEntity).usingBeam() || ((PokemonInterface) (Object) pokemonEntity).usingSound()) {
+        PokemonInterface pokemonInterface=((PokemonInterface) pokemonEntity);
+        if (pokemonInterface.usingBeam() || pokemonInterface.usingSound()||pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
         float value = Math.min(Mth.lerp(attackModifier * moveModifier * multiplier, minDmg, maxDmg), maxDmg);
@@ -220,11 +220,13 @@ public class PokemonAttackEffect {
         if (move == null) {
             return;
         }
+        String moveName = move.getName();
         int particleAmount = 4;
-        boolean b1 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().self_angry_moves).toList().contains(move.getName());
-        boolean b2 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_fire_moves).toList().contains(move.getName());
-        boolean b3 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_moves).toList().contains(move.getName());
-        boolean b4 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().slicing_moves).toList().contains(move.getName());
+        boolean b1 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().self_angry_moves).toList().contains(moveName);
+        boolean b2 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_fire_moves).toList().contains(moveName);
+        boolean b3 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_moves).toList().contains(moveName);
+        boolean b4 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().slicing_moves).toList().contains(moveName);
+        boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().magic_attack_moves).toList().contains(moveName);
         if (b1) {
             PokemonUtils.makeParticle(particleAmount, pokemonEntity, ParticleTypes.ANGRY_VILLAGER);
         }
@@ -237,6 +239,19 @@ public class PokemonAttackEffect {
         if (b4) {
             PokemonUtils.makeParticle(particleAmount, hurtTarget, ParticleTypes.SWEEP_ATTACK);
         }
+        if (b5) {
+            makeMagicAttackParticle(pokemonEntity, hurtTarget);
+        }
+    }
+
+    public static void makeMagicAttackParticle(PokemonEntity pokemonEntity, Entity target) {
+        int particleAmount = 8;
+        Move move = PokemonUtils.getRangeAttackMove(pokemonEntity);
+        if (move == null) {
+            return;
+        }
+        makeTypeEffectParticle(particleAmount, pokemonEntity, move.getType().getName());
+        makeTypeEffectParticle(particleAmount, target, move.getType().getName());
     }
 
     public static void makeTypeEffectParticle(int particleAmount, Entity entity, String typeName) {
@@ -273,7 +288,7 @@ public class PokemonAttackEffect {
         }
     }
 
-    public static void pokemonRecallWithAnimation(PokemonEntity pokemonEntity){
+    public static void pokemonRecallWithAnimation(PokemonEntity pokemonEntity) {
         if (pokemonEntity.getOwner() != null) {
             pokemonEntity.recallWithAnimation();
         }
@@ -302,7 +317,6 @@ public class PokemonAttackEffect {
             pokemon.setCurrentHealth(0);
         }
     }
-
 
 
     public static float getAoERadius(float power) {

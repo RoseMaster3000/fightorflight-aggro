@@ -10,14 +10,17 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -161,6 +164,24 @@ public class PokemonUtils {
     public static boolean isExplosiveMove(String moveName) {
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(moveName);
     }
+
+    public static void createSonicBoomParticle(PokemonEntity pokemonEntity, LivingEntity target) {
+        if (target == null) {
+            return;
+        }
+        float height = pokemonEntity.getEyeHeight();
+        Vec3 vec1 = pokemonEntity.position().add(0, height, 0);
+        Vec3 vec2 = target.getEyePosition().subtract(vec1);
+        Vec3 vec3 = vec2.normalize();
+        for (int i = 1; i < Mth.floor(vec2.length()) + 1; ++i) {
+            Vec3 vec4 = vec1.add(vec3.scale((double) i));
+            Level level = target.level();
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.SONIC_BOOM, vec4.x, vec4.y, vec4.z, 1, 0, 0, 0, 0);
+            }
+        }
+    }
+
 
     public static void sendAnimationPacket(PokemonEntity pokemonEntity, String mode) {
         if (!((LivingEntity) pokemonEntity).level().isClientSide) {

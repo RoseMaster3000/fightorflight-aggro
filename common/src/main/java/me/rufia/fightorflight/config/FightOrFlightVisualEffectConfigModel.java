@@ -31,6 +31,6 @@ public class FightOrFlightVisualEffectConfigModel implements ConfigData {
         "cut","razorleaf","slash","furycutter","aircutter","aerialace","leafblade","nightslash",
             "airslash","x-scissor","psychocut","crosspoison","sacredsword","razorshell","secretsword",
             "solarblade","behemothblade","stoneaxe","ceaselessedge","populationbomb","kowtowcleave",
-            "psyblade","bitterblade","aquacutter","mightycleave","tachyoncutter"
+            "psyblade","bitterblade","aquacutter","mightycleave","tachyoncutter","spacialrend"
     };
 }

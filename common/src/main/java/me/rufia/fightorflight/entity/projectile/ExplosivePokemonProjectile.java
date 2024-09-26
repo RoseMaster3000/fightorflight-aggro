@@ -22,12 +22,12 @@ import net.minecraft.world.phys.EntityHitResult;
 import java.util.Iterator;
 import java.util.List;
 
-public class ExplosivePokemonProjectile extends AbstractPokemonProjectile {
+public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjectile {
     public ExplosivePokemonProjectile(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
     }
 
-    private void explode(PokemonEntity owner) {
+    protected void explode(PokemonEntity owner) {
         level().broadcastEntityEvent(this, (byte) 17);
         if (!this.level().isClientSide) {
             ((ServerLevel) this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 2, 0.2, 0.2, 0.2, 0.0);
@@ -37,7 +37,7 @@ public class ExplosivePokemonProjectile extends AbstractPokemonProjectile {
         this.discard();
     }
 
-    private void dealExplosionDamage(PokemonEntity owner) {
+    protected void dealExplosionDamage(PokemonEntity owner) {
         Move move = PokemonUtils.getRangeAttackMove(owner);
         if (move == null) {
             return;
