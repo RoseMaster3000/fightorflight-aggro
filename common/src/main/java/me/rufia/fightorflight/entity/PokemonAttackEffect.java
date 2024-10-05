@@ -333,6 +333,7 @@ public class PokemonAttackEffect {
         Move move = PokemonUtils.getMeleeMove(pokemonEntity);
 
         if (move != null) {
+            //CobblemonFightOrFlight.LOGGER.info(move.getName());
             boolean b1 = PokemonUtils.isExplosiveMove(move.getName());
             if (b1) {
                 hurtDamage = 0f;

@@ -90,15 +90,25 @@ public class PokemonUtils {
         return null;
     }
 
+    public static boolean isMeleeAttackMove(Move move) {
+        if (move == null) {
+            return true;
+        }
+        String moveName = move.getName();
+        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
+        boolean b2 = isSpecial && Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName);
+        return b1 || b2;
+    }
+
     public static Move getMeleeMove(PokemonEntity pokemonEntity) {
         Move move = getMove(pokemonEntity);
         if (move == null) {
             return null;
         }
-        String moveName = move.getName();
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
-        if ((isPhysical && !Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName)) || (isSpecial && Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName))) {
+
+        if (isMeleeAttackMove(move)) {
             ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
@@ -110,10 +120,7 @@ public class PokemonUtils {
         if (move == null) {
             return null;
         }
-        String moveName = move.getName();
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
-        if ((isSpecial && !Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName)) || (isPhysical && Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName))) {
+        if (!isMeleeAttackMove(move)) {
             ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
@@ -205,7 +212,7 @@ public class PokemonUtils {
         }
     }
 
-    public static boolean shouldRetreat(PokemonEntity pokemonEntity){
+    public static boolean shouldRetreat(PokemonEntity pokemonEntity) {
         return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 

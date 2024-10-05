@@ -19,15 +19,15 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     @Comment("The maximum radius of the AoE moves")
     public float max_AoE_radius = 2.0f;
     @Comment("The AoE damage will be lower to the target away from the center,this value sets the lowest damage multiplier of the AOE damage")
-    public float min_AoE_damage_multiplier=0.6f;
+    public float min_AoE_damage_multiplier = 0.6f;
     @Comment("The radius of the status moves(unused)")
-    public float status_move_radius=8.0f;
+    public float status_move_radius = 8.0f;
     @Comment("Taunting moves are needed to taunt the aggressive wild pokemon")
-    public boolean taunt_moves_needed=true;
+    public boolean taunt_moves_needed = true;
     @Comment("Wild pokemon can taunt your pokemon")
-    public  boolean wild_pokemon_taunt=false;
+    public boolean wild_pokemon_taunt = false;
     @Comment("Special moves that makes contact,these moves will let the Pokemon melee while using the Special Attack stat to calculate the damage.")
-    public String[] special_contact_moves={
+    public String[] special_contact_moves = {
             "electrodrift",
             "infestation",
             "drainingkiss",
@@ -35,6 +35,17 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "wringout",
             "trumpcard",
             "petaldance"
+    };
+    @Comment("Physical moves that uses arrow,these moves will let the Pokemon shoot arrow while using the Attack stat to calculate the damage.")
+    public String[] physical_single_arrow_moves = {
+            "dragondarts",
+            "iceshard",
+            "iciclecrash",
+            "iciclespear",
+            "gunkshot",
+            "spikecannon",
+            "pinmissile",
+            "thousandarrows"
     };
     @Comment("Moves that shoots multiple bullet")
     public String[] multiple_bullet_moves = {
@@ -108,7 +119,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "snipeshot"
     };
     @Comment("Moves that hurt a target without any projectiles or blast.(The AOE moves will be implemented in another way)")
-    public String[] magic_attack_moves={
+    public String[] magic_attack_moves = {
             "absorb",
             "gigadrain",
             "megadrain",
@@ -127,7 +138,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "psychoboost"
     };
     @Comment("Moves that drains HP(50% of the damage dealt)")
-    public String[] hp_draining_moves_50 ={
+    public String[] hp_draining_moves_50 = {
             "absorb",
             "bitterblade",
             "bouncybubble",
@@ -140,12 +151,12 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "paraboliccharge"
     };
     @Comment("Moves that drains HP(75% of the damage dealt)")
-    public String[] hp_draining_moves_75 ={
+    public String[] hp_draining_moves_75 = {
             "drainingkiss",
             "oblivionwing"
     };
     @Comment("Moves that ignores abilities(unused)")
-    public String[] mold_breaker_like_moves={
+    public String[] mold_breaker_like_moves = {
             "sunsteelstrike",
             "moongeistbeam",
             "photongeyser"
@@ -190,7 +201,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "flipturn"
     };
     @Comment("Abilities that forces your Pokemon to switch when it is below 50% HP")
-    public String[] emergency_exit_like_abilities={
+    public String[] emergency_exit_like_abilities = {
             "emergencyexit",
             "wimpout"
     };
@@ -204,7 +215,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     //TODO
     @ConfigEntry.Category("Status moves(WIP)")
     @Comment("Moves that taunt other pokemon")
-    public String[] taunting_moves={
+    public String[] taunting_moves = {
             "taunt",
             "followme",
             "ragepowder",
