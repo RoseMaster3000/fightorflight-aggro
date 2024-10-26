@@ -155,7 +155,6 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         this.setDeltaMovement(vec3);
         Vec3 vec32 = vec3.normalize().scale(0.05000000074505806);
         this.setPosRaw(this.getX() - vec32.x, this.getY() - vec32.y, this.getZ() - vec32.z);
-        this.playSound(SoundEvents.ARROW_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
         this.discard();
     }
 

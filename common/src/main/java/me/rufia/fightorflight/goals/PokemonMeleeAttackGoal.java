@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.Cobblemon;
+import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.battles.BattleBuilder;
 import com.cobblemon.mod.common.battles.BattleFormat;
 import com.cobblemon.mod.common.battles.BattleRegistry;
@@ -16,6 +17,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Arrays;
 
 
 public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
@@ -133,7 +136,6 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         double d0 = this.getAttackReachSqr(target);
         if (distanceToSqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
             this.resetAttackCooldown();
-            this.mob.swing(InteractionHand.MAIN_HAND);
             pokemonDoHurtTarget(target);
         }
     }
@@ -147,8 +149,23 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
 
         if (!pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
+            Move move = PokemonUtils.getMove(pokemonEntity);
+            if (move != null) {
+                if (Arrays.stream(CobblemonFightOrFlight.moveConfig().self_centered_aoe_moves).toList().contains(move.getName())) {
+                    PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity, false, true);
+                    if (PokemonUtils.isMeleeAttackMove(move)) {
+                        PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
+                    } else {
+                        PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
+                    }
+                    return true;
+                }
+            }
+
             PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
             return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget);
+
+
         }
 
         return false;

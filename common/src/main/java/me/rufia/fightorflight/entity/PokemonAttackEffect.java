@@ -1,5 +1,6 @@
 package me.rufia.fightorflight.entity;
 
+import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.api.types.ElementalType;
@@ -16,10 +17,13 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.level.Level;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class PokemonAttackEffect {
     public static SimpleParticleType getParticleFromType(String name) {
@@ -113,8 +117,8 @@ public class PokemonAttackEffect {
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
         float multiplier = 1f;
-        PokemonInterface pokemonInterface=((PokemonInterface) pokemonEntity);
-        if (pokemonInterface.usingBeam() || pokemonInterface.usingSound()||pokemonInterface.usingMagic()) {
+        PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
+        if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
         float value = Math.min(Mth.lerp(attackModifier * moveModifier * multiplier, minDmg, maxDmg), maxDmg);
@@ -283,7 +287,8 @@ public class PokemonAttackEffect {
         }
         if (b4 || b5) {
             float dmg = calculatePokemonDamage(pokemonEntity, move);
-            float percent = b4 ? 0.5f : 0.75f;
+            boolean hasBigRoot = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.BIG_ROOT);
+            float percent = (b4 ? 0.5f : 0.75f) * (hasBigRoot ? 1.3f : 1.0f);
             pokemonEntity.heal(dmg * percent);
         }
     }
@@ -299,6 +304,39 @@ public class PokemonAttackEffect {
             Pokemon pokemon = entity.getPokemon();
             int power = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
             level.explode(entity, level.damageSources().mobAttack(entity), null, entity.getX(), entity.getY(), entity.getZ(), getAoERadius(power) + 1, false, Level.ExplosionInteraction.MOB);
+        }
+    }
+
+    public static void dealAoEDamage(PokemonEntity pokemonEntity, LivingEntity centerEntity, boolean isSpecial, boolean shouldHurtAlly) {
+        Move move = isSpecial ? PokemonUtils.getRangeAttackMove(pokemonEntity) : PokemonUtils.getMeleeMove(pokemonEntity);
+        if (move == null) {
+            return;
+        }
+        double radius = getAoERadius(pokemonEntity, move);
+        CobblemonFightOrFlight.LOGGER.info(Double.toString(radius));
+        List<LivingEntity> list = centerEntity.level().getEntitiesOfClass(LivingEntity.class, centerEntity.getBoundingBox().inflate(radius - centerEntity.getBbWidth() / 2));
+        Iterator<LivingEntity> it = list.iterator();
+        while (true) {
+            LivingEntity livingEntity;
+            do {
+                if (!it.hasNext()) {
+                    return;
+                }
+                livingEntity = it.next();
+            } while (centerEntity.distanceToSqr(livingEntity) > 25.0);
+            if (livingEntity == pokemonEntity || !shouldHurtAlly && livingEntity instanceof TamableAnimal animal && animal.getOwner().equals(pokemonEntity.getOwner())) {
+                continue;
+            }
+            float dmgMultiplier = CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;
+
+            //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
+            boolean bl = livingEntity.hurt(centerEntity.damageSources().mobAttack(pokemonEntity), calculatePokemonDamage(pokemonEntity, move) * dmgMultiplier);
+            if (bl) {
+                applyTypeEffect(pokemonEntity, livingEntity);
+                PokemonUtils.setHurtByPlayer(pokemonEntity, livingEntity);
+                applyOnHitEffect(pokemonEntity, livingEntity, move);
+                makeTypeEffectParticle(10, livingEntity, move.getType().getName());
+            }
         }
     }
 
@@ -323,7 +361,14 @@ public class PokemonAttackEffect {
         float min = CobblemonFightOrFlight.moveConfig().min_AoE_radius;
         float max = CobblemonFightOrFlight.moveConfig().max_AoE_radius;
         return Math.min(Mth.lerp(power / 180, min, max), max);
+    }
 
+    public static double getAoERadius(PokemonEntity entity, Move move) {
+        Pokemon pokemon = entity.getPokemon();
+        boolean isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
+        int stat = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
+        int requiredStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
+        return Math.min(Mth.lerp((float) stat / requiredStat, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);
     }
 
     public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {

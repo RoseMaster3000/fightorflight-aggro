@@ -58,6 +58,9 @@ public class PokemonUtils {
         String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
         Move move = null;
         boolean flag = false;
+        if (moveName == null) {
+            return null;
+        }
         for (MoveTemplate m : pokemonEntity.getPokemon().getAllAccessibleMoves()) {
             move = m.create();
             if (m.getName().equals(moveName)) {
@@ -98,7 +101,7 @@ public class PokemonUtils {
         boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
         boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
         boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
-        boolean b2 = isSpecial && Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName);
+        boolean b2 = isSpecial && (Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
     }
 
@@ -181,7 +184,7 @@ public class PokemonUtils {
         Vec3 vec2 = target.getEyePosition().subtract(vec1);
         Vec3 vec3 = vec2.normalize();
         for (int i = 1; i < Mth.floor(vec2.length()) + 1; ++i) {
-            Vec3 vec4 = vec1.add(vec3.scale((double) i));
+            Vec3 vec4 = vec1.add(vec3.scale(i));
             Level level = target.level();
             if (level instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.SONIC_BOOM, vec4.x, vec4.y, vec4.z, 1, 0, 0, 0, 0);
@@ -193,9 +196,7 @@ public class PokemonUtils {
     public static void sendAnimationPacket(PokemonEntity pokemonEntity, String mode) {
         if (!((LivingEntity) pokemonEntity).level().isClientSide) {
             var pkt = new PlayPoseableAnimationPacket(pokemonEntity.getId(), Set.of(mode), Set.of());
-            pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> {
-                return true;
-            }).forEach((pkt::sendToPlayer));
+            pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> true).forEach((pkt::sendToPlayer));
         }
     }
 

@@ -115,6 +115,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "flashcannon",
 
             "flamethrower",
+            "mysticalfire",
             "oblivionwing",
             "snipeshot"
     };
@@ -135,7 +136,20 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "seedflare",
             "psyshock",
             "psystrike",
-            "psychoboost"
+            "psychoboost",
+            "earthpower"
+    };
+    @Comment("Moves that hurts the entity(including the allies) around the pokemon")
+    public String[] self_centered_aoe_moves={
+            "earthquake",
+            "surf",
+            "lavaplume",
+            "discharge",
+            "sludgewave",
+            "magnitude",
+            "bulldoze",
+            "petalblizzard",
+            "corrosivegas"
     };
     @Comment("Moves that drains HP(50% of the damage dealt)")
     public String[] hp_draining_moves_50 = {

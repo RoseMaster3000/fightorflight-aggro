@@ -57,21 +57,6 @@ public class CobblemonFightOrFlight {
         commonConfig = AutoConfig.getConfigHolder(FightOrFlightCommonConfigModel.class).getConfig();
         moveConfig = AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
-//		CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe(Priority.HIGHEST, event -> {
-//			//LogUtils.getLogger().info(((PokemonEntity)event.getEntity()).getPokemon().getSpecies().getName() + "spawn event");
-//			addPokemonGoal(event.getEntity());
-//			return Unit.INSTANCE;
-//		});
-
-//		CobblemonEvents.POKEMON_ENTITY_LOAD.subscribe(Priority.HIGHEST, event -> {
-//			addPokemonGoal(event.getPokemonEntity());
-//			return Unit.INSTANCE;
-//		});
-
-//		CobblemonEvents.POKEMON_SENT_POST.subscribe(Priority.HIGHEST, event -> {
-//			addPokemonGoal(event.getPokemonEntity());
-//			return Unit.INSTANCE;
-//		});
     }
 
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {
@@ -96,9 +81,7 @@ public class CobblemonFightOrFlight {
         goalAdder.accept(pokemonEntity, 3, new HurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 4, new CaughtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, 48.0f, true, true));
-        goalAdder.accept(pokemonEntity, 5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> {
-            return arg instanceof Enemy && !(arg instanceof Creeper);
-        }));
+        goalAdder.accept(pokemonEntity, 5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(arg instanceof Creeper)));
 
     }
 
@@ -222,9 +205,9 @@ public class CobblemonFightOrFlight {
         if (mob.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.ANGRY_VILLAGER,
                     mob.position().x, mob.getBoundingBox().maxY, mob.position().z,
-                    1, //Amount?
+                    1,
                     particleXSpeed, 0.5d, particleYSpeed,
-                    1.0f); //Scale?
+                    1.0f);
         } else {
             mob.level().addParticle(ParticleTypes.ANGRY_VILLAGER,
                     mob.position().x, mob.getBoundingBox().maxY, mob.position().z,
