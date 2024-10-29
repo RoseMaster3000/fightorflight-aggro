@@ -200,13 +200,13 @@ public class PokemonRangedAttackGoal extends Goal {
 
     protected void addProjectileEntity(AbstractPokemonProjectile projectile, Move move) {
         projectile.setElementalType(move.getType().getName());
-        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, move));
+        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
         this.livingEntity.level().addFreshEntity(projectile);
     }
 
     protected void addProjectileEntity(AbstractPokemonProjectile projectile) {
         projectile.setElementalType(pokemonEntity.getPokemon().getPrimaryType().getName());
-        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, true));
+        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, true));
         this.livingEntity.level().addFreshEntity(projectile);
     }
 
@@ -248,7 +248,7 @@ public class PokemonRangedAttackGoal extends Goal {
                     addProjectileEntity(bullet, move);
                 }
             } else if (b5 || b7 || b8) {
-                target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, move));
+                target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                 PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, move);
             } else if (b6) {

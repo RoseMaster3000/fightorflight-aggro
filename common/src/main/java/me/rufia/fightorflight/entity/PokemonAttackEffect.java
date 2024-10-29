@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.api.types.ElementalType;
+import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
@@ -11,13 +12,12 @@ import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 
 import java.awt.*;
@@ -105,18 +105,19 @@ public class PokemonAttackEffect {
         return getColorFromType(pokemon.getPrimaryType());
     }
 
-    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial) {
-        return calculatePokemonDamage(pokemonEntity, isSpecial, (float) CobblemonFightOrFlight.moveConfig().base_power);
+    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial) {
+        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) CobblemonFightOrFlight.moveConfig().base_power,null);
     }
 
-    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, boolean isSpecial, float movePower) {
+    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial, float movePower,ElementalType type) {
         int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         int maxStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
         float attackModifier = (float) Math.min(attack, maxStat) / maxStat;
         float moveModifier = movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
-        float multiplier = 1f;
+        float multiplier = extraDamageFromEntityFeature(pokemonEntity,target,type);
+        CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
@@ -126,7 +127,7 @@ public class PokemonAttackEffect {
         return value;
     }
 
-    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Move move) {
+    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, Move move) {
         //TODO Special effect for Photon Geyser
         if (move == null) {
             CobblemonFightOrFlight.LOGGER.info("Null move detected");
@@ -144,7 +145,45 @@ public class PokemonAttackEffect {
         } else {
             STAB = 1.0f;
         }
-        return calculatePokemonDamage(pokemonEntity, isSpecial, (float) (move.getPower() * STAB));
+        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) (move.getPower() * STAB),move.getType());
+    }
+
+    protected static float extraDamageFromEntityFeature(PokemonEntity pokemonEntity, Entity target, ElementalType moveType) {
+        //TODO W.I.P.
+        if(target.level().isClientSide || !(target instanceof LivingEntity livingEntity)){
+            return 1.0f;
+        }
+        ElementalType type = moveType == null ? pokemonEntity.getPokemon().getPrimaryType() : moveType;
+        if (!(livingEntity instanceof PokemonEntity targetPokemon)) {
+            if (ElementalTypes.INSTANCE.getWATER().equals(type)) {
+                if (livingEntity.isSensitiveToWater()) {
+                    return CobblemonFightOrFlight.commonConfig().water_type_super_effective_dmg_multiplier;
+                }
+            }
+            if (ElementalTypes.INSTANCE.getFIRE().equals(type)) {
+                if (livingEntity.fireImmune()) {
+                    return CobblemonFightOrFlight.commonConfig().fire_type_no_effect_dmg_multiplier;
+                }
+            }
+            if (ElementalTypes.INSTANCE.getICE().equals(type)) {
+                if (!livingEntity.canFreeze()) {
+                    return CobblemonFightOrFlight.commonConfig().ice_type_no_effect_dmg_multiplier;
+                }
+                if(livingEntity.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)){
+                    return CobblemonFightOrFlight.commonConfig().ice_type_super_effective_dmg_multiplier;
+                }
+            }
+            if(ElementalTypes.INSTANCE.getPOISON().equals(type)){
+                if(livingEntity.getMobType()== MobType.UNDEAD){
+                    return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;
+                }
+            }
+        } else {
+            //TODO type effectiveness here
+            //I checked MoveInstruction, DamageInstruction and SuperEffectiveInstruction and found nothing.
+            // I doubt that Cobblemon doesn't have the type effectiveness logic,it might be sent to showdown to process.I need to write it myself.
+        }
+        return 1.0f;
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
@@ -286,7 +325,7 @@ public class PokemonAttackEffect {
             pokemonRecoilSelf(pokemonEntity, 1.0f);
         }
         if (b4 || b5) {
-            float dmg = calculatePokemonDamage(pokemonEntity, move);
+            float dmg = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
             boolean hasBigRoot = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.BIG_ROOT);
             float percent = (b4 ? 0.5f : 0.75f) * (hasBigRoot ? 1.3f : 1.0f);
             pokemonEntity.heal(dmg * percent);
@@ -330,7 +369,7 @@ public class PokemonAttackEffect {
             float dmgMultiplier = CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;
 
             //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
-            boolean bl = livingEntity.hurt(centerEntity.damageSources().mobAttack(pokemonEntity), calculatePokemonDamage(pokemonEntity, move) * dmgMultiplier);
+            boolean bl = livingEntity.hurt(centerEntity.damageSources().mobAttack(pokemonEntity), calculatePokemonDamage(pokemonEntity, livingEntity, move) * dmgMultiplier);
             if (bl) {
                 applyTypeEffect(pokemonEntity, livingEntity);
                 PokemonUtils.setHurtByPlayer(pokemonEntity, livingEntity);
@@ -384,7 +423,7 @@ public class PokemonAttackEffect {
                 hurtDamage = 0f;
 
             } else {
-                hurtDamage = calculatePokemonDamage(pokemonEntity, move);
+                hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
             }
             applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
             makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
@@ -393,7 +432,7 @@ public class PokemonAttackEffect {
         } else {
             applyTypeEffect(pokemonEntity, hurtTarget);
             makeTypeEffectParticle(6, hurtTarget, pokemonEntity.getPokemon().getPrimaryType().getName());
-            hurtDamage = calculatePokemonDamage(pokemonEntity, false);
+            hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, false);
         }
         applyOnHitEffect(pokemonEntity, hurtTarget, move);
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);

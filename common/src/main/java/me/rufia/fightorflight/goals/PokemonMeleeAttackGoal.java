@@ -161,11 +161,8 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
                     return true;
                 }
             }
-
             PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
             return PokemonAttackEffect.pokemonAttack(pokemonEntity, hurtTarget);
-
-
         }
 
         return false;

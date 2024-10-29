@@ -1,3 +1,16 @@
+## v0.6.1
+* **Animation Support** Support for animations from cobblemon mod when attacking(These animations are not designed for this mod so it might be weird)
+* Wild Pokemon cries correctly when provoked.
+* Player's Pokemon can taunt wild Pokemon.
+* Added a new hotkey that let your pokemon start a battle with the pokemon that tries to attack you.
+* Some abilities(intimidate, unnerve, pressure) can lower the nearby pokemon's aggro.
+* The Wimpod line Pokemon will be recalled when taking damage and the health is below 50%.
+* Using move outside battle can be used to evolve a Pokemon like Annihilape.
+* Pokemon aiming optimization, increasing the accuracy.
+* More specific move classification.
+* The projectiles of ball and bomb moves can cause a small explosion that don't break the blocks.
+* Balance tweaks.
+* Bug fixes.
 ## v0.6.0
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
