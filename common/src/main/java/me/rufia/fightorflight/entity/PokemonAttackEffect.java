@@ -117,7 +117,7 @@ public class PokemonAttackEffect {
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
         float multiplier = extraDamageFromEntityFeature(pokemonEntity,target,type);
-        CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
+        //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
@@ -352,7 +352,7 @@ public class PokemonAttackEffect {
             return;
         }
         double radius = getAoERadius(pokemonEntity, move);
-        CobblemonFightOrFlight.LOGGER.info(Double.toString(radius));
+        //CobblemonFightOrFlight.LOGGER.info(Double.toString(radius));
         List<LivingEntity> list = centerEntity.level().getEntitiesOfClass(LivingEntity.class, centerEntity.getBoundingBox().inflate(radius - centerEntity.getBbWidth() / 2));
         Iterator<LivingEntity> it = list.iterator();
         while (true) {

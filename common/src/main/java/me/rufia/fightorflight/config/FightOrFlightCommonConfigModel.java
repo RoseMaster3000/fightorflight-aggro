@@ -112,7 +112,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float maximum_ranged_attack_damage = 7.0f;
     @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 120 stat, 252 EVs, IVs of 31, and a helpful nature.")
     public int maximum_special_attack_stat = 189;
-    @ConfigEntry.Category("Pokemon Damage Multiplier(misc)")
+    @ConfigEntry.Category("Pokemon Damage Multiplier(misc),These modifiers doesn't stack currently")
     @Comment("Water type damage will be more effective on mobs like Blaze,Enderman,etc.")
     public float water_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Fire type damage will be not very effective against fire immune entity.(set to 0 if you want a complete immune)")

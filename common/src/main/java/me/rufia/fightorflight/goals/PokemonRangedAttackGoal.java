@@ -13,6 +13,7 @@ import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -34,6 +35,10 @@ public class PokemonRangedAttackGoal extends Goal {
     private int attackTime;
     private final double speedModifier;
     private int seeTime;
+
+    private boolean strafingClockwise;
+    private boolean strafingBackwards;
+    private int strafingTime = -1;
 
     private final float attackRadius;
     private final float attackRadiusSqr;
@@ -156,38 +161,61 @@ public class PokemonRangedAttackGoal extends Goal {
                 ticksUntilNewAngerCry = ticksUntilNewAngerCry - 1;
             }
         }
-        double d = this.pokemonEntity.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
-        boolean bl = this.pokemonEntity.getSensing().hasLineOfSight(this.target);
-        if (bl) {
-            ++this.seeTime;
-        } else {
-            seeTime = 0;
-            resetAttackTime(d);
-        }
-
-        if (!(d > (double) this.attackRadiusSqr) && this.seeTime >= 5 && bl) {
-            this.pokemonEntity.getNavigation().stop();
-        } else {
-            this.pokemonEntity.getNavigation().moveTo(this.target, this.speedModifier);
-        }
-
-        this.pokemonEntity.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
-        --this.attackTime;
-        ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() + 1);
-        if (attackTime == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
-            PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
-        }
-        if (attackTime % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
-            PokemonAttackEffect.makeMagicAttackParticle(pokemonEntity, target);
-        }
-        if (this.attackTime == 0) {
-            if (!bl) {
-                return;
+        if (target != null) {
+            double d = this.pokemonEntity.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
+            boolean bl = this.pokemonEntity.getSensing().hasLineOfSight(this.target);
+            if (bl) {
+                ++this.seeTime;
+            } else {
+                seeTime = 0;
+                resetAttackTime(d);
             }
-            resetAttackTime(d);
-            this.performRangedAttack(this.target);
-        } else if (this.attackTime < 0) {
-            resetAttackTime(d);
+            if (!(d > (double) this.attackRadiusSqr) && this.seeTime >= 5 && bl) {
+                this.pokemonEntity.getNavigation().stop();
+                ++strafingTime;
+            } else {
+                this.pokemonEntity.getNavigation().moveTo(this.target, this.speedModifier);
+                strafingTime = -1;
+            }
+            if (this.strafingTime >= 10) {
+                if ((double) this.pokemonEntity.getRandom().nextFloat() < 0.3) {
+                    this.strafingClockwise = !this.strafingClockwise;
+                }
+                if ((double) this.pokemonEntity.getRandom().nextFloat() < 0.3) {
+                    this.strafingBackwards = !this.strafingBackwards;
+                }
+                this.strafingTime = 0;
+            }
+            if (this.strafingTime > -1) {
+                if (d > (double) (this.attackRadiusSqr * 0.8F)) {
+                    this.strafingBackwards = false;
+                } else if (d < (double) (this.attackRadiusSqr * 0.2F)) {
+                    this.strafingBackwards = true;
+                }
+                this.pokemonEntity.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                Entity vehicle = this.pokemonEntity.getControlledVehicle();
+                if (vehicle instanceof Mob mob) {
+                    mob.lookAt(livingEntity, 30.0F, 30.0F);
+                }
+            }
+            this.pokemonEntity.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
+            --this.attackTime;
+            ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() + 1);
+            if (attackTime == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
+                PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
+            }
+            if (attackTime % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
+                PokemonAttackEffect.makeMagicAttackParticle(pokemonEntity, target);
+            }
+            if (this.attackTime == 0) {
+                if (!bl) {
+                    return;
+                }
+                resetAttackTime(d);
+                this.performRangedAttack(this.target);
+            } else if (this.attackTime < 0) {
+                resetAttackTime(d);
+            }
         }
     }
 
