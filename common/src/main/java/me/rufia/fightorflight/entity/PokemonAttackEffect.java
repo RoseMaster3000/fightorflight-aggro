@@ -12,12 +12,12 @@ import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.awt.*;
@@ -73,28 +73,7 @@ public class PokemonAttackEffect {
     }
 
     public static SimpleParticleType getParticleFromType(ElementalType type) {
-        if (type == null) {
-            return ParticleTypes.CRIT;
-        }
-        return switch (type.getName()) {
-            case "fire" -> ParticleTypes.FLAME;
-            case "ice" -> ParticleTypes.SNOWFLAKE;
-            case "poison" -> ParticleTypes.MYCELIUM;
-            case "psychic" -> ParticleTypes.PORTAL;
-            case "fairy" -> ParticleTypes.CHERRY_LEAVES;
-            case "fighting", "ground", "rock" -> ParticleTypes.POOF;
-            case "steel" -> ParticleTypes.WAX_OFF;
-            case "ghost" -> ParticleTypes.SOUL;
-            case "dark" -> ParticleTypes.SMOKE;
-            case "electric" -> ParticleTypes.ELECTRIC_SPARK;
-            case "bug" -> ParticleTypes.SPORE_BLOSSOM_AIR;
-            case "grass" -> ParticleTypes.COMPOSTER;
-            case "dragon" -> ParticleTypes.DRAGON_BREATH;
-            case "flying" -> ParticleTypes.SWEEP_ATTACK;
-            case "water" -> ParticleTypes.SPLASH;
-            case "normal" -> ParticleTypes.CRIT;
-            default -> ParticleTypes.CRIT;
-        };
+        return getParticleFromType(type.getName());
     }
 
     public static Color getColorFromType(ElementalType type) {
@@ -106,17 +85,17 @@ public class PokemonAttackEffect {
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial) {
-        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) CobblemonFightOrFlight.moveConfig().base_power,null);
+        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) CobblemonFightOrFlight.moveConfig().base_power, null);
     }
 
-    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial, float movePower,ElementalType type) {
+    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial, float movePower, ElementalType type) {
         int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         int maxStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
         float attackModifier = (float) Math.min(attack, maxStat) / maxStat;
         float moveModifier = movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
-        float multiplier = extraDamageFromEntityFeature(pokemonEntity,target,type);
+        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type);
         //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
@@ -145,12 +124,11 @@ public class PokemonAttackEffect {
         } else {
             STAB = 1.0f;
         }
-        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) (move.getPower() * STAB),move.getType());
+        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) (move.getPower() * STAB), move.getType());
     }
 
     protected static float extraDamageFromEntityFeature(PokemonEntity pokemonEntity, Entity target, ElementalType moveType) {
-        //TODO W.I.P.
-        if(target.level().isClientSide || !(target instanceof LivingEntity livingEntity)){
+        if (target.level().isClientSide || !(target instanceof LivingEntity livingEntity)) {
             return 1.0f;
         }
         ElementalType type = moveType == null ? pokemonEntity.getPokemon().getPrimaryType() : moveType;
@@ -169,12 +147,12 @@ public class PokemonAttackEffect {
                 if (!livingEntity.canFreeze()) {
                     return CobblemonFightOrFlight.commonConfig().ice_type_no_effect_dmg_multiplier;
                 }
-                if(livingEntity.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)){
+                if (livingEntity.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
                     return CobblemonFightOrFlight.commonConfig().ice_type_super_effective_dmg_multiplier;
                 }
             }
-            if(ElementalTypes.INSTANCE.getPOISON().equals(type)){
-                if(livingEntity.getMobType()== MobType.UNDEAD){
+            if (ElementalTypes.INSTANCE.getPOISON().equals(type)) {
+                if (livingEntity.getMobType() == MobType.UNDEAD) {
                     return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;
                 }
             }
@@ -184,6 +162,105 @@ public class PokemonAttackEffect {
             // I doubt that Cobblemon doesn't have the type effectiveness logic,it might be sent to showdown to process.I need to write it myself.
         }
         return 1.0f;
+    }
+
+    public static float getHeldItemDmgMultiplier(PokemonEntity pokemonEntity, Entity target) {
+        //TODO W.I.P.
+        //Variables that might be needed.
+        ItemStack heldItem = PokemonUtils.getHeldItem(pokemonEntity);
+        Move move = PokemonUtils.getMove(pokemonEntity);
+        ElementalType type = null;
+        if (move != null) {
+            type = move.getType();
+        }
+
+        if (heldItem.is(CobblemonItems.LIFE_ORB)) {
+            return 1.3f;//Do you really like 5324/4096(1.2998046875)?
+        }
+        if (move != null) {
+            //TODO choice specs & choice band
+            if (DamageCategories.INSTANCE.getPHYSICAL().equals(move.getDamageCategory())) {
+                if(heldItem.is(CobblemonItems.MUSCLE_BAND)){
+                    return 1.1f;
+                }
+            }else if(DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory())){
+                if(heldItem.is(CobblemonItems.WISE_GLASSES)){
+                    return 1.1f;
+                }
+            }
+        }
+        //Type-enhancing item.
+        if (type != null) {
+            switch (type.getName()) {
+                case "fire":
+                    if (heldItem.is(CobblemonItems.CHARCOAL)) return 1.2f;
+                    break;
+                case "ice":
+                    if (heldItem.is(CobblemonItems.NEVER_MELT_ICE)) return 1.2f;
+                    break;
+                case "poison":
+                    if (heldItem.is(CobblemonItems.POISON_BARB)) return 1.2f;
+                    break;
+                case "psychic":
+                    if (heldItem.is(CobblemonItems.TWISTED_SPOON)) return 1.2f;
+                    break;
+                case "fairy":
+                    if (heldItem.is(CobblemonItems.FAIRY_FEATHER)) return 1.2f;
+                    break;
+                case "fighting":
+                    if (heldItem.is(CobblemonItems.BLACK_BELT)) return 1.2f;
+                    break;
+                case "steel":
+                    if (heldItem.is(CobblemonItems.METAL_COAT)) return 1.2f;
+                    break;
+                case "ghost":
+                    if (heldItem.is(CobblemonItems.SPELL_TAG)) return 1.2f;
+                    break;
+                case "dark":
+                    if (heldItem.is(CobblemonItems.BLACK_GLASSES)) return 1.2f;
+                    break;
+                case "ground":
+                    if (heldItem.is(CobblemonItems.SOFT_SAND)) return 1.2f;
+                    break;
+                case "rock":
+                    if (heldItem.is(CobblemonItems.HARD_STONE)) return 1.2f;
+                    break;
+                case "electric":
+                    if (heldItem.is(CobblemonItems.MAGNET)) return 1.2f;
+                    break;
+                case "bug":
+                    if (heldItem.is(CobblemonItems.SILVER_POWDER)) return 1.2f;
+                    break;
+                case "grass":
+                    if (heldItem.is(CobblemonItems.MIRACLE_SEED)) return 1.2f;
+                    break;
+                case "dragon":
+                    if (heldItem.is(CobblemonItems.DRAGON_FANG)) return 1.2f;
+                    break;
+                case "flying":
+                    if (heldItem.is(CobblemonItems.SHARP_BEAK)) return 1.2f;
+                    break;
+                case "water":
+                    if (heldItem.is(CobblemonItems.MYSTIC_WATER)) return 1.2f;
+                    break;
+                case "normal":
+                    if (heldItem.is(CobblemonItems.SILK_SCARF)) return 1.2f;
+                    break;
+                default:
+                    break;
+            }
+            return 1.2f;
+        }
+
+        return 1.0f;
+    }
+
+    public static boolean canChangeMove(PokemonEntity pokemonEntity) {
+        ItemStack itemStack = PokemonUtils.getHeldItem(pokemonEntity);
+        if (itemStack.is(CobblemonItems.CHOICE_BAND) || itemStack.is(CobblemonItems.CHOICE_SCARF) || itemStack.is(CobblemonItems.CHOICE_SPECS)) {
+            return false;
+        }
+        return true;
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
@@ -395,7 +472,6 @@ public class PokemonAttackEffect {
         }
     }
 
-
     public static float getAoERadius(float power) {
         float min = CobblemonFightOrFlight.moveConfig().min_AoE_radius;
         float max = CobblemonFightOrFlight.moveConfig().max_AoE_radius;
@@ -421,7 +497,6 @@ public class PokemonAttackEffect {
             boolean b1 = PokemonUtils.isExplosiveMove(move.getName());
             if (b1) {
                 hurtDamage = 0f;
-
             } else {
                 hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
             }

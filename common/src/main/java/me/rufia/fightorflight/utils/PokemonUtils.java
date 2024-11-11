@@ -18,6 +18,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -214,6 +216,7 @@ public class PokemonUtils {
     }
 
     public static boolean shouldRetreat(PokemonEntity pokemonEntity) {
+        ItemStack i=pokemonEntity.getPokemon().heldItem();
         return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 
@@ -223,5 +226,19 @@ public class PokemonUtils {
             packet.sendToPlayersAround(entity.getX(), entity.getY(), entity.getZ(), 50, entity.level().dimension(), (serverPlayer) -> false);
         }
         //todo I still need to find a way to update the locator or the particle can't be spawned at the target's location.
+    }
+
+    public static ItemStack getHeldItem(PokemonEntity pokemonEntity){
+        if(pokemonEntity==null){
+            return null;
+        }
+        return getHeldItem(pokemonEntity.getPokemon());
+    }
+
+    public static ItemStack getHeldItem(Pokemon pokemon){
+        if(pokemon==null){
+            return null;
+        }
+        return  pokemon.heldItem();
     }
 }
