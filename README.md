@@ -31,7 +31,7 @@
 - A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you.
 - Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro.
 - The Wimpod line Pokemon will be recalled when taking damage and the health is below 50%.
-### Features that is not released currently:
+### Features that is not released currently(will be released after the release of Cobblemon 1.6:
 * Moves like earthquake will hurt the entities nearby when the Pokemon hits the target.
 * **Type effectiveness for some non-pokemon entities** These effects don't strictly follow the rules of Pokemon,instead,they are more closely related to minecraft itself:
 * * Water type damage will be more effective on mobs that takes damage from the water.
@@ -39,7 +39,9 @@
 * * Ice type damage will be not very effective against entities that don't take the frost damage(still x0.1).
 * * Ice type damage will be more effective against entities that has a weaker resistant to the frost damage,(blaze,magma cube,etc.).
 * * Poison type damage will be not very effective against undead mobs.(x0.1 again)
+* The hp of the pokemon entity is no longer decided by the base stat,it is decided by the hp stat of the pokemon directly now.
 ## TODO
+- Synchronization of the entity's hp and the pokemon's hp.
 - Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
 - Give more special effects to different moves.
 - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)

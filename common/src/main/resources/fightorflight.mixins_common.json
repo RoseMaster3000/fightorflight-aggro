@@ -8,7 +8,8 @@
     "MinecraftClientInject"
   ],
   "mixins": [
-    "PokemonEntityMixin"
+    "PokemonEntityMixin",
+    "PokemonServerDelegateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

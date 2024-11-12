@@ -123,4 +123,19 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float ice_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Poison type damage will be not very effective against undead mobs.(set to 0 if you want a complete immune)")
     public float poison_type_no_effect_dmg_multiplier = 0.1f;
+    @ConfigEntry.Category("Health Calculation & Synchronization")
+    @Comment("If the original updateMaxHealth() will be replaced by my version. This version used the hp stat instead of the base hp stat.The following configurations needs this one to work.")
+    public boolean shouldOverrideUpdateMaxHealthUpdate = true;
+    @Comment("The minimum hp of a pokemon entity,shedinja is set to 1.0 and can't be changed.")
+    public float min_HP=5.0f;
+    @Comment("The medium hp value of a pokemon entity,the medium value is designed to allow you to better tweak the growth of HP value for the entity")
+    public float mid_HP=30.0f;
+    @Comment("The maximum hp of a pokemon entity.")
+    public float max_HP=80.0f;
+    @Comment("HP above this value will increase the HP of the entity")
+    public int min_HP_required_stat=20;
+    @Comment("The medium hp value of a pokemon entity.")
+    public int mid_HP_required_stat=160;
+    @Comment("The maximum hp of a pokemon entity.The max hp of a Blissey is 714.")
+    public int max_HP_required_stat=700;
 }
