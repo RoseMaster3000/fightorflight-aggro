@@ -30,6 +30,7 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -50,6 +51,9 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Shadow
     public abstract Pokemon getPokemon();
+
+    @Shadow
+    public abstract boolean hasRoomToMount(@NotNull Player player);
 
     @Unique
     @Nullable
@@ -149,7 +153,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Override
-    public boolean usingMagic(){
+    public boolean usingMagic() {
         if (getCurrentMove().isEmpty()) {
             return false;
         }
@@ -189,6 +193,20 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
     }
 
+    @Inject(method = "hurt", at = @At("RETURN"))
+    private void hurtDamageToPokemon(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (PokemonUtils.isUsingNewHealthMechanic()) {
+            PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, amount, false);
+        }
+    }
+
+    @Override
+    public void heal(float healAmount) {
+        if (PokemonUtils.isUsingNewHealthMechanic()) {
+            PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, healAmount, true);
+        }
+        super.heal(healAmount);
+    }
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
@@ -208,10 +226,9 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (getNextCryTime() >= 0) {
             setNextCryTime(getNextCryTime() - 1);
         }
-
     }
 
-    //Don't use @Override for this function or you will find that you can't change your pokemon's held item
+    //Don't use @Override for this function, or you will find that you can't change your pokemon's held item
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
     private void mobInteractInject(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         ItemStack itemStack = player.getItemInHand(hand);

@@ -31,3 +31,10 @@ mandatory = true
 versionRange = "[1.5.0,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.fightorflight]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.1.12,)"
+ordering = "NONE"
+side = "BOTH"

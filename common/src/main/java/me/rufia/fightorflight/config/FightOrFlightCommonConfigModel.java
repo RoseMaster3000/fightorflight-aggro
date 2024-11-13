@@ -92,7 +92,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")
     public int speed_stat_limit = 548;
     @Comment("The maximum damage reduction a pokemon can get from its defense/special defense(uses the highest one)")
-    public float max_damage_reduction_multiplier = 0.15f;
+    public float max_damage_reduction_multiplier = 0.4f;
     @Comment("The highest defense stat needed to get the highest damage reduction.")
     public int defense_stat_limit = 161;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
@@ -124,18 +124,18 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Poison type damage will be not very effective against undead mobs.(set to 0 if you want a complete immune)")
     public float poison_type_no_effect_dmg_multiplier = 0.1f;
     @ConfigEntry.Category("Health Calculation & Synchronization")
-    @Comment("If the original updateMaxHealth() will be replaced by my version. This version used the hp stat instead of the base hp stat.The following configurations needs this one to work.")
-    public boolean shouldOverrideUpdateMaxHealthUpdate = true;
+    @Comment("If the original updateMaxHealth() will be replaced by my version. This version uses the hp stat instead of the base hp stat.The following configurations needs this one to work.")
+    public boolean shouldOverrideUpdateMaxHealth = true;
     @Comment("The minimum hp of a pokemon entity,shedinja is set to 1.0 and can't be changed.")
-    public float min_HP=5.0f;
+    public float min_HP=8.0f;
     @Comment("The medium hp value of a pokemon entity,the medium value is designed to allow you to better tweak the growth of HP value for the entity")
-    public float mid_HP=30.0f;
+    public float mid_HP=40.0f;
     @Comment("The maximum hp of a pokemon entity.")
-    public float max_HP=80.0f;
+    public float max_HP=100.0f;
     @Comment("HP above this value will increase the HP of the entity")
     public int min_HP_required_stat=20;
     @Comment("The medium hp value of a pokemon entity.")
     public int mid_HP_required_stat=160;
     @Comment("The maximum hp of a pokemon entity.The max hp of a Blissey is 714.")
-    public int max_HP_required_stat=700;
+    public int max_HP_required_stat=500;
 }

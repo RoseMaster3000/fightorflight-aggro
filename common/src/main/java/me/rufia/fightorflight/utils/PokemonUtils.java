@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -216,7 +217,7 @@ public class PokemonUtils {
     }
 
     public static boolean shouldRetreat(PokemonEntity pokemonEntity) {
-        ItemStack i=pokemonEntity.getPokemon().heldItem();
+        ItemStack i = pokemonEntity.getPokemon().heldItem();
         return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 
@@ -228,17 +229,52 @@ public class PokemonUtils {
         //todo I still need to find a way to update the locator or the particle can't be spawned at the target's location.
     }
 
-    public static ItemStack getHeldItem(PokemonEntity pokemonEntity){
-        if(pokemonEntity==null){
+    public static ItemStack getHeldItem(PokemonEntity pokemonEntity) {
+        if (pokemonEntity == null) {
             return null;
         }
         return getHeldItem(pokemonEntity.getPokemon());
     }
 
-    public static ItemStack getHeldItem(Pokemon pokemon){
-        if(pokemon==null){
+    public static ItemStack getHeldItem(Pokemon pokemon) {
+        if (pokemon == null) {
             return null;
         }
-        return  pokemon.heldItem();
+        return pokemon.heldItem();
+    }
+
+    public static boolean isUsingNewHealthMechanic() {
+        return CobblemonFightOrFlight.commonConfig().shouldOverrideUpdateMaxHealth;
+    }
+    public static float getMaxHealth(PokemonEntity pokemonEntity) {
+        return getMaxHealth(pokemonEntity.getPokemon());
+    }
+
+    public static int getHPStat(Pokemon pokemon) {
+        return pokemon.getHp();//TODO don't forget to replace this one,this will be deprecated
+    }
+
+    public static float getMaxHealth(Pokemon pokemon) {
+        int hpStat = getHPStat(pokemon);
+        int minStat = CobblemonFightOrFlight.commonConfig().min_HP_required_stat;
+        int midStat = CobblemonFightOrFlight.commonConfig().mid_HP_required_stat;
+        int maxStat = CobblemonFightOrFlight.commonConfig().max_HP_required_stat;
+        int stat = Mth.clamp(hpStat, minStat, maxStat);
+        float minHealth = CobblemonFightOrFlight.commonConfig().min_HP;
+        float midHealth = CobblemonFightOrFlight.commonConfig().mid_HP;
+        float maxHealth = CobblemonFightOrFlight.commonConfig().max_HP;
+        float health = minHealth;
+        health = (float) (10 * Math.round(
+                stat < midStat ?
+                        Mth.lerp((float) (stat - minStat) / (midStat - minStat), minHealth, midHealth) :
+                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth))) / 10;
+        return health;
+    }
+
+    public static void entityHpToPokemonHp(PokemonEntity pokemonEntity, float amount, boolean isHealing) {
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        float ratio = amount / getMaxHealth(pokemonEntity);
+        int val = pokemon.getCurrentHealth() + (int) Math.floor(ratio * getHPStat(pokemon)) * (isHealing ? 1 : -1);
+        pokemon.setCurrentHealth(val);
     }
 }
