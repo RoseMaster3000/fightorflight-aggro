@@ -27,7 +27,7 @@ public abstract class PokemonServerDelegateMixin implements PokemonSideDelegate 
             } else {
                 int hpStat = entity.getPokemon().getHp();
                 int currentHealth = entity.getPokemon().getCurrentHealth();
-                float health = PokemonUtils.getMaxHealth(entity);
+                int health = PokemonUtils.getMaxHealth(entity);
                 entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(health);
                 entity.setHealth(Math.round((float) currentHealth / hpStat * health));
             }

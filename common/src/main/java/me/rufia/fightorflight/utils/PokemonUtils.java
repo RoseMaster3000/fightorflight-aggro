@@ -246,7 +246,8 @@ public class PokemonUtils {
     public static boolean isUsingNewHealthMechanic() {
         return CobblemonFightOrFlight.commonConfig().shouldOverrideUpdateMaxHealth;
     }
-    public static float getMaxHealth(PokemonEntity pokemonEntity) {
+
+    public static int getMaxHealth(PokemonEntity pokemonEntity) {
         return getMaxHealth(pokemonEntity.getPokemon());
     }
 
@@ -254,21 +255,21 @@ public class PokemonUtils {
         return pokemon.getHp();//TODO don't forget to replace this one,this will be deprecated
     }
 
-    public static float getMaxHealth(Pokemon pokemon) {
+    public static int getMaxHealth(Pokemon pokemon) {
         int hpStat = getHPStat(pokemon);
         int minStat = CobblemonFightOrFlight.commonConfig().min_HP_required_stat;
         int midStat = CobblemonFightOrFlight.commonConfig().mid_HP_required_stat;
         int maxStat = CobblemonFightOrFlight.commonConfig().max_HP_required_stat;
         int stat = Mth.clamp(hpStat, minStat, maxStat);
-        float minHealth = CobblemonFightOrFlight.commonConfig().min_HP;
-        float midHealth = CobblemonFightOrFlight.commonConfig().mid_HP;
-        float maxHealth = CobblemonFightOrFlight.commonConfig().max_HP;
-        float health = minHealth;
-        health = (float) (10 * Math.round(
+        int minHealth = CobblemonFightOrFlight.commonConfig().min_HP;
+        int midHealth = CobblemonFightOrFlight.commonConfig().mid_HP;
+        int maxHealth = CobblemonFightOrFlight.commonConfig().max_HP;
+        int health = minHealth;
+        health = Math.round(
                 stat < midStat ?
                         Mth.lerp((float) (stat - minStat) / (midStat - minStat), minHealth, midHealth) :
-                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth))) / 10;
-        return health;
+                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth));
+        return health;//The return value is a mathematical integer,but some calculation needs a float.
     }
 
     public static void entityHpToPokemonHp(PokemonEntity pokemonEntity, float amount, boolean isHealing) {

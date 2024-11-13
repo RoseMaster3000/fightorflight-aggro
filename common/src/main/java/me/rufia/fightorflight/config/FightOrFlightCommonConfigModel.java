@@ -127,11 +127,11 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("If the original updateMaxHealth() will be replaced by my version. This version uses the hp stat instead of the base hp stat.The following configurations needs this one to work.")
     public boolean shouldOverrideUpdateMaxHealth = true;
     @Comment("The minimum hp of a pokemon entity,shedinja is set to 1.0 and can't be changed.")
-    public float min_HP=8.0f;
+    public int min_HP=8;
     @Comment("The medium hp value of a pokemon entity,the medium value is designed to allow you to better tweak the growth of HP value for the entity")
-    public float mid_HP=40.0f;
+    public int mid_HP=40;
     @Comment("The maximum hp of a pokemon entity.")
-    public float max_HP=100.0f;
+    public int max_HP=100;
     @Comment("HP above this value will increase the HP of the entity")
     public int min_HP_required_stat=20;
     @Comment("The medium hp value of a pokemon entity.")
