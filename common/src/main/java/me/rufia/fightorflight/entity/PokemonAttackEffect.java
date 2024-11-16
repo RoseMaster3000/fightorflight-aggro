@@ -95,7 +95,8 @@ public class PokemonAttackEffect {
         float moveModifier = movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
         float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
         float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
-        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type);
+        float sheerForceMultiplier = PokemonUtils.isSheerForce(pokemonEntity) ? 1.3f : 1.0f;
+        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier;
         //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
@@ -178,14 +179,17 @@ public class PokemonAttackEffect {
             return 1.3f;//Do you really like 5324/4096(1.2998046875)?
         }
         if (move != null) {
-            //TODO choice specs & choice band
             if (DamageCategories.INSTANCE.getPHYSICAL().equals(move.getDamageCategory())) {
-                if(heldItem.is(CobblemonItems.MUSCLE_BAND)){
+                if (heldItem.is(CobblemonItems.MUSCLE_BAND)) {
                     return 1.1f;
+                } else if (heldItem.is(CobblemonItems.CHOICE_BAND)) {
+                    return 1.5f;
                 }
-            }else if(DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory())){
-                if(heldItem.is(CobblemonItems.WISE_GLASSES)){
+            } else if (DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory())) {
+                if (heldItem.is(CobblemonItems.WISE_GLASSES)) {
                     return 1.1f;
+                } else if (heldItem.is(CobblemonItems.CHOICE_SPECS)) {
+                    return 1.5f;
                 }
             }
         }
@@ -249,9 +253,7 @@ public class PokemonAttackEffect {
                 default:
                     break;
             }
-            return 1.2f;
         }
-
         return 1.0f;
     }
 
@@ -264,6 +266,9 @@ public class PokemonAttackEffect {
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
+        if (PokemonUtils.isSheerForce(pokemonEntity)) {
+            return;
+        }
         if (hurtTarget instanceof
                 LivingEntity livingHurtTarget) {
             int effectStrength = Math.max(pkmLevel / 10, 1);
@@ -392,6 +397,7 @@ public class PokemonAttackEffect {
         boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().recoil_moves_allHP).toList().contains(move.getName());
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
+        boolean b6 = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.LIFE_ORB);
         if (b1) {
             pokemonRecallWithAnimation(pokemonEntity);
         }
@@ -406,6 +412,12 @@ public class PokemonAttackEffect {
             boolean hasBigRoot = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.BIG_ROOT);
             float percent = (b4 ? 0.5f : 0.75f) * (hasBigRoot ? 1.3f : 1.0f);
             pokemonEntity.heal(dmg * percent);
+        }
+        if (b6) {
+            var abilityName = pokemonEntity.getPokemon().getAbility().getName();
+            if (!(abilityName.equals("sheerforce") || abilityName.equals("magicguard"))) {
+                pokemonRecoilSelf(pokemonEntity, 0.1f);
+            }
         }
     }
 
@@ -466,7 +478,7 @@ public class PokemonAttackEffect {
         } else {
             pokemonEntity.setHealth(0);
         }
-
+        PokemonUtils.entityHpToPokemonHp(pokemonEntity, maxHealth * percent, false);
         if (pokemonEntity.getHealth() == 0f) {
             pokemon.setCurrentHealth(0);
         }

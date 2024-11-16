@@ -281,4 +281,8 @@ public class PokemonUtils {
         int val = pokemon.getCurrentHealth() + (int) Math.floor(ratio * getHPStat(pokemon)) * (isHealing ? 1 : -1);
         pokemon.setCurrentHealth(val);
     }
+
+    public static boolean isSheerForce(PokemonEntity pokemonEntity){
+        return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
+    }
 }

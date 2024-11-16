@@ -1,5 +1,6 @@
 package me.rufia.fightorflight.item;
 
+import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
@@ -73,14 +74,14 @@ public class PokeStaff extends Item {
                     if (player.level().isClientSide) {
                         player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.mode.send"));
                     }
-                    CobblemonFightOrFlight.LOGGER.info("sending");
+                    //CobblemonFightOrFlight.LOGGER.info("sending");
                 }
                 case SEND -> {
                     tag2.putString("mode", MODE.SETMOVE.name());
                     if (player.level().isClientSide) {
                         player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.mode.selectmoveslot"));
                     }
-                    CobblemonFightOrFlight.LOGGER.info("SETTING Moves");
+                    //CobblemonFightOrFlight.LOGGER.info("SETTING Moves");
                 }
             }
             return InteractionResultHolder.success(player.getItemInHand(usedHand));
@@ -118,15 +119,20 @@ public class PokeStaff extends Item {
         if (!livingEntity.level().isClientSide) {
             if (livingEntity instanceof PokemonEntity pokemonEntity) {
                 if (pokemonEntity.getOwner() == player) {
+                    ItemStack heldItem = pokemonEntity.getPokemon().heldItem();
+                    if (heldItem.is(CobblemonItems.CHOICE_SCARF) || heldItem.is(CobblemonItems.CHOICE_BAND) || heldItem.is(CobblemonItems.CHOICE_SPECS)) {
+                        return;
+                    }
                     CompoundTag tag = itemStack.getOrCreateTag();
                     if (tag.contains("command") && itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
                         int dataTag = tag.getCompound("command").getInt("data");
-                        Move move=pokemonEntity.getPokemon().getMoveSet().get(dataTag);
-                        if(move==null){move=pokemonEntity.getPokemon().getMoveSet().get(0);}
+                        Move move = pokemonEntity.getPokemon().getMoveSet().get(dataTag);
+                        if (move == null) {
+                            move = pokemonEntity.getPokemon().getMoveSet().get(0);
+                        }
                         ((PokemonInterface) (Object) pokemonEntity).setCurrentMove(move);
                         player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.send.result").append(move.getDisplayName()));
-                        CobblemonFightOrFlight.LOGGER.info(dataTag + pokemonEntity.getPokemon().getMoveSet().get(dataTag).getName());
-
+                        //CobblemonFightOrFlight.LOGGER.info(dataTag + pokemonEntity.getPokemon().getMoveSet().get(dataTag).getName());
                     }
                 }
             }
@@ -141,7 +147,7 @@ public class PokeStaff extends Item {
     protected void moveSelect(ItemStack stack, int data, Player player) {
         stack.getOrCreateTag().getCompound("command").putInt("data", (data + 1) % 4);
         if (player.level().isClientSide) {
-            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.desc2", (data + 1) % 4+1));
+            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.desc2", (data + 1) % 4 + 1));
         }
     }
 

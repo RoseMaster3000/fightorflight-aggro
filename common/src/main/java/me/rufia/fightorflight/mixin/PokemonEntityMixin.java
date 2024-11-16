@@ -52,9 +52,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Shadow
     public abstract Pokemon getPokemon();
 
-    @Shadow
-    public abstract boolean hasRoomToMount(@NotNull Player player);
-
     @Unique
     @Nullable
     private LivingEntity fightorflight$clientSideCachedAttackTarget;
