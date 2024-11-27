@@ -32,7 +32,7 @@
 - Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro.
 - The Wimpod line Pokemon will be recalled when taking damage and the health is below 50%.
 ### Features that is not released currently(will be released after the release of Cobblemon 1.6:
-* Moves like earthquake that hurts all pokemon around will hurt the entities nearby when the Pokemon hits the target.
+* Moves like earthquake that hurts all pokemon around will hurt the entities nearby when the Pokemon hits the target.(The special moves will use the melee attack,too.)
 * **Type effectiveness for some non-pokemon entities** These effects don't strictly follow the rules of Pokemon,instead,they are more closely related to minecraft itself:
 * * Water type damage will be more effective on mobs that takes damage from the water.
 * * Fire type damage will be not very effective against fire immune entities(x0.1 by default,set to 0 might be confusing for new player).
@@ -47,6 +47,7 @@
 * Some held item will offer damage boost(type-enhancing items,Choice Specs, Choice Band,Muscle Band,Choice Glasses,Life orb)
 * * The life orb will also deal damage to the pokemon like the core series.A pokemon is immune to the damage if the pokemon's ability is Sheer Force or Magic Guard.
 * The sheer force will boost all moves' damage,but the move can no longer apply effects to the entities.(e.g. fire type move will no longer set the entity on fire)
+* Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more.
 ## TODO
 - Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
 - Give more special effects to different moves.
