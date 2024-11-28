@@ -63,12 +63,15 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<String> MOVE;
     @Unique
     private static final EntityDataAccessor<Integer> CRY_CD;
+    @Unique
+    private static final EntityDataAccessor<String> COMMAND;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
+        COMMAND = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
     }
 
     protected PokemonEntityMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
@@ -176,7 +179,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     public void setNextCryTime(int time) {
         this.entityData.set(CRY_CD, time);
     }
-
 
     @ModifyVariable(method = "hurt", at = @At("HEAD"))
     private float hurtDamageTweak(float amount) {

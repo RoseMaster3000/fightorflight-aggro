@@ -2,9 +2,16 @@
   "item.fightorflight.pokestaff":"宝可杖",
   "item.fightorflight.pokestaff.desc1":"模式: ",
   "item.fightorflight.pokestaff.desc2":"招式位置: %d",
-  "item.fightorflight.pokestaff.mode.send":"给你的宝可梦发送命令",
+  "item.fightorflight.pokestaff.desc3":"当前指令: %s",
+  "item.fightorflight.pokestaff.mode.send":"向你的宝可梦发送命令/确认技能",
   "item.fightorflight.pokestaff.mode.selectmoveslot":"选择技能",
-  "item.fightorflight.pokestaff.send.result":"当前选择技能: ",
+  "item.fightorflight.pokestaff.mode.selectcommand": "选择指令",
+  "item.fightorflight.pokestaff.command.move_attack": "移动攻击",
+  "item.fightorflight.pokestaff.command.move": "移动",
+  "item.fightorflight.pokestaff.command.stay": "原地驻守",
+  "item.fightorflight.pokestaff.command.no_cmd": "无指令",
+  "item.fightorflight.pokestaff.send.result.move":"当前选择技能: ",
+  "item.fightorflight.pokestaff.send.result.command":"当前指令: ",
   "item.fightorflight.oran_lucky_egg":"橙橙幸运蛋",
   "key.fightorflight.startbattle": "向被激怒的宝可梦发起战斗"
 

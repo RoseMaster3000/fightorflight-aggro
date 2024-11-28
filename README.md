@@ -49,11 +49,13 @@
 * The sheer force will boost all moves' damage,but the move can no longer apply effects to the entities.(e.g. fire type move will no longer set the entity on fire)
 * Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more.
 ## TODO
+- I've added new command to the Poke Staff, but I haven't implemented them.
 - Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
 - Give more special effects to different moves.
 - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
 - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
 - More config options for fight of flight choices.
+- Mob greifing feature for moves.
 - Use the berry/heal items that heal the pokemon to heal the Pokemon entity(The healing items don't share a unique base class, they just extends PokemonSelectingItem(the base class for many items that can open the party menu and select a Pokemon to use). I don't think adding the mixin to every class and implements an interface is a good idea.)
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough.)
 ## Known Issues
@@ -61,4 +63,4 @@
 ## How to use the Poke Staff
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  
-Right click:Send the command to the pokemon(send command mode)/Select the move(select mode)
+Right click:Send the command to the pokemon(send command mode)/Select the move(select mode)/select the command(select command mode)
