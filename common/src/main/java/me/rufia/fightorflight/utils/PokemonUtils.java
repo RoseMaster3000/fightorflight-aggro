@@ -299,6 +299,14 @@ public class PokemonUtils {
         return PokeStaff.CMDMODE.MOVE == getCommandMode(pokemonEntity);
     }
 
+    public static boolean moveAttackCommandAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
+    }
+
+    public static boolean stayCommandAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.STAY == getCommandMode(pokemonEntity);
+    }
+
     public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
         PokeStaff.CMDMODE cmd = getCommandMode(pokemon);
         switch (cmd) {

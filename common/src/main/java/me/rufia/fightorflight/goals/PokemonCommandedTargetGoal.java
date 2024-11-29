@@ -30,8 +30,8 @@ public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestA
                         Matcher m = pattern.matcher(data);
                         if (m.find()) {
                             CobblemonFightOrFlight.LOGGER.info(m.group(1));
+                            return entity.getStringUUID().equals(m.group(1));
                         }
-                        return true;
                     }
                 }
             }
