@@ -54,6 +54,51 @@ public class PokemonUtils {
         }
     }
 
+    public static boolean shouldFightTarget(PokemonEntity pokemonEntity) {
+        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.commonConfig().minimum_attack_level) {
+            return false;
+        }
+
+        LivingEntity owner = pokemonEntity.getOwner();
+        if (owner != null) {
+            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || (pokemonEntity.getTarget() == null || pokemonEntity.getTarget() == owner)) {
+                return false;
+            }
+
+            if (pokemonEntity.getTarget() instanceof PokemonEntity targetPokemon) {
+                LivingEntity targetOwner = targetPokemon.getOwner();
+                if (targetOwner != null) {
+                    if (targetOwner == owner) {
+                        return false;
+                    }
+                    if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
+                        return false;
+                    }
+                }
+            }
+            if (pokemonEntity.getTarget() instanceof Player) {
+                if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
+                    return false;
+                }
+            }
+
+        } else {
+            if (pokemonEntity.getTarget() != null) {
+                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= 0) {
+                    return false;
+                }
+
+                LivingEntity targetEntity = pokemonEntity.getTarget();
+                if (pokemonEntity.distanceToSqr(targetEntity.getX(), targetEntity.getY(), targetEntity.getZ()) > 400) {
+                    return false;
+                }
+            }
+        }
+        //if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
+
+        return !pokemonEntity.isBusy();
+    }
+
     public static Move getMove(PokemonEntity pokemonEntity) {
         if (pokemonEntity == null) {
             CobblemonFightOrFlight.LOGGER.info("PokemonEntity is null");//This will be shown if the projectile hits the target and the pokemon is recalled
@@ -310,12 +355,16 @@ public class PokemonUtils {
     public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
         PokeStaff.CMDMODE cmd = getCommandMode(pokemon);
         switch (cmd) {
-            case ATTACK, ATTACK_POSITION, MOVE_ATTACK, STAY -> {
+            case ATTACK, ATTACK_POSITION, MOVE_ATTACK, STAY, MOVE -> {
                 return true;
             }
             default -> {
                 return false;
             }
         }
+    }
+
+    public static void clearCommand(PokemonEntity pokemonEntity) {
+        ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.NOCMD.name());
     }
 }

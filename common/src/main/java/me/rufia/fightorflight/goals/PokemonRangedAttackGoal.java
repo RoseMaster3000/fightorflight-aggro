@@ -66,7 +66,7 @@ public class PokemonRangedAttackGoal extends Goal {
         LivingEntity livingEntity = this.pokemonEntity.getTarget();
         if (livingEntity != null && livingEntity.isAlive()) {
             this.target = livingEntity;
-            return shouldFightTarget();
+            return PokemonUtils.shouldFightTarget(pokemonEntity);
         } else {
             return false;
         }
@@ -84,52 +84,6 @@ public class PokemonRangedAttackGoal extends Goal {
 
     public boolean requiresUpdateEveryTick() {
         return true;
-    }
-
-    public boolean shouldFightTarget() {
-        //if (FightOrFlightCommonConfigs.DO_POKEMON_ATTACK.get() == false) { return false; }
-        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.commonConfig().minimum_attack_level) {
-            return false;
-        }
-
-        LivingEntity owner = pokemonEntity.getOwner();
-        if (owner != null) {
-            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || (this.pokemonEntity.getTarget() == null || this.pokemonEntity.getTarget() == owner)) {
-                return false;
-            }
-
-            if (this.pokemonEntity.getTarget() instanceof PokemonEntity targetPokemon) {
-                LivingEntity targetOwner = targetPokemon.getOwner();
-                if (targetOwner != null) {
-                    if (targetOwner == owner) {
-                        return false;
-                    }
-                    if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
-                        return false;
-                    }
-                }
-            }
-            if (this.pokemonEntity.getTarget() instanceof Player) {
-                if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
-                    return false;
-                }
-            }
-
-        } else {
-            if (this.pokemonEntity.getTarget() != null) {
-                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= 0) {
-                    return false;
-                }
-
-                LivingEntity targetEntity = this.pokemonEntity.getTarget();
-                if (this.pokemonEntity.distanceToSqr(targetEntity.getX(), targetEntity.getY(), targetEntity.getZ()) > 400) {
-                    return false;
-                }
-            }
-        }
-        //if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
-
-        return !pokemonEntity.isBusy();
     }
 
     public boolean isTargetInBattle() {

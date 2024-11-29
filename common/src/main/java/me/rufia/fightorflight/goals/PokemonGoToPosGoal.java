@@ -6,8 +6,12 @@ import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,11 +19,12 @@ import java.util.regex.Pattern;
 public class PokemonGoToPosGoal extends Goal {
     private final PokemonEntity pokemonEntity;
     private final double speedModifier;
-    private BlockPos blockPos;
+    private boolean stuck;
 
-    PokemonGoToPosGoal(PokemonEntity entity, double speedModifier) {
+    public PokemonGoToPosGoal(PokemonEntity entity, double speedModifier) {
         pokemonEntity = entity;
         this.speedModifier = speedModifier;
+
     }
 
     protected boolean checkCommand() {
@@ -29,29 +34,57 @@ public class PokemonGoToPosGoal extends Goal {
     }
 
     public boolean canUse() {
-        return checkCommand();
+        return checkCommand() && !isCloseEnough();
     }
 
+    public boolean canContinueToUse() {
+        return checkCommand() && !isCloseEnough();
+    }
+
+    public void start() {
+        stuck = false;
+    }
+
+
     public void tick() {
-        String data = ((PokemonInterface) (Object) pokemonEntity).getCommandData();
-        if (data.startsWith("VEC3_")) {
-            Pattern p = Pattern.compile("VEC3_([-\\d]*)_([-\\d]*)_([-\\d]*)");//I know it's not safe, but who will send other data?
-            Matcher m = p.matcher(data);
-            if (m.find()) {
-                try {
-                    int x = Integer.parseInt(m.group(1));
-                    int y = Integer.parseInt(m.group(2));
-                    int z = Integer.parseInt(m.group(3));
-                    BlockPos targetBlockPos = new BlockPos(x, y, z);
-                } catch (NumberFormatException e) {
-                    CobblemonFightOrFlight.LOGGER.info("Failed to get the target position");
+        //BlockPos
+        BlockPos blockPos = getBlockPos();
+        if (blockPos != BlockPos.ZERO) {
+            //CobblemonFightOrFlight.LOGGER.info("Pathfinding");
+            if (pokemonEntity.getNavigation().isDone()) {
+                Vec3 vec3 = Vec3.atBottomCenterOf(blockPos);
+                Vec3 vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 16, 3, vec3, 0.3141592741012573);
+                if (vec32 == null) {
+                    vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 8, 7, vec3, 1.5707963705062866);
                 }
+
+                if (vec32 != null) {
+                    int i = Mth.floor(vec32.x);
+                    int j = Mth.floor(vec32.z);
+                    if (!((LivingEntity) pokemonEntity).level().hasChunksAt(i - 34, j - 34, i + 34, j + 34)) {
+                        vec32 = null;
+                    }
+                }
+
+                if (vec32 == null) {
+                    this.stuck = true;
+                    return;
+                }
+
+                pokemonEntity.getNavigation().moveTo(vec32.x, vec32.y, vec32.z, this.speedModifier);
             }
         }
     }
 
-
     public void stop() {
-        ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.NOCMD.name());
+        PokemonUtils.clearCommand(pokemonEntity);
+    }
+
+    protected BlockPos getBlockPos() {
+        return ((PokemonInterface) (Object) pokemonEntity).getTargetBlockPos();
+    }
+
+    protected boolean isCloseEnough() {
+        return getBlockPos().closerToCenterThan(pokemonEntity.position(), 2);
     }
 }

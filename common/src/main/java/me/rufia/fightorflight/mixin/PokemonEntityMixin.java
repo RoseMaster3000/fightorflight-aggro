@@ -14,6 +14,7 @@ import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.utils.FOFEVCalculator;
 import me.rufia.fightorflight.utils.FOFExpCalculator;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -43,6 +44,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
@@ -67,6 +70,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<String> COMMAND;
     @Unique
     private static final EntityDataAccessor<String> COMMAND_DATA;
+    @Unique
+    private static final EntityDataAccessor<BlockPos> TARGET_BLOCK_POS;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
@@ -75,6 +80,29 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         COMMAND = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         COMMAND_DATA = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
+        TARGET_BLOCK_POS = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.BLOCK_POS);
+    }
+
+    protected void createTargetBlockPos() {
+        String data = this.getCommandData();
+        if (data.startsWith("VEC3_")) {
+            Pattern p = Pattern.compile("VEC3_([-\\d]*)_([-\\d]*)_([-\\d]*)");//I know it's not safe, but who will send other data?
+            Matcher m = p.matcher(data);
+            if (m.find()) {
+                try {
+                    int x = Integer.parseInt(m.group(1));
+                    int y = Integer.parseInt(m.group(2));
+                    int z = Integer.parseInt(m.group(3));
+                    BlockPos targetBlockPos = new BlockPos(x, y, z);
+                    CobblemonFightOrFlight.LOGGER.info("Generated position:x: %d y: %d z: %d".formatted(x, y, z));
+                    setTargetBlockPos(targetBlockPos);
+                    return;
+                } catch (NumberFormatException e) {
+                    CobblemonFightOrFlight.LOGGER.info("Failed to get the target position");
+                }
+            }
+        }
+        setTargetBlockPos(BlockPos.ZERO);
     }
 
     protected PokemonEntityMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
@@ -112,11 +140,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         this.entityData.define(CRY_CD, 0);
         this.entityData.define(COMMAND, "");
         this.entityData.define(COMMAND_DATA, "");
+        this.entityData.define(TARGET_BLOCK_POS, BlockPos.ZERO);
     }
 
     @Inject(method = "saveWithoutId", at = @At("HEAD"))
     private void writeAdditionalNbt(CompoundTag compoundTag, CallbackInfoReturnable<Boolean> ci) {
         compoundTag.putInt(CRY_CD.toString(), 0);
+        compoundTag.putString(COMMAND.toString(), getCommand());
+        compoundTag.putString(COMMAND_DATA.toString(), getCommandData());
     }
 
     @Inject(method = "load", at = @At("TAIL"))
@@ -198,11 +229,22 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public void setCommandData(String cmdData) {
         entityData.set(COMMAND_DATA, cmdData);
+        createTargetBlockPos();
     }
 
     @Override
     public String getCommandData() {
         return entityData.get(COMMAND_DATA);
+    }
+
+    @Override
+    public BlockPos getTargetBlockPos() {
+        return this.entityData.get(TARGET_BLOCK_POS);
+    }
+
+    @Override
+    public void setTargetBlockPos(BlockPos blockPos) {
+        this.entityData.set(TARGET_BLOCK_POS, blockPos);
     }
 
     @ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
@@ -234,7 +276,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
-        if(Objects.equals(getCommand(), PokeStaff.CMDMODE.CLEAR.name())){
+        if (Objects.equals(getCommand(), PokeStaff.CMDMODE.CLEAR.name())) {
             setCommand(PokeStaff.CMDMODE.NOCMD.name());
         }
         var targetEntity = getTarget();

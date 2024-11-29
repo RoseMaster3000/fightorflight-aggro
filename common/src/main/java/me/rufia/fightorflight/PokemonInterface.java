@@ -2,6 +2,7 @@ package me.rufia.fightorflight;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 
 
@@ -61,5 +62,12 @@ public interface PokemonInterface {
     }
 
     default void setCommandData(String cmdData) {
+    }
+
+    default BlockPos getTargetBlockPos() {
+        return null;
+    }
+
+    default void setTargetBlockPos(BlockPos blockPos) {
     }
 }
