@@ -3,7 +3,10 @@ package me.rufia.fightorflight.item;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.utils.RayTrace;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -15,18 +18,22 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PokeStaff extends Item {
     enum MODE {
         SEND, SETMOVE, SETCMDMODE
     }
 
-    enum CMDMODE {
-        MOVE_ATTACK, MOVE, STAY, NOCMD
+    public enum CMDMODE {
+        MOVE_ATTACK, MOVE, STAY, ATTACK, ATTACK_POSITION, NOCMD, CLEAR
     }
 
     public PokeStaff(Item.Properties properties) {
@@ -54,7 +61,7 @@ public class PokeStaff extends Item {
 
                 tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc1").append(component));
                 tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc2", d + 1));
-                tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc3",getTranslatedCmdModeName(cmdMode).getString()));
+                tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc3", getTranslatedCmdModeName(cmdMode).getString()));
             }
         }
     }
@@ -94,6 +101,7 @@ public class PokeStaff extends Item {
             return InteractionResultHolder.success(player.getItemInHand(usedHand));
         }
 
+        String mode = getMode(stack);
         if (MODE.valueOf(tag.getCompound("command").getString("mode")) == MODE.SETMOVE) {
             //CobblemonFightOrFlight.LOGGER.info("SELECTING MOVES");
             int nextMoveSlot = getMoveSlot(stack) + 1;
@@ -106,9 +114,43 @@ public class PokeStaff extends Item {
         if (MODE.valueOf(tag.getCompound("command").getString("mode")) == MODE.SETCMDMODE) {
             commandModeSelectNext(stack, getCommandMode(stack));
             setMoveSlot(stack, -1, player);
-            if(player.level().isClientSide){
+            if (player.level().isClientSide) {
                 player.sendSystemMessage(getTranslatedCmdModeName(getCommandMode(stack)));
             }
+        }
+
+        if (mode.equals(MODE.SEND.name())) {
+            CobblemonFightOrFlight.LOGGER.info("SENDING COMMAND");
+            CMDMODE cmdmode = CMDMODE.valueOf(getCommandMode(stack));
+            String cmdData = "";
+
+            switch (cmdmode) {
+                case MOVE, ATTACK_POSITION, MOVE_ATTACK, STAY -> {
+                    BlockHitResult result = RayTrace.rayTraceBlock(player, 16);
+                    BlockPos blockPos = result.getBlockPos();
+                    //CobblemonFightOrFlight.LOGGER.info("VEC3_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+                    cmdData = "VEC3_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+                }
+                case ATTACK -> {
+                    LivingEntity livingEntity = RayTrace.rayTraceEntity(player, 16);
+                    if (livingEntity != null) {
+                        cmdData = "ENTITY_%s".formatted(livingEntity.getStringUUID());
+
+                        //CobblemonFightOrFlight.LOGGER.info("ENTITY_%s".formatted(livingEntity.getStringUUID()));
+                    }
+                }
+                default -> cmdData = "";
+            }
+            if (!Objects.equals(getCommandMode(stack), CMDMODE.NOCMD.name())) {
+                for (PokemonEntity pokemonEntity : player.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.position(), 8, 8, 8), (pokemonEntity -> Objects.equals(pokemonEntity.getOwner(), player)))) {
+                    ((PokemonInterface) (Object) pokemonEntity).setCommand(getCommandMode(stack));
+                    ((PokemonInterface) (Object) pokemonEntity).setCommandData(cmdData);
+                    if (player.level().isClientSide) {
+                        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.recv.command", pokemonEntity.getName().getString(), cmdmode.name()));
+                    }
+                }
+            }
+
         }
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }
@@ -127,7 +169,7 @@ public class PokeStaff extends Item {
         return Objects.equals(tag.getCompound("command").getString("mode"), MODE.SEND.name());
     }
 
-    public void send(Player player, LivingEntity livingEntity, ItemStack itemStack) {
+    public void sendMoveSlot(Player player, LivingEntity livingEntity, ItemStack itemStack) {
         if (!livingEntity.level().isClientSide && livingEntity instanceof PokemonEntity pokemonEntity) {
             if (pokemonEntity.getOwner() == player) {
                 ItemStack heldItem = pokemonEntity.getPokemon().heldItem();
@@ -146,9 +188,9 @@ public class PokeStaff extends Item {
                         ((PokemonInterface) (Object) pokemonEntity).setCurrentMove(move);
                         player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.send.result.move").append(move.getDisplayName()));
                         //CobblemonFightOrFlight.LOGGER.info(moveSlot + pokemonEntity.getPokemon().getMoveSet().get(moveSlot).getName());
-                    } else if (cmdMode != CMDMODE.NOCMD.name()) {
-
                     }
+
+                    ((PokemonInterface) (Object) pokemonEntity).setCommand(cmdMode);
                 }
             }
         }
@@ -163,6 +205,16 @@ public class PokeStaff extends Item {
             tag2.putString("command_mode", CMDMODE.NOCMD.name());
             tag.put("commnad", tag2);
         }
+    }
+
+    protected String getMode(ItemStack itemStack) {
+        CompoundTag tag = itemStack.getOrCreateTag();
+        if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
+            if (tag.contains("command")) {
+                return tag.getCompound("command").getString("mode");
+            }
+        }
+        return "";
     }
 
     public int getMoveSlot(ItemStack itemStack) {
@@ -203,21 +255,27 @@ public class PokeStaff extends Item {
         switch (CMDMODE.valueOf(mode)) {
             case MOVE_ATTACK -> cmd = CMDMODE.MOVE.name();
             case MOVE -> cmd = CMDMODE.STAY.name();
-            case STAY -> cmd = CMDMODE.NOCMD.name();
-            case NOCMD -> cmd = CMDMODE.MOVE_ATTACK.name();
+            case STAY -> cmd = CMDMODE.ATTACK.name();
+            case ATTACK -> cmd = CMDMODE.ATTACK_POSITION.name();
+            case ATTACK_POSITION -> cmd = CMDMODE.NOCMD.name();
+            case NOCMD -> cmd = CMDMODE.CLEAR.name();
+            case CLEAR -> cmd = CMDMODE.MOVE_ATTACK.name();
             default -> cmd = CMDMODE.NOCMD.name();
         }
         setCommandMode(stack, cmd);
     }
 
-    protected Component getTranslatedCmdModeName(String cmdModeName){
+    protected Component getTranslatedCmdModeName(String cmdModeName) {
         Component component;
-        switch (CMDMODE.valueOf(cmdModeName)){
-            case MOVE_ATTACK -> component=Component.translatable("item.fightorflight.pokestaff.command.move_attack");
-            case MOVE -> component=Component.translatable("item.fightorflight.pokestaff.command.move");
-            case STAY -> component=Component.translatable("item.fightorflight.pokestaff.command.stay");
-            case NOCMD -> component=Component.translatable("item.fightorflight.pokestaff.command.no_cmd");
-            default -> component=null;
+        switch (CMDMODE.valueOf(cmdModeName)) {
+            case MOVE_ATTACK -> component = Component.translatable("item.fightorflight.pokestaff.command.move_attack");
+            case MOVE -> component = Component.translatable("item.fightorflight.pokestaff.command.move");
+            case STAY -> component = Component.translatable("item.fightorflight.pokestaff.command.stay");
+            case ATTACK -> component = Component.translatable("item.fightorflight.pokestaff.command.attack_target");
+            case ATTACK_POSITION ->
+                    component = Component.translatable("item.fightorflight.pokestaff.command.attack_position");
+            case CLEAR -> component = Component.translatable("item.fightorflight.pokestaff.command.clear_cmd");
+            default -> component = Component.translatable("item.fightorflight.pokestaff.command.no_cmd");
         }
         return component;
     }

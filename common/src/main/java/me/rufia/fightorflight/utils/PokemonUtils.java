@@ -10,6 +10,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.item.PokeStaff;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
@@ -282,7 +283,31 @@ public class PokemonUtils {
         pokemon.setCurrentHealth(val);
     }
 
-    public static boolean isSheerForce(PokemonEntity pokemonEntity){
+    public static boolean isSheerForce(PokemonEntity pokemonEntity) {
         return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
+    }
+
+    public static PokeStaff.CMDMODE getCommandMode(PokemonEntity pokemon) {
+        try {
+            return PokeStaff.CMDMODE.valueOf(((PokemonInterface) (Object) pokemon).getCommand());
+        } catch (IllegalArgumentException e) {
+            return PokeStaff.CMDMODE.NOCMD;
+        }
+    }
+
+    public static boolean moveCommandAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.MOVE == getCommandMode(pokemonEntity);
+    }
+
+    public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
+        PokeStaff.CMDMODE cmd = getCommandMode(pokemon);
+        switch (cmd) {
+            case ATTACK, ATTACK_POSITION, MOVE_ATTACK, STAY -> {
+                return true;
+            }
+            default -> {
+                return false;
+            }
+        }
     }
 }

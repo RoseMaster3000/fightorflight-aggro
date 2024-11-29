@@ -59,7 +59,7 @@ public class PokemonRangedAttackGoal extends Goal {
     }
 
     public boolean canUse() {
-        if (!PokemonUtils.shouldShoot(pokemonEntity)) {
+        if (!PokemonUtils.shouldShoot(pokemonEntity) || PokemonUtils.moveCommandAvailable(pokemonEntity)) {
             return false;
         }
 

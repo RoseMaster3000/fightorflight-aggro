@@ -55,4 +55,11 @@ public interface PokemonInterface {
 
     default void setCommand(String cmd) {
     }
+
+    default String getCommandData() {
+        return "";
+    }
+
+    default void setCommandData(String cmdData) {
+    }
 }

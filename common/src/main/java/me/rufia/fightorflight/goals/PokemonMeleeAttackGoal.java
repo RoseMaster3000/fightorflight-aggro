@@ -123,7 +123,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
     public boolean canUse() {
         if (mob instanceof PokemonEntity pokemonEntity) {
-            return PokemonUtils.shouldMelee(pokemonEntity) && shouldFightTarget() && super.canUse();
+            return !PokemonUtils.moveCommandAvailable(pokemonEntity) && PokemonUtils.shouldMelee(pokemonEntity) && shouldFightTarget() && super.canUse();
         }
         return false;
     }

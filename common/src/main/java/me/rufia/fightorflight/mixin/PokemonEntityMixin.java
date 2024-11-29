@@ -30,7 +30,6 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -43,6 +42,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
@@ -65,6 +65,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<Integer> CRY_CD;
     @Unique
     private static final EntityDataAccessor<String> COMMAND;
+    @Unique
+    private static final EntityDataAccessor<String> COMMAND_DATA;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
@@ -72,6 +74,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         COMMAND = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
+        COMMAND_DATA = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
     }
 
     protected PokemonEntityMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
@@ -107,6 +110,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         this.entityData.define(ATTACK_TIME, 0);
         this.entityData.define(MOVE, "");
         this.entityData.define(CRY_CD, 0);
+        this.entityData.define(COMMAND, "");
+        this.entityData.define(COMMAND_DATA, "");
     }
 
     @Inject(method = "saveWithoutId", at = @At("HEAD"))
@@ -180,7 +185,27 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         this.entityData.set(CRY_CD, time);
     }
 
-    @ModifyVariable(method = "hurt", at = @At("HEAD"))
+    @Override
+    public void setCommand(String cmd) {
+        entityData.set(COMMAND, cmd);
+    }
+
+    @Override
+    public String getCommand() {
+        return entityData.get(COMMAND);
+    }
+
+    @Override
+    public void setCommandData(String cmdData) {
+        entityData.set(COMMAND_DATA, cmdData);
+    }
+
+    @Override
+    public String getCommandData() {
+        return entityData.get(COMMAND_DATA);
+    }
+
+    @ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
     private float hurtDamageTweak(float amount) {
         if (PokemonUtils.shouldRetreat((PokemonEntity) (Object) this)) {
             PokemonAttackEffect.pokemonRecallWithAnimation((PokemonEntity) (Object) this);
@@ -209,6 +234,9 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
+        if(Objects.equals(getCommand(), PokeStaff.CMDMODE.CLEAR.name())){
+            setCommand(PokeStaff.CMDMODE.NOCMD.name());
+        }
         var targetEntity = getTarget();
         if (targetEntity != null && targetEntity.isAlive()) {
             if (getNextCryTime() == 0) {
@@ -234,7 +262,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
             PokeStaff staff = (PokeStaff) itemStack.getItem();
             if (staff.canSend(itemStack)) {
-                staff.send(player, this, itemStack);
+                staff.sendMoveSlot(player, this, itemStack);
                 cir.setReturnValue(InteractionResult.SUCCESS);
             }
         }

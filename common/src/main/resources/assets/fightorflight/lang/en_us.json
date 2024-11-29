@@ -9,9 +9,13 @@
   "item.fightorflight.pokestaff.command.move_attack": "Move Attack",
   "item.fightorflight.pokestaff.command.move": "Move",
   "item.fightorflight.pokestaff.command.stay": "Hold Position",
+  "item.fightorflight.pokestaff.command.attack_target": "Attack Target",
+  "item.fightorflight.pokestaff.command.attack_position": "Attack Position",
   "item.fightorflight.pokestaff.command.no_cmd": "No Command",
+  "item.fightorflight.pokestaff.command.clear_cmd": "Clear All Command",
   "item.fightorflight.pokestaff.send.result.move":"Selected move: ",
   "item.fightorflight.pokestaff.send.result.command":"Selected command: ",
+  "item.fightorflight.pokestaff.recv.command": "[ %s ] Selected Command: %s",
   "item.fightorflight.oran_lucky_egg":"Oran Lucky Egg",
   "key.fightorflight.startbattle": "Start a battle with an angered pokemon",
   "key.fightorflight.categories.fightorflight":"Cobblemon Fight of Flight"
