@@ -120,7 +120,7 @@ public class PokeStaff extends Item {
         }
 
         if (mode.equals(MODE.SEND.name())) {
-            CobblemonFightOrFlight.LOGGER.info("SENDING COMMAND");
+            //CobblemonFightOrFlight.LOGGER.info("SENDING COMMAND");
             CMDMODE cmdmode = CMDMODE.valueOf(getCommandMode(stack));
             String cmdData = "";
 

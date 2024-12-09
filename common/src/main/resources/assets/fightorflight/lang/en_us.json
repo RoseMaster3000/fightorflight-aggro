@@ -10,7 +10,7 @@
   "item.fightorflight.pokestaff.command.move": "Move",
   "item.fightorflight.pokestaff.command.stay": "Hold Position",
   "item.fightorflight.pokestaff.command.attack_target": "Attack Target",
-  "item.fightorflight.pokestaff.command.attack_position": "Attack Position",
+  "item.fightorflight.pokestaff.command.attack_position": "Attack Position(W.I.P.)",
   "item.fightorflight.pokestaff.command.no_cmd": "No Command",
   "item.fightorflight.pokestaff.command.clear_cmd": "Clear All Command",
   "item.fightorflight.pokestaff.send.result.move":"Selected move: ",

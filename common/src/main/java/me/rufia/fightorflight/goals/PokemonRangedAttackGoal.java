@@ -180,71 +180,7 @@ public class PokemonRangedAttackGoal extends Goal {
         this.attackTime = Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
     }
 
-    protected void addProjectileEntity(AbstractPokemonProjectile projectile, Move move) {
-        projectile.setElementalType(move.getType().getName());
-        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
-        this.livingEntity.level().addFreshEntity(projectile);
-    }
-
-    protected void addProjectileEntity(AbstractPokemonProjectile projectile) {
-        projectile.setElementalType(pokemonEntity.getPokemon().getPrimaryType().getName());
-        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, true));
-        this.livingEntity.level().addFreshEntity(projectile);
-    }
-
-    protected void shootProjectileEntity(AbstractPokemonProjectile projectile) {
-        double d = target.getX() - this.livingEntity.getX();
-        double e = target.getY(0.3333333) - projectile.getY();
-        double f = target.getZ() - this.livingEntity.getZ();
-        float velocity = 1.6f;
-        projectile.accurateShoot(d, e, f, velocity, 0.1f);
-
-    }
-
     protected void performRangedAttack(LivingEntity target) {
-        Move move = PokemonUtils.getRangeAttackMove(pokemonEntity);
-        AbstractPokemonProjectile bullet;
-        PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
-
-        if (move != null) {
-            String moveName = move.getName();
-            //CobblemonFightOrFlight.LOGGER.info(moveName);
-            Random rand = new Random();
-            boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName);
-            boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName);
-            boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_tracing_bullet_moves).toList().contains(moveName);
-            boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_tracing_bullet_moves).toList().contains(moveName);
-            boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_beam_moves).toList().contains(moveName);
-            boolean b6 = PokemonUtils.isExplosiveMove(moveName);
-            boolean b7 = Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(moveName);
-            boolean b8 = Arrays.stream(CobblemonFightOrFlight.moveConfig().magic_attack_moves).toList().contains(moveName);
-            if (b3 || b4) {
-                for (int i = 0; i < (b3 ? 1 : rand.nextInt(3) + 1); ++i) {
-                    bullet = new PokemonTracingBullet(livingEntity.level(), pokemonEntity, target, livingEntity.getDirection().getAxis());
-                    addProjectileEntity(bullet, move);
-                }
-            } else if (b1 || b2) {
-                for (int i = 0; i < (b1 ? 1 : rand.nextInt(3) + 1); ++i) {
-                    bullet = new PokemonBullet(livingEntity.level(), pokemonEntity, target);
-                    shootProjectileEntity(bullet);
-                    addProjectileEntity(bullet, move);
-                }
-            } else if (b5 || b7 || b8) {
-                target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
-                PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-                PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, move);
-            } else if (b6) {
-                //Nothing to do now.
-            } else {
-                bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
-                shootProjectileEntity(bullet);
-                addProjectileEntity(bullet, move);
-            }
-        } else {
-            bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
-            shootProjectileEntity(bullet);
-            addProjectileEntity(bullet);
-        }
-        PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
+        PokemonAttackEffect.pokemonPerformRangedAttack(pokemonEntity, target);
     }
 }

@@ -94,7 +94,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                     int y = Integer.parseInt(m.group(2));
                     int z = Integer.parseInt(m.group(3));
                     BlockPos targetBlockPos = new BlockPos(x, y, z);
-                    CobblemonFightOrFlight.LOGGER.info("Generated position:x: %d y: %d z: %d".formatted(x, y, z));
+                    //CobblemonFightOrFlight.LOGGER.info("Generated position:x: %d y: %d z: %d".formatted(x, y, z));
                     setTargetBlockPos(targetBlockPos);
                     return;
                 } catch (NumberFormatException e) {

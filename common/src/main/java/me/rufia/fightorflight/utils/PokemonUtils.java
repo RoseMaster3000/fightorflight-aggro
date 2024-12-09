@@ -11,6 +11,7 @@ import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgr
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.PokeStaff;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
@@ -18,10 +19,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -352,6 +352,10 @@ public class PokemonUtils {
         return PokeStaff.CMDMODE.STAY == getCommandMode(pokemonEntity);
     }
 
+    public static boolean attackPositionAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.STAY == getCommandMode(pokemonEntity);
+    }
+
     public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
         PokeStaff.CMDMODE cmd = getCommandMode(pokemon);
         switch (cmd) {
@@ -366,5 +370,41 @@ public class PokemonUtils {
 
     public static void clearCommand(PokemonEntity pokemonEntity) {
         ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.NOCMD.name());
+        ((PokemonInterface) (Object) pokemonEntity).setCommandData("");
+    }
+
+    public static void finishMoving(PokemonEntity pokemonEntity) {
+        if (CobblemonFightOrFlight.commonConfig().stay_after_move_command) {
+            ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.STAY.name());
+        } else {
+            clearCommand(pokemonEntity);
+        }
+    }
+
+    public static void pokemonEntityApproachPos(PokemonEntity pokemonEntity, BlockPos pos, double speedModifier) {
+        if (pos != BlockPos.ZERO) {
+            //CobblemonFightOrFlight.LOGGER.info("Pathfinding");
+            if (pokemonEntity.getNavigation().isDone()) {
+                Vec3 vec3 = Vec3.atBottomCenterOf(pos);
+                Vec3 vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 8, 3, vec3, 0.3141592741012573);
+                if (vec32 == null) {
+                    vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 4, 7, vec3, 1.5707963705062866);
+                }
+
+                if (vec32 != null) {
+                    int i = Mth.floor(vec32.x);
+                    int j = Mth.floor(vec32.z);
+                    if (!((LivingEntity) pokemonEntity).level().hasChunksAt(i - 34, j - 34, i + 34, j + 34)) {
+                        vec32 = null;
+                    }
+                }
+
+                if (vec32 == null) {
+                    return;
+                }
+
+                pokemonEntity.getNavigation().moveTo(vec32.x, vec32.y, vec32.z, speedModifier);
+            }
+        }
     }
 }

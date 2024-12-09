@@ -1,20 +1,10 @@
 package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.Vec3;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PokemonGoToPosGoal extends Goal {
     private final PokemonEntity pokemonEntity;
@@ -27,57 +17,45 @@ public class PokemonGoToPosGoal extends Goal {
 
     }
 
-    protected boolean checkCommand() {
+    protected boolean moveCommand() {
         return PokemonUtils.moveCommandAvailable(pokemonEntity)
-                || PokemonUtils.moveAttackCommandAvailable(pokemonEntity)
-                || PokemonUtils.stayCommandAvailable(pokemonEntity);
+                || PokemonUtils.moveAttackCommandAvailable(pokemonEntity);
     }
 
+    protected boolean stayCommand() {
+        return PokemonUtils.stayCommandAvailable(pokemonEntity);
+    }
+
+    @Override
     public boolean canUse() {
-        return checkCommand() && !isCloseEnough();
+        return moveCommand() && !isCloseEnough() || stayCommand();
     }
 
+    @Override
     public boolean canContinueToUse() {
-        return checkCommand() && !isCloseEnough();
+        return moveCommand() && !isCloseEnough() || stayCommand();
     }
 
     public void start() {
         stuck = false;
     }
 
-
     public void tick() {
-        //BlockPos
-        BlockPos blockPos = getBlockPos();
-        if (blockPos != BlockPos.ZERO) {
-            //CobblemonFightOrFlight.LOGGER.info("Pathfinding");
-            if (pokemonEntity.getNavigation().isDone()) {
-                Vec3 vec3 = Vec3.atBottomCenterOf(blockPos);
-                Vec3 vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 16, 3, vec3, 0.3141592741012573);
-                if (vec32 == null) {
-                    vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 8, 7, vec3, 1.5707963705062866);
-                }
-
-                if (vec32 != null) {
-                    int i = Mth.floor(vec32.x);
-                    int j = Mth.floor(vec32.z);
-                    if (!((LivingEntity) pokemonEntity).level().hasChunksAt(i - 34, j - 34, i + 34, j + 34)) {
-                        vec32 = null;
-                    }
-                }
-
-                if (vec32 == null) {
-                    this.stuck = true;
-                    return;
-                }
-
-                pokemonEntity.getNavigation().moveTo(vec32.x, vec32.y, vec32.z, this.speedModifier);
+        if (moveCommand()) {
+            approach();
+        } else if (stayCommand()) {
+            if (!isCloseEnough()) {
+                approach();
             }
         }
     }
 
     public void stop() {
-        PokemonUtils.clearCommand(pokemonEntity);
+        PokemonUtils.finishMoving(pokemonEntity);
+    }
+
+    protected void approach() {
+        PokemonUtils.pokemonEntityApproachPos(pokemonEntity, getBlockPos(), speedModifier);
     }
 
     protected BlockPos getBlockPos() {
@@ -85,6 +63,6 @@ public class PokemonGoToPosGoal extends Goal {
     }
 
     protected boolean isCloseEnough() {
-        return getBlockPos().closerToCenterThan(pokemonEntity.position(), 2);
+        return getBlockPos().closerToCenterThan(pokemonEntity.position(), 4);
     }
 }
