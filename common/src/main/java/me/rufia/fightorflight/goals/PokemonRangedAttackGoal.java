@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class PokemonRangedAttackGoal extends Goal {
+public class PokemonRangedAttackGoal extends PokemonAttackGoal{
     public int ticksUntilNewAngerParticle = 0;
 
     public int ticksUntilNewAngerCry = 0;
@@ -32,7 +32,7 @@ public class PokemonRangedAttackGoal extends Goal {
     private final LivingEntity livingEntity;
     @Nullable
     private LivingEntity target;
-    private int attackTime;
+    //private int attackTime;
     private final double speedModifier;
     private int seeTime;
 
@@ -44,7 +44,7 @@ public class PokemonRangedAttackGoal extends Goal {
     private final float attackRadiusSqr;
 
     public PokemonRangedAttackGoal(LivingEntity pokemonEntity, double speedModifier, float attackRadius) {
-        this.attackTime = -1;
+        setAttackTime(-1);
         this.livingEntity = pokemonEntity;
         if (!(pokemonEntity instanceof PokemonEntity)) {
             throw new IllegalArgumentException("PokemonRangedAttackGoal requires a PokemonEntity");
@@ -54,7 +54,8 @@ public class PokemonRangedAttackGoal extends Goal {
 
             this.attackRadius = attackRadius;
             this.attackRadiusSqr = attackRadius * attackRadius;
-            this.setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
+
+            this.setFlags(EnumSet.of(Goal.Flag.LOOK, Goal.Flag.MOVE));
         }
     }
 
@@ -79,7 +80,7 @@ public class PokemonRangedAttackGoal extends Goal {
     public void stop() {
         this.target = null;
         this.seeTime = 0;
-        this.attackTime = -1;
+        setAttackTime(-1);
     }
 
     public boolean requiresUpdateEveryTick() {
@@ -153,31 +154,28 @@ public class PokemonRangedAttackGoal extends Goal {
                 }
             }
             this.pokemonEntity.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
-            --this.attackTime;
-            ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() + 1);
-            if (attackTime == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
+            ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() - 1);
+            if (getAttackTime() == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
                 PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
             }
-            if (attackTime % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
+            if (getAttackTime() % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
                 PokemonAttackEffect.makeMagicAttackParticle(pokemonEntity, target);
             }
-            if (this.attackTime == 0) {
+            if (getAttackTime() == 0) {
                 if (!bl) {
                     return;
                 }
                 resetAttackTime(d);
                 this.performRangedAttack(this.target);
-            } else if (this.attackTime < 0) {
+            } else if (getAttackTime() < 0) {
                 resetAttackTime(d);
             }
         }
     }
 
-    protected void resetAttackTime(double d) {
-        ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);
-        float attackSpeedModifier = Math.max(0.1f, 1 - this.pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
-        float f = (float) Math.sqrt(d) / this.attackRadius * attackSpeedModifier;
-        this.attackTime = Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
+    @Override
+    protected PokemonEntity getPokemonEntity(){
+        return pokemonEntity;
     }
 
     protected void performRangedAttack(LivingEntity target) {

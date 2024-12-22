@@ -8,6 +8,7 @@ import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.goals.*;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -72,9 +73,9 @@ public class CobblemonFightOrFlight {
 
         goalAdder.accept(pokemonEntity,3,new PokemonGoToPosGoal(pokemonEntity,pursuitSpeed));
         goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
-        goalAdder.accept(pokemonEntity, 3, new PokemonRangedAttackGoal(pokemonEntity, pursuitSpeed, 16));
+        goalAdder.accept(pokemonEntity, 3, new PokemonRangedAttackGoal(pokemonEntity, pursuitSpeed, PokemonUtils.getAttackRadius()));
         //goalAdder.accept(pokemonEntity,3,new PokemonPassiveAbilityGoal(pokemonEntity));
-        goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, 48.0f, 1.0f, fleeSpeed));
+        goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, PokemonUtils.getAttackRadius()*3, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
 
         goalAdder.accept(pokemonEntity, 1, new PokemonCommandedTargetGoal<>(pokemonEntity, LivingEntity.class, false));
@@ -83,7 +84,7 @@ public class CobblemonFightOrFlight {
         goalAdder.accept(pokemonEntity, 3, new PokemonTauntedTargetGoal<>(pokemonEntity, PokemonEntity.class, false));
         goalAdder.accept(pokemonEntity, 4, new HurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 5, new CaughtByTargetGoal(pokemonEntity));
-        goalAdder.accept(pokemonEntity, 6, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, 48.0f, true, true));
+        goalAdder.accept(pokemonEntity, 6, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius()*3, true, true));
         goalAdder.accept(pokemonEntity, 6, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(arg instanceof Creeper)));
 
     }

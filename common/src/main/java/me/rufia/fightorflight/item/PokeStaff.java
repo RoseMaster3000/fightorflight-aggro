@@ -129,7 +129,7 @@ public class PokeStaff extends Item {
                     BlockHitResult result = RayTrace.rayTraceBlock(player, 16);
                     BlockPos blockPos = result.getBlockPos();
                     //CobblemonFightOrFlight.LOGGER.info("VEC3_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
-                    cmdData = "VEC3_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+                    cmdData = "VEC3i_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ());
                 }
                 case ATTACK -> {
                     LivingEntity livingEntity = RayTrace.rayTraceEntity(player, 16);

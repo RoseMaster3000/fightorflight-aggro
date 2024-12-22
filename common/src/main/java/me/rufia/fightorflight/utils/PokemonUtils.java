@@ -179,6 +179,14 @@ public class PokemonUtils {
         return null;
     }
 
+    public static boolean isSpecialMove(Move move) {
+        return move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+    }
+
+    public static boolean isPhysicalMove(Move move) {
+        return move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+    }
+
     public static void makeParticle(int particleAmount, Entity entity, SimpleParticleType particleType) {
         Level level = entity.level();
         if (particleAmount > 0) {
@@ -340,6 +348,11 @@ public class PokemonUtils {
         }
     }
 
+    public static String getCommandData(PokemonEntity pokemonEntity) {
+        return ((PokemonInterface) (Object) pokemonEntity).getCommandData();
+    }
+
+
     public static boolean moveCommandAvailable(PokemonEntity pokemonEntity) {
         return PokeStaff.CMDMODE.MOVE == getCommandMode(pokemonEntity);
     }
@@ -406,5 +419,9 @@ public class PokemonUtils {
                 pokemonEntity.getNavigation().moveTo(vec32.x, vec32.y, vec32.z, speedModifier);
             }
         }
+    }
+
+    public static float getAttackRadius() {
+        return 16.0f;
     }
 }

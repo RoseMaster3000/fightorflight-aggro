@@ -239,4 +239,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public String[] burn_status_move = {
             "willowisp"
     };
+    @ConfigEntry.Category("Misc move settings")
+    @Comment("Do Pokemon grief?")
+    public boolean pokemon_griefing=true;
 }

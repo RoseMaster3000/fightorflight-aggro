@@ -46,9 +46,10 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
     }
 
 
-    private static final EntityDataAccessor<String> type = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.STRING);
 
+    private static final EntityDataAccessor<String> type = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Float> damage = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> category=SynchedEntityData.defineId(AbstractPokemonProjectile.class,EntityDataSerializers.INT);
 
     protected void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);

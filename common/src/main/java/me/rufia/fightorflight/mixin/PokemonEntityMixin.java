@@ -13,8 +13,10 @@ import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.utils.FOFEVCalculator;
 import me.rufia.fightorflight.utils.FOFExpCalculator;
+import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -31,6 +33,7 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -85,22 +88,11 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     protected void createTargetBlockPos() {
         String data = this.getCommandData();
-        if (data.startsWith("VEC3_")) {
-            Pattern p = Pattern.compile("VEC3_([-\\d]*)_([-\\d]*)_([-\\d]*)");//I know it's not safe, but who will send other data?
-            Matcher m = p.matcher(data);
-            if (m.find()) {
-                try {
-                    int x = Integer.parseInt(m.group(1));
-                    int y = Integer.parseInt(m.group(2));
-                    int z = Integer.parseInt(m.group(3));
-                    BlockPos targetBlockPos = new BlockPos(x, y, z);
-                    //CobblemonFightOrFlight.LOGGER.info("Generated position:x: %d y: %d z: %d".formatted(x, y, z));
-                    setTargetBlockPos(targetBlockPos);
-                    return;
-                } catch (NumberFormatException e) {
-                    CobblemonFightOrFlight.LOGGER.info("Failed to get the target position");
-                }
-            }
+        Vec3i vec3i = FOFUtils.stringToVec3i(data);
+        if (vec3i != null) {
+            BlockPos blockPos = new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ());
+            setTargetBlockPos(blockPos);
+            return;
         }
         setTargetBlockPos(BlockPos.ZERO);
     }

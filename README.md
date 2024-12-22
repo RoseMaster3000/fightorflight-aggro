@@ -47,9 +47,9 @@
 * Some held item will offer damage boost(type-enhancing items,Choice Specs, Choice Band,Muscle Band,Choice Glasses,Life orb)
 * * The life orb will also deal damage to the pokemon like the core series.A pokemon is immune to the damage if the pokemon's ability is Sheer Force or Magic Guard.
 * The sheer force will boost all moves' damage,but the move can no longer apply effects to the entities.(e.g. fire type move will no longer set the entity on fire)
-* Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more.
+* Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more at the early game.
 ## TODO
-- Attack Position for Poke Staff(not available currently. I'm quite busy irl recently,it will take some time to develop this feature.)
+- Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Give more special effects to different moves.
 - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
 - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
@@ -60,6 +60,7 @@
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough.)
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
+- The explosion damage calculation might not follow the damage categories.
 ## How to use the Poke Staff
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  

@@ -38,7 +38,7 @@ public class PokemonPostRenderer {
         int attackTime = ((PokemonInterface) (Object) entity).getAttackTime();
         boolean enabled = ((PokemonInterface) (Object) entity).usingBeam() && !entity.isBattling();
         if (livingEntity != null) {
-            if (livingEntity.isAlive() && attackTime > 5 && enabled) {
+            if (livingEntity.isAlive() && attackTime > 0 && enabled) {
                 Move move = PokemonUtils.getMove(entity);
                 if (move == null) {
                     CobblemonFightOrFlight.LOGGER.info("Trying to use a null move");

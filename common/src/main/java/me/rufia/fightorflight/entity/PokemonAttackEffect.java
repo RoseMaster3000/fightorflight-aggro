@@ -14,6 +14,7 @@ import me.rufia.fightorflight.entity.projectile.PokemonArrow;
 import me.rufia.fightorflight.entity.projectile.PokemonBullet;
 import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.tags.EntityTypeTags;
@@ -508,7 +509,10 @@ public class PokemonAttackEffect {
         }
     }
 
-    public static void dealAoEDamage(PokemonEntity pokemonEntity, LivingEntity centerEntity, boolean isSpecial, boolean shouldHurtAlly) {
+    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean isSpecial, boolean shouldHurtAlly) {
+        if (pokemonEntity == null) {
+            return;
+        }
         Move move = isSpecial ? PokemonUtils.getRangeAttackMove(pokemonEntity) : PokemonUtils.getMeleeMove(pokemonEntity);
         if (move == null) {
             return;
@@ -541,6 +545,21 @@ public class PokemonAttackEffect {
         }
     }
 
+    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean shouldHurtAlly) {
+        if (pokemonEntity != null) {
+            Move move = PokemonUtils.getMove(pokemonEntity);
+            if (move != null) {
+                dealAoEDamage(pokemonEntity, centerEntity, PokemonUtils.isSpecialMove(move), shouldHurtAlly);
+            }
+        }
+
+    }
+
+
+    public static void explode(PokemonEntity pokemonEntity, boolean isSpecial, Vec3i pos) {
+        //FOFExplosion.explode();
+    }
+
     public static void pokemonRecoilSelf(PokemonEntity pokemonEntity, float percent) {
         Pokemon pokemon = pokemonEntity.getPokemon();
         float curHealth = pokemonEntity.getHealth();
@@ -563,7 +582,7 @@ public class PokemonAttackEffect {
         return Math.min(Mth.lerp(power / 180, min, max), max);
     }
 
-    public static double getAoERadius(PokemonEntity entity, Move move) {
+    public static float getAoERadius(PokemonEntity entity, Move move) {
         Pokemon pokemon = entity.getPokemon();
         boolean isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
         int stat = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
