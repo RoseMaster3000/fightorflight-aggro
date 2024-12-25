@@ -153,7 +153,7 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal{
                     mob.lookAt(livingEntity, 30.0F, 30.0F);
                 }
             }
-            this.pokemonEntity.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
+            this.pokemonEntity.getLookControl().setLookAt(this.target);
             ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() - 1);
             if (getAttackTime() == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
                 PokemonUtils.createSonicBoomParticle(pokemonEntity, target);

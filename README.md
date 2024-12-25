@@ -1,3 +1,5 @@
+# I've seen that the Cobblemon 1.6 is released. I will spend my time updating this mod to 1.21.1.
+# This mod is for Minecraft 1.20.1 currently.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
 ### Features included in [v0.6.1](https://github.com/LyquidQrystal/fightorflight/releases/tag/v0.6.1):
@@ -48,16 +50,16 @@
 * * The life orb will also deal damage to the pokemon like the core series.A pokemon is immune to the damage if the pokemon's ability is Sheer Force or Magic Guard.
 * The sheer force will boost all moves' damage,but the move can no longer apply effects to the entities.(e.g. fire type move will no longer set the entity on fire)
 * Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more at the early game.
+* Ball projectiles will cause an explosion when hitting something. Explosion caused by fire type moves will ignite the ground.(I personally doesn't like mob griefing, so I disabled it by default.You need to enable it manually. Sorry about that.)
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Give more special effects to different moves.
 - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
 - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
 - More config options for fight of flight choices.
-- Mob greifing feature for moves.
 - Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
 - Use the berry/heal items that heal the pokemon to heal the Pokemon entity(The healing items don't share a unique base class, they just extends PokemonSelectingItem(the base class for many items that can open the party menu and select a Pokemon to use). I don't think adding the mixin to every class and implements an interface is a good idea.)
-- The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently ,so I won't work on it until the mod got cool enough.)
+- The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
 - The explosion damage calculation might not follow the damage categories.

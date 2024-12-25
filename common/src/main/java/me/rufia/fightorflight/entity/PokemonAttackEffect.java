@@ -447,7 +447,7 @@ public class PokemonAttackEffect {
 
     protected static void shootProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile) {
         double d = target.getX() - pokemonEntity.getX();
-        double e = target.getY(0.3333333) - projectile.getY();
+        double e = target.getY(0.5) - projectile.getY();
         double f = target.getZ() - pokemonEntity.getZ();
         float velocity = 1.6f;
         projectile.accurateShoot(d, e, f, velocity, 0.1f);

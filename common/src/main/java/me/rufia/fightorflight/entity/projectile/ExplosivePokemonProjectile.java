@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -41,12 +42,20 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
         if (owner == null) {
             return;
         }
+        FOFExplosion explosion = FOFExplosion.createExplosion(this, owner, getX(), getY(), getZ(), true);
+        if (explosion != null) {
+            explosion.explode();
+            explosion.finalizeExplosion();
+        }
+        /*
         Move move = PokemonUtils.getMove(owner);
         boolean isSpecial = false;
         if (move != null) {
             isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
         }
-        PokemonAttackEffect.dealAoEDamage(owner, this, isSpecial , true);
+        PokemonAttackEffect.dealAoEDamage(owner, this, isSpecial, true);
+
+         */
     }
 
     @Override
