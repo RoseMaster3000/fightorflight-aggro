@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PokemonServerDelegate.class)
 public abstract class PokemonServerDelegateMixin implements PokemonSideDelegate {
-    @Shadow
+    @Shadow(remap = false)
     public PokemonEntity entity;
 
     @Inject(method = "updateMaxHealth", at = @At("HEAD"), cancellable = true, remap = false)

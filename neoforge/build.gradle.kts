@@ -6,7 +6,7 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    neoforge()
+    neoForge()
 }
 
 configurations {
@@ -19,7 +19,7 @@ configurations {
 
 loom {
     enableTransitiveAccessWideners.set(true)
-    silentMojangMappingsLicense()
+    //silentMojangMappingsLicense()
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 //    mixin {
 //        defaultRefmapName.set("mixins.${project.name}.refmap.json")
@@ -36,17 +36,16 @@ repositories {
 }
 
 dependencies {
-    neoForge("net.neoforged:neoforge:1.21.1-${project.properties["forge_version"]}")
+    neoForge("net.neoforged:neoforge:${project.properties["neoforge_version"]}")
     modApi("dev.architectury:architectury-neoforge:${project.properties["architectury_version"]}")
 
     "common"(project(":common", "namedElements")) { isTransitive = false }
     "shadowCommon"(project(":common", "transformProductionNeoForge")) { isTransitive = false }
 
-    runtimeOnly("maven.modrinth:ordsPcFz:CZYJI3gh") //kotlinforforge
+    runtimeOnly("maven.modrinth:ordsPcFz:${project.properties["kff_version"]}") //kotlinforforge
 
-    include(modApi("me.shedaniel.cloth:cloth-config-neoforge:11.1.106")!!)
+    include(modApi("me.shedaniel.cloth:cloth-config-neoforge:${project.properties["cloth_config_version"]}")!!)
     modImplementation("com.cobblemon:neoforge:${project.properties["cobblemon_version"]}")
-
 }
 
 tasks {
@@ -61,7 +60,7 @@ tasks {
 
     shadowJar {
         exclude("fabric.mod.json")
-        exclude("generations/gg/generations/core/generationscore/forge/datagen/**")
+        exclude("generations/gg/generations/core/generationscore/neoforge/datagen/**")
         exclude("architectury-common.accessWidener")
         exclude("architectury.common.json")
 

@@ -3,10 +3,10 @@ package me.rufia.fightorflight.item;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.utils.RayTrace;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -20,12 +20,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PokeStaff extends Item {
     enum MODE {
@@ -41,8 +38,9 @@ public class PokeStaff extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        CompoundTag tag = stack.getOrCreateTag();
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        /*
+        CompoundTag tag = stack.getOrDefault(DataComponents.DAMAGE);
 
         if (tag.contains("command")) {
             String modeTag = tag.getCompound("command").getString("mode");
@@ -63,12 +61,12 @@ public class PokeStaff extends Item {
                 tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc2", d + 1));
                 tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc3", getTranslatedCmdModeName(cmdMode).getString()));
             }
-        }
+        }*/
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        ItemStack stack = player.getItemInHand(usedHand);
+        /*ItemStack stack = player.getItemInHand(usedHand);
 
         CompoundTag tag = stack.getOrCreateTag();
         initTag(stack);
@@ -151,7 +149,7 @@ public class PokeStaff extends Item {
                 }
             }
 
-        }
+        }*/
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }
 
@@ -162,14 +160,19 @@ public class PokeStaff extends Item {
     }
 
     public boolean canSend(ItemStack stack) {
+        /*
         CompoundTag tag = stack.getOrCreateTag();
         if (!(tag.contains("command") && stack.is(ItemFightOrFlight.POKESTAFF.get()))) {
             return false;
         }
         return Objects.equals(tag.getCompound("command").getString("mode"), MODE.SEND.name());
+    */
+        return true;
     }
 
+
     public void sendMoveSlot(Player player, LivingEntity livingEntity, ItemStack itemStack) {
+        /*
         if (!livingEntity.level().isClientSide && livingEntity instanceof PokemonEntity pokemonEntity) {
             if (pokemonEntity.getOwner() == player) {
                 ItemStack heldItem = pokemonEntity.getPokemon().heldItem();
@@ -194,9 +197,12 @@ public class PokeStaff extends Item {
                 }
             }
         }
+
+         */
     }
 
     private void initTag(ItemStack itemStack) {
+        /*
         CompoundTag tag = itemStack.getOrCreateTag();
         if (!tag.contains("command")) {
             CompoundTag tag2 = itemStack.getOrCreateTagElement("command");
@@ -204,36 +210,42 @@ public class PokeStaff extends Item {
             tag2.putInt("move_slot", 0);
             tag2.putString("command_mode", CMDMODE.NOCMD.name());
             tag.put("commnad", tag2);
-        }
+        }*/
     }
 
     protected String getMode(ItemStack itemStack) {
+        /*
         CompoundTag tag = itemStack.getOrCreateTag();
         if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
             if (tag.contains("command")) {
                 return tag.getCompound("command").getString("mode");
             }
         }
+
+         */
         return "";
+
     }
 
     public int getMoveSlot(ItemStack itemStack) {
+        /*
         CompoundTag tag = itemStack.getOrCreateTag();
         if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
             if (tag.contains("command")) {
                 return tag.getCompound("command").getInt("move_slot");
             }
-        }
+        }*/
         return -1;
     }
 
     public String getCommandMode(ItemStack itemStack) {
+        /*
         CompoundTag tag = itemStack.getOrCreateTag();
         if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
             if (tag.contains("command")) {
                 return tag.getCompound("command").getString("command_mode");
             }
-        }
+        }*/
         return CMDMODE.NOCMD.name();
     }
 
@@ -243,11 +255,11 @@ public class PokeStaff extends Item {
     }
 
     protected void setMoveSlot(ItemStack stack, int moveSlot, Player player) {
-        stack.getOrCreateTag().getCompound("command").putInt("move_slot", moveSlot % 4);
+        //stack.getOrCreateTag().getCompound("command").putInt("move_slot", moveSlot % 4);
     }
 
     protected void setCommandMode(ItemStack stack, String mode) {
-        stack.getOrCreateTag().getCompound("command").putString("command_mode", mode);
+        //stack.getOrCreateTag().getCompound("command").putString("command_mode", mode);
     }
 
     protected void commandModeSelectNext(ItemStack stack, String mode) {

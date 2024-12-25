@@ -4,7 +4,7 @@ import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
+import com.cobblemon.mod.common.net.messages.client.animation.PlayPosableAnimationPacket;
 import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
@@ -27,6 +27,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public class PokemonUtils {
@@ -252,7 +253,7 @@ public class PokemonUtils {
 
     public static void sendAnimationPacket(PokemonEntity pokemonEntity, String mode) {
         if (!((LivingEntity) pokemonEntity).level().isClientSide) {
-            var pkt = new PlayPoseableAnimationPacket(pokemonEntity.getId(), Set.of(mode), Set.of());
+            var pkt = new PlayPosableAnimationPacket(pokemonEntity.getId(), Set.of(mode), List.of());
             pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> true).forEach((pkt::sendToPlayer));
         }
     }

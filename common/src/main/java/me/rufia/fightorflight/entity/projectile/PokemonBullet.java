@@ -64,7 +64,7 @@ public class PokemonBullet extends ExplosivePokemonProjectile{
         this.setXRot((float) (Mth.atan2(f, l) * 57.2957763671875));
         this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
         this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
-        float n = getGravity();
+        //float n = (float) getGravity();
         if (this.isInWater()) {
             for (int o = 0; o < 4; ++o) {
                 float p = 0.25F;

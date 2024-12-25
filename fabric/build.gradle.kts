@@ -1,5 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("dev.architectury.loom")
+    id("architectury-plugin")
 }
 
 architectury {
@@ -24,7 +26,7 @@ loom {
 }
 
 dependencies {
-    modImplementation("net.fabricmc:fabric-loader:${project.properties["fabric_loader_version"]}")
+    modApi("net.fabricmc:fabric-loader:${project.properties["fabric_loader_version"]}")
     modApi("net.fabricmc.fabric-api:fabric-api:${project.properties["fabric_api_version"]}+$minecraftVersion")
     modApi("dev.architectury:architectury-fabric:${project.properties["architectury_version"]}")
 
@@ -49,7 +51,7 @@ tasks {
 
     shadowJar {
         exclude("generations/gg/generations/core/generationscore/fabric/datagen/**")
-        exclude("data/forge/**")
+        exclude("data/neoforge/**")
         configurations = listOf(project.configurations.getByName("shadowCommon"))
         archiveClassifier.set("dev-shadow")
     }

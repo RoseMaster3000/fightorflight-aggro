@@ -23,7 +23,7 @@ import java.awt.*;
 
 //This class hasn't been used!
 public class PokemonPostRenderer {
-    private static final ResourceLocation BEAM_LOCATION = new ResourceLocation(CobblemonFightOrFlight.MODID, "textures/entity/beam.png");
+    private static final ResourceLocation BEAM_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/beam.png");
     private static final RenderType BEAM_RENDER_TYPE;
 
     private static Vec3 getPosition(LivingEntity livingEntity, double yOffset, float partialTick) {
@@ -91,32 +91,31 @@ public class PokemonPostRenderer {
                 float ao = j * 2.5F + an;
                 VertexConsumer vertexConsumer = buffer.getBuffer(BEAM_RENDER_TYPE);
                 PoseStack.Pose pose = poseStack.last();
-                Matrix4f matrix4f = pose.pose();
-                Matrix3f matrix3f = pose.normal();
-                vertex(vertexConsumer, matrix4f, matrix3f, ac, j, ad, p, q, r, 0.4999F, ao);
-                vertex(vertexConsumer, matrix4f, matrix3f, ac, 0.0F, ad, p, q, r, 0.4999F, an);
-                vertex(vertexConsumer, matrix4f, matrix3f, ae, 0.0F, af, p, q, r, 0.0F, an);
-                vertex(vertexConsumer, matrix4f, matrix3f, ae, j, af, p, q, r, 0.0F, ao);
-                vertex(vertexConsumer, matrix4f, matrix3f, ag, j, ah, p, q, r, 0.4999F, ao);
-                vertex(vertexConsumer, matrix4f, matrix3f, ag, 0.0F, ah, p, q, r, 0.4999F, an);
-                vertex(vertexConsumer, matrix4f, matrix3f, ai, 0.0F, aj, p, q, r, 0.0F, an);
-                vertex(vertexConsumer, matrix4f, matrix3f, ai, j, aj, p, q, r, 0.0F, ao);
+
+                vertex(vertexConsumer, pose,  ac, j, ad, p, q, r, 0.4999F, ao);
+                vertex(vertexConsumer, pose,  ac, 0.0F, ad, p, q, r, 0.4999F, an);
+                vertex(vertexConsumer, pose,  ae, 0.0F, af, p, q, r, 0.0F, an);
+                vertex(vertexConsumer, pose,  ae, j, af, p, q, r, 0.0F, ao);
+                vertex(vertexConsumer, pose,  ag, j, ah, p, q, r, 0.4999F, ao);
+                vertex(vertexConsumer, pose,  ag, 0.0F, ah, p, q, r, 0.4999F, an);
+                vertex(vertexConsumer, pose,  ai, 0.0F, aj, p, q, r, 0.0F, an);
+                vertex(vertexConsumer, pose,  ai, j, aj, p, q, r, 0.0F, ao);
                 float ap = 0.0F;
                 if (entity.tickCount % 2 == 0) {
                     ap = 0.5F;
                 }
 
-                vertex(vertexConsumer, matrix4f, matrix3f, u, j, v, p, q, r, 0.5F, ap + 0.5F);
-                vertex(vertexConsumer, matrix4f, matrix3f, w, j, x, p, q, r, 1.0F, ap + 0.5F);
-                vertex(vertexConsumer, matrix4f, matrix3f, aa, j, ab, p, q, r, 1.0F, ap);
-                vertex(vertexConsumer, matrix4f, matrix3f, y, j, z, p, q, r, 0.5F, ap);
+                vertex(vertexConsumer, pose,  u, j, v, p, q, r, 0.5F, ap + 0.5F);
+                vertex(vertexConsumer, pose,  w, j, x, p, q, r, 1.0F, ap + 0.5F);
+                vertex(vertexConsumer, pose,  aa, j, ab, p, q, r, 1.0F, ap);
+                vertex(vertexConsumer, pose,  y, j, z, p, q, r, 0.5F, ap);
                 poseStack.popPose();
             }
         }
     }
 
-    private static void vertex(VertexConsumer consumer, Matrix4f pose, Matrix3f normal, float x, float y, float z, int red, int green, int blue, float u, float v) {
-        consumer.vertex(pose, x, y, z).color(red, green, blue, 255).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+    private static void vertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z, int red, int green, int blue, float u, float v) {
+        consumer.addVertex(pose, x, y, z).setColor(red, green, blue, 255).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880).setNormal(pose, 0.0F, 1.0F, 0.0F);
     }
 
     static {

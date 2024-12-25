@@ -32,7 +32,7 @@ public interface EntityFightOrFlight {
     }
 
     static <T extends LivingEntity> RegistrySupplier<EntityType<T>> register(String name, EntityType.Builder<T> builder, Supplier<AttributeSupplier.Builder> attributes) {
-        ResourceLocation id = new ResourceLocation(CobblemonFightOrFlight.MODID, name);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, name);
         return ENTITY_TYPES.register(id, () -> {
             EntityType<T> result = builder.build(id.toString());
             EntityAttributeRegistry.register(() -> result, attributes);
@@ -42,7 +42,7 @@ public interface EntityFightOrFlight {
     }
 
     static <T extends Projectile> RegistrySupplier<EntityType<T>> registerProjectile(String name, EntityType.Builder<T> builder) {
-        ResourceLocation id = new ResourceLocation(CobblemonFightOrFlight.MODID, name);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, name);
         return ENTITY_TYPES.register(id, () -> {
             EntityType<T> result = builder.build(id.toString());
             return result;

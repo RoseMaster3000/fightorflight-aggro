@@ -21,6 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -52,10 +53,10 @@ import java.util.regex.Pattern;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
-    @Shadow
+    @Shadow(remap = false)
     public abstract void cry();
 
-    @Shadow
+    @Shadow(remap = false)
     public abstract Pokemon getPokemon();
 
     @Unique
@@ -125,14 +126,15 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    protected void defineSynchedData(CallbackInfo info) {
-        this.entityData.define(DATA_ID_ATTACK_TARGET, 0);
-        this.entityData.define(ATTACK_TIME, 0);
-        this.entityData.define(MOVE, "");
-        this.entityData.define(CRY_CD, 0);
-        this.entityData.define(COMMAND, "");
-        this.entityData.define(COMMAND_DATA, "");
-        this.entityData.define(TARGET_BLOCK_POS, BlockPos.ZERO);
+    protected void defineSynchedData(SynchedEntityData.Builder builder,CallbackInfo callbackInfo) {
+        builder.define(DATA_ID_ATTACK_TARGET, 0);
+        builder.define(ATTACK_TIME, 0);
+        builder.define(MOVE, "");
+        builder.define(CRY_CD, 0);
+        builder.define(COMMAND, "");
+        builder.define(COMMAND_DATA, "");
+        builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
+
     }
 
     @Inject(method = "saveWithoutId", at = @At("HEAD"))
@@ -303,7 +305,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
-    private void dropAllDeathLootInject(DamageSource source, CallbackInfo ci) {
+    private void dropAllDeathLootInject(ServerLevel world, DamageSource source, CallbackInfo ci) {
         if (getLastHurtByMob() instanceof PokemonEntity pokemonEntity) {
             if (pokemonEntity.getOwner() != null) {
                 PokemonEntity self = (PokemonEntity) (Object) this;

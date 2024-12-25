@@ -1,10 +1,10 @@
 modLoader = "javafml"
-loaderVersion = "[47,)"
+loaderVersion = "[21,)"
 license = "MIT License"
 
 [[mods]]
 modId = "fightorflight"
-version = "0.6.2"
+version = "0.7.0"
 displayName = "Cobblemon Fight or Flight"
 authors = "rufia,LyquidQrystal"
 description = '''
@@ -14,12 +14,12 @@ Makes Cobblemon run away or fight back in response to a player attack or failed 
 [[dependencies.fightorflight]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.1]"
+versionRange = "[1.21.1]"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.fightorflight]]
-modId = "forge"
+modId = "neoforge"
 mandatory = true
 versionRange = "[47,)"
 ordering = "NONE"
@@ -28,6 +28,6 @@ side = "BOTH"
 [[dependencies.fightorflight]]
 modId = "cobblemon"
 mandatory = true
-versionRange = "[1.5.0,)"
+versionRange = "[1.6.0,)"
 ordering = "NONE"
 side = "BOTH"

@@ -11,6 +11,7 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -76,11 +77,11 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
     public boolean canContinueToUse() {
         return PokemonUtils.shouldFightTarget((PokemonEntity) mob) && super.canContinueToUse();
+
     }
 
-    protected void checkAndPerformAttack(LivingEntity target, double distanceToSqr) {
-        double d0 = this.getAttackReachSqr(target);
-        if (distanceToSqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
+    protected void checkAndPerformAttack(LivingEntity target) {
+        if (canPerformAttack(target)) {
             this.resetAttackCooldown();
             pokemonDoHurtTarget(target);
         }

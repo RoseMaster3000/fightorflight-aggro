@@ -64,6 +64,7 @@
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
 - The explosion damage calculation might not follow the damage categories.
 ## How to use the Poke Staff
+### The Poke Staff might be removed for a short period of time because of the code changes of Minecraft.
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  
 Right click:Send the command to the pokemon(send command mode)/Select the move(select mode)/select the command(select command mode)

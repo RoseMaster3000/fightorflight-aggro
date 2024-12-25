@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.mixin;
 
 import com.cobblemon.mod.common.CobblemonNetwork;
+import com.cobblemon.mod.common.battles.BattleFormat;
 import com.cobblemon.mod.common.client.CobblemonClient;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.server.BattleChallengePacket;
@@ -52,11 +53,11 @@ public abstract class MinecraftClientInject {
             );
             for (PokemonEntity pokemonEntity : entities) {
                 if (pokemonEntity.getOwner() == null && pokemonEntity.canBattle(player)) {
-                    CobblemonNetwork.INSTANCE.sendPacketToServer(new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid()));
+                    CobblemonNetwork.INSTANCE.sendToServer(new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid(), BattleFormat.Companion.getGEN_9_SINGLES()));
                     break;
                 } else if (pokemonEntity.getOwner() != player) {
                     if (pokemonEntity.getOwner() instanceof Player player1) {
-                        CobblemonNetwork.INSTANCE.sendPacketToServer(new RequestPlayerInteractionsPacket(pokemonEntity.getUUID(), pokemonEntity.getId(), pokemon.getUuid()));
+                        CobblemonNetwork.INSTANCE.sendToServer(new RequestPlayerInteractionsPacket(pokemonEntity.getUUID(), pokemonEntity.getId(), pokemon.getUuid()));
                         break;
                     }
                 } else {

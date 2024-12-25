@@ -10,6 +10,7 @@ import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -74,5 +75,10 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
         if (owner instanceof PokemonEntity pokemonEntity) {
             explode(pokemonEntity);
         }
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
     }
 }

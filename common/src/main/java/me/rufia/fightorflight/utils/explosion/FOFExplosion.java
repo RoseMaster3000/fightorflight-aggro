@@ -62,7 +62,7 @@ public class FOFExplosion extends Explosion {
     protected final Map<Player, Vec3> hitPlayers;
 
     public FOFExplosion(Level level, @Nullable Entity source, PokemonEntity pokemon, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double toBlowX, double toBlowY, double toBlowZ, float radius, boolean fire, Explosion.BlockInteraction blockInteraction, boolean shouldHurtAlly) {
-        super(level, source, damageSource, damageCalculator, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction);
+        super(level, source, damageSource, damageCalculator, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction,null,null,SoundEvents.GENERIC_EXPLODE);
         this.random = RandomSource.create();
         this.toBlow = new ObjectArrayList<>();
         this.hitPlayers = Maps.newHashMap();
@@ -145,7 +145,7 @@ public class FOFExplosion extends Explosion {
 
     public void finalizeExplosion() {
         if (this.level.isClientSide) {
-            this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
+            this.level.playLocalSound(this.x, this.y, this.z, this.getExplosionSound().value(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
         }
 
         boolean bl = this.interactsWithBlocks();
