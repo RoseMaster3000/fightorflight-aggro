@@ -82,9 +82,9 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The  damage a pokemon would do on hit if it had 0 ATK")
     public float minimum_attack_damage = 1.0f;
     @Comment("The  damage a pokemon would do on hit if it had reached the max stat")
-    public float maximum_attack_damage = 7.0f;
-    @Comment("Attack stat required to reach the maximum damage,the default value is calculated with 50 level, 120 stat, 252 EVs, IVs of 31, and a helpful nature.")
-    public int maximum_attack_stat = 189;
+    public float maximum_attack_damage = 10.0f;
+    @Comment("Attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
+    public int maximum_attack_stat = 200;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
     public float minimum_movement_speed = 1.3f;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon reaches the value in the config.")
@@ -92,7 +92,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")
     public int speed_stat_limit = 548;
     @Comment("The maximum damage reduction a pokemon can get from its defense/special defense(uses the highest one)")
-    public float max_damage_reduction_multiplier = 0.15f;
+    public float max_damage_reduction_multiplier = 0.4f;
     @Comment("The highest defense stat needed to get the highest damage reduction.")
     public int defense_stat_limit = 161;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
@@ -109,9 +109,9 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The amount of damage a pokemon would do on contact if it had 0 Sp.ATK.")
     public float minimum_ranged_attack_damage = 1.0f;
     @Comment("The amount of damage a pokemon would do on contact if it had reached the max stat")
-    public float maximum_ranged_attack_damage = 7.0f;
-    @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 120 stat, 252 EVs, IVs of 31, and a helpful nature.")
-    public int maximum_special_attack_stat = 189;
+    public float maximum_ranged_attack_damage = 10.0f;
+    @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
+    public int maximum_special_attack_stat = 200;
     @ConfigEntry.Category("Pokemon Damage Multiplier(misc),These modifiers doesn't stack currently")
     @Comment("Water type damage will be more effective on mobs like Blaze,Enderman,etc.")
     public float water_type_super_effective_dmg_multiplier = 2.0f;
@@ -123,4 +123,22 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float ice_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Poison type damage will be not very effective against undead mobs.(set to 0 if you want a complete immune)")
     public float poison_type_no_effect_dmg_multiplier = 0.1f;
+    @ConfigEntry.Category("Health Calculation & Synchronization")
+    @Comment("If the original updateMaxHealth() will be replaced by my version. This version uses the hp stat instead of the base hp stat.The following configurations needs this one to work.")
+    public boolean shouldOverrideUpdateMaxHealth = true;
+    @Comment("The minimum hp of a pokemon entity,shedinja is set to 1.0 and can't be changed.")
+    public int min_HP = 8;
+    @Comment("The medium hp value of a pokemon entity,the medium value is designed to allow you to better tweak the growth of HP value for the entity")
+    public int mid_HP = 40;
+    @Comment("The maximum hp of a pokemon entity.")
+    public int max_HP = 100;
+    @Comment("HP above this value will increase the HP of the entity")
+    public int min_HP_required_stat = 20;
+    @Comment("The medium hp value of a pokemon entity.")
+    public int mid_HP_required_stat = 160;
+    @Comment("The maximum hp of a pokemon entity.The max hp of a Blissey is 714.")
+    public int max_HP_required_stat = 500;
+    @ConfigEntry.Category("Poke Staff")
+    public boolean stay_after_move_command = true;
+
 }

@@ -140,7 +140,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "earthpower"
     };
     @Comment("Moves that hurts the entity(including the allies) around the pokemon")
-    public String[] self_centered_aoe_moves={
+    public String[] self_centered_aoe_moves = {
             "earthquake",
             "surf",
             "lavaplume",
@@ -239,4 +239,9 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public String[] burn_status_move = {
             "willowisp"
     };
+    @ConfigEntry.Category("Pokemon Griefing")
+    @Comment("Do Pokemon grief(only explosions currently)?")
+    public boolean pokemon_griefing = false;
+    @Comment("Fire type attack(only explosions currently) should burn the ground")
+    public boolean should_create_fire = false;
 }

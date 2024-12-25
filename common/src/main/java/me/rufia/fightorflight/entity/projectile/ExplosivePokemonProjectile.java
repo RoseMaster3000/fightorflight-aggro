@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -38,37 +39,23 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
     }
 
     protected void dealExplosionDamage(PokemonEntity owner) {
-        Move move = PokemonUtils.getRangeAttackMove(owner);
-        if (move == null) {
+        if (owner == null) {
             return;
         }
-        double radius = PokemonAttackEffect.getAoERadius(owner, move);
-        //Vec3 vec3 = this.position();
-        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(radius - getBbWidth() / 2));
-        Iterator<LivingEntity> it = list.iterator();
-        while (true) {
-            LivingEntity livingEntity;
-            do {
-                if (!it.hasNext()) {
-                    return;
-                }
-                livingEntity = it.next();
-            } while (this.distanceToSqr(livingEntity) > 25.0);
-            float fullDamageRadius = 0.8f;
-            float dmgMultiplier;
-            if (this.distanceToSqr(livingEntity) <= fullDamageRadius) {
-                dmgMultiplier = 1.0f;
-            } else {
-                dmgMultiplier = Math.max(1 - (float) (distanceTo(livingEntity) / (radius)), CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier);
-            }
-            //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
-            boolean bl = livingEntity.hurt(this.damageSources().mobProjectile(this, owner), getDamage() * dmgMultiplier);
-            if (bl) {
-                applyTypeEffect(owner, livingEntity);
-            }
-            PokemonUtils.setHurtByPlayer(owner, livingEntity);
-            PokemonAttackEffect.applyOnHitEffect(owner, livingEntity, move);
+        FOFExplosion explosion = FOFExplosion.createExplosion(this, owner, getX(), getY(), getZ(), true);
+        if (explosion != null) {
+            explosion.explode();
+            explosion.finalizeExplosion();
         }
+        /*
+        Move move = PokemonUtils.getMove(owner);
+        boolean isSpecial = false;
+        if (move != null) {
+            isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
+        }
+        PokemonAttackEffect.dealAoEDamage(owner, this, isSpecial, true);
+
+         */
     }
 
     @Override

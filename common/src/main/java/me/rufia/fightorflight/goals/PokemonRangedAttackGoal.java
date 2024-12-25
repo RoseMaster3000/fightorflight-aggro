@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class PokemonRangedAttackGoal extends Goal {
+public class PokemonRangedAttackGoal extends PokemonAttackGoal{
     public int ticksUntilNewAngerParticle = 0;
 
     public int ticksUntilNewAngerCry = 0;
@@ -32,7 +32,7 @@ public class PokemonRangedAttackGoal extends Goal {
     private final LivingEntity livingEntity;
     @Nullable
     private LivingEntity target;
-    private int attackTime;
+    //private int attackTime;
     private final double speedModifier;
     private int seeTime;
 
@@ -44,7 +44,7 @@ public class PokemonRangedAttackGoal extends Goal {
     private final float attackRadiusSqr;
 
     public PokemonRangedAttackGoal(LivingEntity pokemonEntity, double speedModifier, float attackRadius) {
-        this.attackTime = -1;
+        setAttackTime(-1);
         this.livingEntity = pokemonEntity;
         if (!(pokemonEntity instanceof PokemonEntity)) {
             throw new IllegalArgumentException("PokemonRangedAttackGoal requires a PokemonEntity");
@@ -54,19 +54,20 @@ public class PokemonRangedAttackGoal extends Goal {
 
             this.attackRadius = attackRadius;
             this.attackRadiusSqr = attackRadius * attackRadius;
-            this.setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
+
+            this.setFlags(EnumSet.of(Goal.Flag.LOOK, Goal.Flag.MOVE));
         }
     }
 
     public boolean canUse() {
-        if (!PokemonUtils.shouldShoot(pokemonEntity)) {
+        if (!PokemonUtils.shouldShoot(pokemonEntity) || PokemonUtils.moveCommandAvailable(pokemonEntity)) {
             return false;
         }
 
         LivingEntity livingEntity = this.pokemonEntity.getTarget();
         if (livingEntity != null && livingEntity.isAlive()) {
             this.target = livingEntity;
-            return shouldFightTarget();
+            return PokemonUtils.shouldFightTarget(pokemonEntity);
         } else {
             return false;
         }
@@ -79,57 +80,11 @@ public class PokemonRangedAttackGoal extends Goal {
     public void stop() {
         this.target = null;
         this.seeTime = 0;
-        this.attackTime = -1;
+        setAttackTime(-1);
     }
 
     public boolean requiresUpdateEveryTick() {
         return true;
-    }
-
-    public boolean shouldFightTarget() {
-        //if (FightOrFlightCommonConfigs.DO_POKEMON_ATTACK.get() == false) { return false; }
-        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.commonConfig().minimum_attack_level) {
-            return false;
-        }
-
-        LivingEntity owner = pokemonEntity.getOwner();
-        if (owner != null) {
-            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || (this.pokemonEntity.getTarget() == null || this.pokemonEntity.getTarget() == owner)) {
-                return false;
-            }
-
-            if (this.pokemonEntity.getTarget() instanceof PokemonEntity targetPokemon) {
-                LivingEntity targetOwner = targetPokemon.getOwner();
-                if (targetOwner != null) {
-                    if (targetOwner == owner) {
-                        return false;
-                    }
-                    if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
-                        return false;
-                    }
-                }
-            }
-            if (this.pokemonEntity.getTarget() instanceof Player) {
-                if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
-                    return false;
-                }
-            }
-
-        } else {
-            if (this.pokemonEntity.getTarget() != null) {
-                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= 0) {
-                    return false;
-                }
-
-                LivingEntity targetEntity = this.pokemonEntity.getTarget();
-                if (this.pokemonEntity.distanceToSqr(targetEntity.getX(), targetEntity.getY(), targetEntity.getZ()) > 400) {
-                    return false;
-                }
-            }
-        }
-        //if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
-
-        return !pokemonEntity.isBusy();
     }
 
     public boolean isTargetInBattle() {
@@ -198,99 +153,32 @@ public class PokemonRangedAttackGoal extends Goal {
                     mob.lookAt(livingEntity, 30.0F, 30.0F);
                 }
             }
-            this.pokemonEntity.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
-            --this.attackTime;
-            ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() + 1);
-            if (attackTime == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
+            this.pokemonEntity.getLookControl().setLookAt(this.target);
+            ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() - 1);
+            if (getAttackTime() == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
                 PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
             }
-            if (attackTime % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
+            if (getAttackTime() % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
                 PokemonAttackEffect.makeMagicAttackParticle(pokemonEntity, target);
             }
-            if (this.attackTime == 0) {
+            if (getAttackTime() == 0) {
                 if (!bl) {
                     return;
                 }
                 resetAttackTime(d);
                 this.performRangedAttack(this.target);
-            } else if (this.attackTime < 0) {
+            } else if (getAttackTime() < 0) {
                 resetAttackTime(d);
             }
         }
     }
 
-    protected void resetAttackTime(double d) {
-        ((PokemonInterface) (Object) pokemonEntity).setAttackTime(0);
-        float attackSpeedModifier = Math.max(0.1f, 1 - this.pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
-        float f = (float) Math.sqrt(d) / this.attackRadius * attackSpeedModifier;
-        this.attackTime = Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
-    }
-
-    protected void addProjectileEntity(AbstractPokemonProjectile projectile, Move move) {
-        projectile.setElementalType(move.getType().getName());
-        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
-        this.livingEntity.level().addFreshEntity(projectile);
-    }
-
-    protected void addProjectileEntity(AbstractPokemonProjectile projectile) {
-        projectile.setElementalType(pokemonEntity.getPokemon().getPrimaryType().getName());
-        projectile.setDamage(PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, true));
-        this.livingEntity.level().addFreshEntity(projectile);
-    }
-
-    protected void shootProjectileEntity(AbstractPokemonProjectile projectile) {
-        double d = target.getX() - this.livingEntity.getX();
-        double e = target.getY(0.3333333) - projectile.getY();
-        double f = target.getZ() - this.livingEntity.getZ();
-        float velocity = 1.6f;
-        projectile.accurateShoot(d, e, f, velocity, 0.1f);
-
+    @Override
+    protected PokemonEntity getPokemonEntity(){
+        return pokemonEntity;
     }
 
     protected void performRangedAttack(LivingEntity target) {
-        Move move = PokemonUtils.getRangeAttackMove(pokemonEntity);
-        AbstractPokemonProjectile bullet;
-        PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
-
-        if (move != null) {
-            String moveName = move.getName();
-            //CobblemonFightOrFlight.LOGGER.info(moveName);
-            Random rand = new Random();
-            boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName);
-            boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName);
-            boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_tracing_bullet_moves).toList().contains(moveName);
-            boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_tracing_bullet_moves).toList().contains(moveName);
-            boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_beam_moves).toList().contains(moveName);
-            boolean b6 = PokemonUtils.isExplosiveMove(moveName);
-            boolean b7 = Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(moveName);
-            boolean b8 = Arrays.stream(CobblemonFightOrFlight.moveConfig().magic_attack_moves).toList().contains(moveName);
-            if (b3 || b4) {
-                for (int i = 0; i < (b3 ? 1 : rand.nextInt(3) + 1); ++i) {
-                    bullet = new PokemonTracingBullet(livingEntity.level(), pokemonEntity, target, livingEntity.getDirection().getAxis());
-                    addProjectileEntity(bullet, move);
-                }
-            } else if (b1 || b2) {
-                for (int i = 0; i < (b1 ? 1 : rand.nextInt(3) + 1); ++i) {
-                    bullet = new PokemonBullet(livingEntity.level(), pokemonEntity, target);
-                    shootProjectileEntity(bullet);
-                    addProjectileEntity(bullet, move);
-                }
-            } else if (b5 || b7 || b8) {
-                target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
-                PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-                PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, move);
-            } else if (b6) {
-                //Nothing to do now.
-            } else {
-                bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
-                shootProjectileEntity(bullet);
-                addProjectileEntity(bullet, move);
-            }
-        } else {
-            bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
-            shootProjectileEntity(bullet);
-            addProjectileEntity(bullet);
-        }
-        PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
+        PokemonAttackEffect.pokemonPerformRangedAttack(pokemonEntity, target);
     }
 }

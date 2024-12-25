@@ -10,6 +10,8 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.item.PokeStaff;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
@@ -17,9 +19,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -50,6 +52,51 @@ public class PokemonUtils {
         } else {
             return b3;
         }
+    }
+
+    public static boolean shouldFightTarget(PokemonEntity pokemonEntity) {
+        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.commonConfig().minimum_attack_level) {
+            return false;
+        }
+
+        LivingEntity owner = pokemonEntity.getOwner();
+        if (owner != null) {
+            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || (pokemonEntity.getTarget() == null || pokemonEntity.getTarget() == owner)) {
+                return false;
+            }
+
+            if (pokemonEntity.getTarget() instanceof PokemonEntity targetPokemon) {
+                LivingEntity targetOwner = targetPokemon.getOwner();
+                if (targetOwner != null) {
+                    if (targetOwner == owner) {
+                        return false;
+                    }
+                    if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
+                        return false;
+                    }
+                }
+            }
+            if (pokemonEntity.getTarget() instanceof Player) {
+                if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
+                    return false;
+                }
+            }
+
+        } else {
+            if (pokemonEntity.getTarget() != null) {
+                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= 0) {
+                    return false;
+                }
+
+                LivingEntity targetEntity = pokemonEntity.getTarget();
+                if (pokemonEntity.distanceToSqr(targetEntity.getX(), targetEntity.getY(), targetEntity.getZ()) > 400) {
+                    return false;
+                }
+            }
+        }
+        //if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
+
+        return !pokemonEntity.isBusy();
     }
 
     public static Move getMove(PokemonEntity pokemonEntity) {
@@ -130,6 +177,14 @@ public class PokemonUtils {
             return move;
         }
         return null;
+    }
+
+    public static boolean isSpecialMove(Move move) {
+        return move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+    }
+
+    public static boolean isPhysicalMove(Move move) {
+        return move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
     }
 
     public static void makeParticle(int particleAmount, Entity entity, SimpleParticleType particleType) {
@@ -216,7 +271,7 @@ public class PokemonUtils {
     }
 
     public static boolean shouldRetreat(PokemonEntity pokemonEntity) {
-        ItemStack i=pokemonEntity.getPokemon().heldItem();
+        ItemStack i = pokemonEntity.getPokemon().heldItem();
         return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 
@@ -228,17 +283,145 @@ public class PokemonUtils {
         //todo I still need to find a way to update the locator or the particle can't be spawned at the target's location.
     }
 
-    public static ItemStack getHeldItem(PokemonEntity pokemonEntity){
-        if(pokemonEntity==null){
+    public static ItemStack getHeldItem(PokemonEntity pokemonEntity) {
+        if (pokemonEntity == null) {
             return null;
         }
         return getHeldItem(pokemonEntity.getPokemon());
     }
 
-    public static ItemStack getHeldItem(Pokemon pokemon){
-        if(pokemon==null){
+    public static ItemStack getHeldItem(Pokemon pokemon) {
+        if (pokemon == null) {
             return null;
         }
-        return  pokemon.heldItem();
+        return pokemon.heldItem();
+    }
+
+    public static boolean isUsingNewHealthMechanic() {
+        return CobblemonFightOrFlight.commonConfig().shouldOverrideUpdateMaxHealth;
+    }
+
+    public static int getMaxHealth(PokemonEntity pokemonEntity) {
+        return getMaxHealth(pokemonEntity.getPokemon());
+    }
+
+    public static int getHPStat(Pokemon pokemon) {
+        return pokemon.getHp();//TODO don't forget to replace this one,this will be deprecated
+    }
+
+    public static int getMaxHealth(Pokemon pokemon) {
+        int hpStat = getHPStat(pokemon);
+        int minStat = CobblemonFightOrFlight.commonConfig().min_HP_required_stat;
+        int midStat = CobblemonFightOrFlight.commonConfig().mid_HP_required_stat;
+        int maxStat = CobblemonFightOrFlight.commonConfig().max_HP_required_stat;
+        int stat = Mth.clamp(hpStat, minStat, maxStat);
+        int minHealth = CobblemonFightOrFlight.commonConfig().min_HP;
+        int midHealth = CobblemonFightOrFlight.commonConfig().mid_HP;
+        int maxHealth = CobblemonFightOrFlight.commonConfig().max_HP;
+        int health = minHealth;
+        health = Math.round(
+                stat < midStat ?
+                        Mth.lerp((float) (stat - minStat) / (midStat - minStat), minHealth, midHealth) :
+                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth));
+        return health;//The return value is a mathematical integer,but some calculation needs a float.
+    }
+
+    public static void entityHpToPokemonHp(PokemonEntity pokemonEntity, float amount, boolean isHealing) {
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        if (pokemon.getCurrentHealth() == 0) {
+            return;
+        }
+        float ratio = amount / getMaxHealth(pokemonEntity);
+        int val = pokemon.getCurrentHealth() + (int) Math.floor(ratio * getHPStat(pokemon)) * (isHealing ? 1 : -1);
+        pokemon.setCurrentHealth(val);
+    }
+
+    public static boolean isSheerForce(PokemonEntity pokemonEntity) {
+        return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
+    }
+
+    public static PokeStaff.CMDMODE getCommandMode(PokemonEntity pokemon) {
+        try {
+            return PokeStaff.CMDMODE.valueOf(((PokemonInterface) (Object) pokemon).getCommand());
+        } catch (IllegalArgumentException e) {
+            return PokeStaff.CMDMODE.NOCMD;
+        }
+    }
+
+    public static String getCommandData(PokemonEntity pokemonEntity) {
+        return ((PokemonInterface) (Object) pokemonEntity).getCommandData();
+    }
+
+
+    public static boolean moveCommandAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.MOVE == getCommandMode(pokemonEntity);
+    }
+
+    public static boolean moveAttackCommandAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
+    }
+
+    public static boolean stayCommandAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.STAY == getCommandMode(pokemonEntity);
+    }
+
+    public static boolean attackPositionAvailable(PokemonEntity pokemonEntity) {
+        return PokeStaff.CMDMODE.STAY == getCommandMode(pokemonEntity);
+    }
+
+    public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
+        PokeStaff.CMDMODE cmd = getCommandMode(pokemon);
+        switch (cmd) {
+            case ATTACK, ATTACK_POSITION, MOVE_ATTACK, STAY, MOVE -> {
+                return true;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    public static void clearCommand(PokemonEntity pokemonEntity) {
+        ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.NOCMD.name());
+        ((PokemonInterface) (Object) pokemonEntity).setCommandData("");
+    }
+
+    public static void finishMoving(PokemonEntity pokemonEntity) {
+        if (CobblemonFightOrFlight.commonConfig().stay_after_move_command) {
+            ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.STAY.name());
+        } else {
+            clearCommand(pokemonEntity);
+        }
+    }
+
+    public static void pokemonEntityApproachPos(PokemonEntity pokemonEntity, BlockPos pos, double speedModifier) {
+        if (pos != BlockPos.ZERO) {
+            //CobblemonFightOrFlight.LOGGER.info("Pathfinding");
+            if (pokemonEntity.getNavigation().isDone()) {
+                Vec3 vec3 = Vec3.atBottomCenterOf(pos);
+                Vec3 vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 8, 3, vec3, 0.3141592741012573);
+                if (vec32 == null) {
+                    vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 4, 7, vec3, 1.5707963705062866);
+                }
+
+                if (vec32 != null) {
+                    int i = Mth.floor(vec32.x);
+                    int j = Mth.floor(vec32.z);
+                    if (!((LivingEntity) pokemonEntity).level().hasChunksAt(i - 34, j - 34, i + 34, j + 34)) {
+                        vec32 = null;
+                    }
+                }
+
+                if (vec32 == null) {
+                    return;
+                }
+
+                pokemonEntity.getNavigation().moveTo(vec32.x, vec32.y, vec32.z, speedModifier);
+            }
+        }
+    }
+
+    public static float getAttackRadius() {
+        return 16.0f;
     }
 }
