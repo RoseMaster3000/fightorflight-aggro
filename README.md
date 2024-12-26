@@ -1,5 +1,5 @@
-# I've seen that the Cobblemon 1.6 is released. I will spend my time updating this mod to 1.21.1.
-# This mod is for Minecraft 1.20.1 currently.
+# Some features are not available currently, but most  of the features are still working in 1.21.1.
+## The new version will be released after I fix them.(If I failed, I will release a version that disables the bugged features)
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
 ### Features included in [v0.6.1](https://github.com/LyquidQrystal/fightorflight/releases/tag/v0.6.1):
@@ -33,7 +33,7 @@
 - A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you.
 - Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro.
 - The Wimpod line Pokemon will be recalled when taking damage and the health is below 50%.
-### Features that is not released currently(will be released after the release of Cobblemon 1.6:
+### Features that is not released currently(will be released after I fix the bug):
 * Moves like earthquake that hurts all pokemon around will hurt the entities nearby when the Pokemon hits the target.(The special moves will use the melee attack,too.)
 * **Type effectiveness for some non-pokemon entities** These effects don't strictly follow the rules of Pokemon,instead,they are more closely related to minecraft itself:
 * * Water type damage will be more effective on mobs that takes damage from the water.
@@ -63,6 +63,8 @@
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
 - The explosion damage calculation might not follow the damage categories.
+### Known issues for 1.21.1 version(not released yet)
+- I'm not sure why the battle does not start when using the key bind I added.
 ## How to use the Poke Staff
 ### The Poke Staff might be removed for a short period of time because of the code changes of Minecraft.
 1. Get one Poke Staff by crafting or get it in the creative mode.

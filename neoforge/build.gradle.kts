@@ -18,6 +18,9 @@ configurations {
 }
 
 loom {
+    neoForge{
+
+    }
     enableTransitiveAccessWideners.set(true)
     //silentMojangMappingsLicense()
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
@@ -42,18 +45,18 @@ dependencies {
     "common"(project(":common", "namedElements")) { isTransitive = false }
     "shadowCommon"(project(":common", "transformProductionNeoForge")) { isTransitive = false }
 
-    runtimeOnly("maven.modrinth:ordsPcFz:${project.properties["kff_version"]}") //kotlinforforge
+    modApi("maven.modrinth:ordsPcFz:${project.properties["kff_version"]}") //kotlinforforge
 
     include(modApi("me.shedaniel.cloth:cloth-config-neoforge:${project.properties["cloth_config_version"]}")!!)
     modImplementation("com.cobblemon:neoforge:${project.properties["cobblemon_version"]}")
 }
 
 tasks {
-    base.archivesName.set(base.archivesName.get() + "-forge")
+    base.archivesName.set(base.archivesName.get() + "-neoforge")
     processResources {
         inputs.property("version", project.version)
 
-        filesMatching("META-INF/mods.toml") {
+        filesMatching("META-INF/neoforge.mods.toml") {
             expand(mapOf("version" to project.version))
         }
     }

@@ -285,7 +285,7 @@ public class PokemonAttackEffect {
 
             switch (typeName) {
                 case "fire":
-                    livingHurtTarget.setRemainingFireTicks(effectStrength);
+                    livingHurtTarget.setRemainingFireTicks(effectStrength * 20);
                     break;
                 case "ice":
                     livingHurtTarget.setTicksFrozen(livingHurtTarget.getTicksFrozen() + effectStrength * 30);

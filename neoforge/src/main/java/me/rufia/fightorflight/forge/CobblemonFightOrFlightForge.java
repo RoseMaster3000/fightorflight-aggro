@@ -2,27 +2,28 @@ package me.rufia.fightorflight.forge;
 
 
 import dev.architectury.neoforge.ArchitecturyNeoForge;
-import dev.architectury.platform.hooks.EventBusesHooks;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
-import net.neoforged.bus.EventBus;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 
 
 @Mod(CobblemonFightOrFlight.MODID)
-@EventBusSubscriber(modid = CobblemonFightOrFlight.MODID,bus = EventBusSubscriber.Bus.MOD)
+//@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public final class CobblemonFightOrFlightForge {
-    public CobblemonFightOrFlightForge() {
-        CobblemonFightOrFlight.LOGGER.info("Hello forge");
+    public CobblemonFightOrFlightForge(IEventBus modEventBus, ModContainer modContainer) {
+        CobblemonFightOrFlight.LOGGER.info("Hello neoforge");
         //EventBusesHooks.getModEventBus(CobblemonFightOrFlight.MODID).get().;
         //EventBuses.registerModEventBus(CobblemonFightOrFlight.MODID, FMLJavaModLoadingContext.get().getModEventBus());
         EntityFightOrFlight.bootstrap();
         ItemFightOrFlight.bootstrap();
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
-        NeoForge.EVENT_BUS.register(ForgeBusEvent.class);
+        //NeoForge.EVENT_BUS.register(ForgeBusEvent.class);
+        NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
 
     }
 

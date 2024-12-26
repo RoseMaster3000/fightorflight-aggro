@@ -307,7 +307,7 @@ public class PokemonUtils {
     }
 
     public static int getHPStat(Pokemon pokemon) {
-        return pokemon.getHp();//TODO don't forget to replace this one,this will be deprecated
+        return pokemon.getMaxHealth();
     }
 
     public static int getMaxHealth(Pokemon pokemon) {
