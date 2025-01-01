@@ -1,7 +1,5 @@
 package me.rufia.fightorflight;
 
-
-import com.cobblemon.mod.common.api.pokemon.feature.SpeciesFeature;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -30,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class CobblemonFightOrFlight {
@@ -101,12 +98,13 @@ public class CobblemonFightOrFlight {
         Pokemon pokemon = pokemonEntity.getPokemon();
         String speciesName = pokemon.getSpecies().getName().toLowerCase();
         Set<String> pokemonAspects = pokemon.getAspects();
+        double height = pokemonEntity.position().y;
 
         if (SpeciesNeverAggro(speciesName) || SpeciesAlwaysFlee(speciesName)) {
             return -100;
         }
 
-        if (SpeciesAlwaysAggro(speciesName) || AspectsAlwaysAggro(pokemonAspects)) {
+        if (SpeciesAlwaysAggro(speciesName) || AspectsAlwaysAggro(pokemonAspects) || BelowAlwaysAggro(height)) {
             return 100;
         }
 
@@ -185,6 +183,10 @@ public class CobblemonFightOrFlight {
         return finalResult;
     }
 
+    public static boolean BelowAlwaysAggro(double height) {
+        return height < CobblemonFightOrFlight.commonConfig().always_aggro_below;
+    }
+
     public static boolean AspectsAlwaysAggro(Set<String> pokemonAspects) {
         // Retrieve the list of always aggressive features from the config
         String[] alwaysAggroFeatures = CobblemonFightOrFlight.commonConfig().always_aggro_aspects;
@@ -200,7 +202,6 @@ public class CobblemonFightOrFlight {
         }
         return false;
     }
-
 
     public static boolean SpeciesAlwaysAggro(String speciesName) {
         //LogUtils.getLogger().info("Are " + speciesName + " always aggro?");
