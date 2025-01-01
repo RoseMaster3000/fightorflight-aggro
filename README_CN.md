@@ -2,7 +2,7 @@
 ### 施工中
 ### 需要[Architectury](https://modrinth.com/mod/architectury-api) !!!
 ## 自 0.5.3 （原mod最后一个版本） 之后的特性/改动
-### v0.7.0 已经实现的特性/改动:
+### v0.7.1 已经实现的特性/改动:
 - **关闭野生宝可梦主动攻击** 我个人不喜欢这个特性，宝可梦无时无刻不在刷，尽管不是所有宝可梦都会主动攻击，但是当主动攻击开启时你很容易就会获得在朱/紫被肯泰罗群殴的糟糕的游戏体验。 当然你要想开可以在config中打开
 - **更低的最高伤害值:** 我看到有人在curseforge页面上说宝可梦伤害太高了，所以我把最高伤害的默认值调低了。作为补偿，达到最高伤害所需的能力值也被调低了。你也可以使用config进一步调整
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -31,7 +31,7 @@
 - - 需要特殊技能(挑衅,看我嘛,愤怒粉,无理取闹) (可以在config禁用)
 - Pokemon with higher defense stat can lower the damage it take.(configurable)
 - A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you.（not working currently)
-- Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro.
+- 部分特性（威吓，压迫感，紧张感）会降低野生宝可梦敌意。
 - 具甲武者一家血量在一半以下时受到伤害会免疫这次伤害并被收回。
 * 地震等aoe在击中目标时会伤害附近的实体.(会导致特殊攻击变成近战)
 * **非宝可梦实体的属性克制** 这些效果并不严格遵守宝可梦的规则，相反，它们更加接近Minecraft本身：
@@ -49,6 +49,7 @@
 * * 生命宝珠会像游戏里一样对宝可梦自身造成伤害.强行和魔法防守的宝可梦免疫这个伤害.
 * 不同于主系列，强行会增强所有招式，但不会再有附加状态效果等特效（比如火系技能不会再让生物着火。
 * 弹类弹射物会产生一个小爆炸，火系技能的爆炸会点燃地面(我自己不喜欢，默认关掉了，你要在config里手动启用。骚瑞。)
+* 更多敌意相关设定
 ### Features that is not released currently(will be released after I fix the bug):
 - Nope. I will be busy for a few days so the development should slow down.
 ## TODO
