@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 //It seems quite hard to mixin the private function of the parent class,so we just edit the canUse
 @Mixin(PokemonFollowOwnerGoal.class)
 public abstract class PokemonFollowOwnerGoalMixin extends FollowOwnerGoal {
-    public PokemonFollowOwnerGoalMixin(TamableAnimal tamable, double speedModifier, float startDistance, float stopDistance, boolean canFly) {
-        super(tamable, speedModifier, startDistance, stopDistance, canFly);
+    public PokemonFollowOwnerGoalMixin(TamableAnimal tamable, double speedModifier, float startDistance, float stopDistance) {
+        super(tamable, speedModifier, startDistance, stopDistance);
     }
 
-    @Shadow
+    @Shadow(remap = false)
     public abstract PokemonEntity getEntity();
 
     @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)

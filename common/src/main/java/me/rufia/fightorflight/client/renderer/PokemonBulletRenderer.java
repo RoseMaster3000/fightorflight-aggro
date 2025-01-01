@@ -15,21 +15,25 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
 
 public class PokemonBulletRenderer extends EntityRenderer<PokemonBullet> {
-    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(CobblemonFightOrFlight.MODID, "textures/entity/tracing_bullet_spark.png");
+    private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/tracing_bullet_spark.png");
     private static final RenderType RENDER_TYPE;
     private final PokemonBulletModel<PokemonBullet> model;
+
     public PokemonBulletRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.model = new PokemonBulletModel(context.bakeLayer(ModelLayers.SHULKER_BULLET));
     }
+
     protected int getBlockLightLevel(PokemonBullet entity, BlockPos pos) {
         return 15;
     }
+
     public void render(PokemonBullet entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         Color color = Color.white;
         if (entity.getElementalType() != null) {
@@ -47,13 +51,15 @@ public class PokemonBulletRenderer extends EntityRenderer<PokemonBullet> {
         poseStack.scale(-0.5F, -0.5F, 0.5F);
         this.model.setupAnim(entity, 0.0F, 0.0F, 0.0F, f, g);
         VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(TEXTURE_LOCATION));
-        this.model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.scale(1.5F, 1.5F, 1.5F);
         VertexConsumer vertexConsumer2 = buffer.getBuffer(RENDER_TYPE);
-        this.model.renderToBuffer(poseStack, vertexConsumer2, packedLight, OverlayTexture.NO_OVERLAY, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, 0.75F);
+        int colorCode = FastColor.ARGB32.colorFromFloat((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, 0.75F);
+        this.model.renderToBuffer(poseStack, vertexConsumer2, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
+
     public ResourceLocation getTextureLocation(PokemonBullet entity) {
         return TEXTURE_LOCATION;
     }

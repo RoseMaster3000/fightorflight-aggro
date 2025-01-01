@@ -11,6 +11,7 @@ import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
+import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.FOFEVCalculator;
 import me.rufia.fightorflight.utils.FOFExpCalculator;
 import me.rufia.fightorflight.utils.FOFUtils;
@@ -21,6 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,7 +35,6 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -47,15 +48,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
-    @Shadow
+    @Shadow(remap = false)
     public abstract void cry();
 
-    @Shadow
+    @Shadow(remap = false)
     public abstract Pokemon getPokemon();
 
     @Unique
@@ -125,14 +124,15 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    protected void defineSynchedData(CallbackInfo info) {
-        this.entityData.define(DATA_ID_ATTACK_TARGET, 0);
-        this.entityData.define(ATTACK_TIME, 0);
-        this.entityData.define(MOVE, "");
-        this.entityData.define(CRY_CD, 0);
-        this.entityData.define(COMMAND, "");
-        this.entityData.define(COMMAND_DATA, "");
-        this.entityData.define(TARGET_BLOCK_POS, BlockPos.ZERO);
+    protected void defineSynchedData(SynchedEntityData.Builder builder,CallbackInfo callbackInfo) {
+        builder.define(DATA_ID_ATTACK_TARGET, 0);
+        builder.define(ATTACK_TIME, 0);
+        builder.define(MOVE, "");
+        builder.define(CRY_CD, 0);
+        builder.define(COMMAND, "");
+        builder.define(COMMAND_DATA, "");
+        builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
+
     }
 
     @Inject(method = "saveWithoutId", at = @At("HEAD"))
@@ -268,8 +268,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
-        if (Objects.equals(getCommand(), PokeStaff.CMDMODE.CLEAR.name())) {
-            setCommand(PokeStaff.CMDMODE.NOCMD.name());
+        if (Objects.equals(getCommand(), PokeStaffComponent.CMDMODE.CLEAR.name())) {
+            setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
         }
         var targetEntity = getTarget();
         if (targetEntity != null && targetEntity.isAlive()) {
@@ -303,7 +303,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
-    private void dropAllDeathLootInject(DamageSource source, CallbackInfo ci) {
+    private void dropAllDeathLootInject(ServerLevel world, DamageSource source, CallbackInfo ci) {
         if (getLastHurtByMob() instanceof PokemonEntity pokemonEntity) {
             if (pokemonEntity.getOwner() != null) {
                 PokemonEntity self = (PokemonEntity) (Object) this;

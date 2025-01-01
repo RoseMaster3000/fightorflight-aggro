@@ -21,7 +21,10 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -159,7 +162,8 @@ public class PokemonAttackEffect {
                 }
             }
             if (ElementalTypes.INSTANCE.getPOISON().equals(type)) {
-                if (livingEntity.getMobType() == MobType.UNDEAD) {
+                if (livingEntity.getType().is(EntityTypeTags.UNDEAD)) {
+
                     return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;
                 }
             }
@@ -281,7 +285,7 @@ public class PokemonAttackEffect {
 
             switch (typeName) {
                 case "fire":
-                    livingHurtTarget.setSecondsOnFire(effectStrength);
+                    livingHurtTarget.setRemainingFireTicks(effectStrength * 20);
                     break;
                 case "ice":
                     livingHurtTarget.setTicksFrozen(livingHurtTarget.getTicksFrozen() + effectStrength * 30);

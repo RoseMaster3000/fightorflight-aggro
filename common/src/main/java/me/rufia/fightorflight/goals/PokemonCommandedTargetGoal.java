@@ -3,11 +3,10 @@ package me.rufia.fightorflight.goals;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import me.rufia.fightorflight.item.PokeStaff;
+import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 
 import java.util.regex.Matcher;
@@ -23,7 +22,7 @@ public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestA
                 return false;
             }
             if (mob instanceof PokemonEntity pokemonEntity) {
-                if (PokemonUtils.getCommandMode(pokemonEntity).equals(PokeStaff.CMDMODE.ATTACK)) {
+                if (PokemonUtils.getCommandMode(pokemonEntity).equals(PokeStaffComponent.CMDMODE.ATTACK)) {
                     String data = ((PokemonInterface) (Object) pokemonEntity).getCommandData();
                     if (data.startsWith("ENTITY_")) {
                         Pattern pattern = Pattern.compile("ENTITY_([a-z\\d]{8}-[a-z\\d]{4}-[a-z\\d]{4}-[a-z\\d]{4}-[a-z\\d]{12})");

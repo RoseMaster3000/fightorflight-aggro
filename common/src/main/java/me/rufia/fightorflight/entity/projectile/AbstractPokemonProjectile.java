@@ -48,7 +48,7 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     private static final EntityDataAccessor<String> type = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Float> damage = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> category = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.INT);
+    //private static final EntityDataAccessor<Integer> category = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.INT);
 
     protected void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -99,9 +99,9 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(type, "normal");
-        this.entityData.define(damage, 1f);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(type, "normal");
+        builder.define(damage, 1f);
     }
 
     protected void onHitEntity(EntityHitResult result) {
@@ -125,16 +125,11 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     public void accurateShoot(double x, double y, double z, float velocity, float inaccuracy) {
         double horizontalDistance = Math.sqrt(x * x + z * z);
-        float g = getGravity();
+        float g = (float) getGravity();
         double v2 = velocity * velocity;
         double delta = Math.sqrt(2 * v2 * g * y + v2 * v2 - g * g * horizontalDistance * horizontalDistance);
         double t = Math.sqrt(2 * (g * y + v2 - delta)) / g;
         double result = y + 0.5 * g * t * t;
         this.shoot(x, result, z, velocity, inaccuracy);
-    }
-
-    @Override
-    protected float getGravity() {
-        return 0.05f;
     }
 }

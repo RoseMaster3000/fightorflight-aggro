@@ -1,12 +1,11 @@
-# I've seen that the Cobblemon 1.6 is released. I will spend my time updating this mod to 1.21.1.
-# This mod is for Minecraft 1.20.1 currently.
+## Untested on server. Use at your own risk.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in [v0.6.1](https://github.com/LyquidQrystal/fightorflight/releases/tag/v0.6.1):
+### Features included in v0.7.0:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
-- **Faster Pokemon:** Pokemon with a higher speed stat can run faster.(can be changed in the config)
+- **Faster Pokemon:** Pokemon with a higher speed stat can run faster.(can be changed in the config, the base speed of cobblemon is too slow, so it might not be obvious.)
 - **Range attack!:** Added a range attack for pokemon whose Sp.ATK is higher than its ATK.
 - - Wild pokemon are not allowed to use the range attack.(can be enabled in the config)
 - **Different ways of range attack:** If a pokemon has some special moves,they will shoot different bullet.
@@ -30,10 +29,9 @@
 - Your pokemon can taunt the pokemon that attacks you.(Your pokemon can't be taunted.)
 - - Moves(taunt,follow me,rage powder,torment) are needed,and they need to be set as the first move in the move set. to taunt the wild pokemon.(can be disabled in the config)
 - Pokemon with higher defense stat can lower the damage it take.(configurable)
-- A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you.
+- A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you.(not working currently)
 - Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro.
 - The Wimpod line Pokemon will be recalled when taking damage and the health is below 50%.
-### Features that is not released currently(will be released after the release of Cobblemon 1.6:
 * Moves like earthquake that hurts all pokemon around will hurt the entities nearby when the Pokemon hits the target.(The special moves will use the melee attack,too.)
 * **Type effectiveness for some non-pokemon entities** These effects don't strictly follow the rules of Pokemon,instead,they are more closely related to minecraft itself:
 * * Water type damage will be more effective on mobs that takes damage from the water.
@@ -42,7 +40,7 @@
 * * Ice type damage will be more effective against entities that has a weaker resistant to the frost damage,(blaze,magma cube,etc.).
 * * Poison type damage will be not very effective against undead mobs.(x0.1 again)
 * Health mechanic reworked
-* * Use a mixin to replace the original max health calculation function,set shouldOverrideUpdateMaxHealth in config/fightorflight.json5 to false to disable it if you don't like the changes I made. 
+* * Use a mixin to replace the original max health calculation function,set shouldOverrideUpdateMaxHealth in config/fightorflight.json5 to false to disable it if you don't like the changes I made.
 * * The hp of the pokemon entity is no longer decided by the base stat,it is decided by the hp stat of the pokemon directly now.
 * * The damage a Pokemon entity takes will be dealt to the pokemon,causing the hp to drop,healing the entity will also heal the pokemon(Recommended to use with [Healing Campfire](https://modrinth.com/mod/healing-campfire)). (This feature uses some function used by my max health calculation function. Disabling the function will also disable this feature.)
 * * Please notice that healing the Pokemon won't heal the entity currently.Just recall your pokemon,use your sitrus berries or anything else and get back to fight. Or use the items,recall and send it out again.
@@ -51,6 +49,8 @@
 * The sheer force will boost all moves' damage,but the move can no longer apply effects to the entities.(e.g. fire type move will no longer set the entity on fire)
 * Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more at the early game.
 * Ball projectiles will cause an explosion when hitting something. Explosion caused by fire type moves will ignite the ground.(I personally doesn't like mob griefing, so I disabled it by default.You need to enable it manually. Sorry about that.)
+### Features that is not released currently:
+- Nope. I will be busy for a few days so the development should slow down.
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Give more special effects to different moves.
@@ -63,6 +63,8 @@
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
 - The explosion damage calculation might not follow the damage categories.
+### Known issues for 1.21.1 version(not released yet)
+- I'm not sure why the battle does not start when using the key bind I added.
 ## How to use the Poke Staff
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  

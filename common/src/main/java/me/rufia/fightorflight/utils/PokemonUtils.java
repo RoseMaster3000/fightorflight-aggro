@@ -4,13 +4,13 @@ import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.net.messages.client.animation.PlayPoseableAnimationPacket;
+import com.cobblemon.mod.common.net.messages.client.animation.PlayPosableAnimationPacket;
 import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import me.rufia.fightorflight.item.PokeStaff;
+import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -27,6 +27,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public class PokemonUtils {
@@ -252,7 +253,7 @@ public class PokemonUtils {
 
     public static void sendAnimationPacket(PokemonEntity pokemonEntity, String mode) {
         if (!((LivingEntity) pokemonEntity).level().isClientSide) {
-            var pkt = new PlayPoseableAnimationPacket(pokemonEntity.getId(), Set.of(mode), Set.of());
+            var pkt = new PlayPosableAnimationPacket(pokemonEntity.getId(), Set.of(mode), List.of());
             pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> true).forEach((pkt::sendToPlayer));
         }
     }
@@ -306,7 +307,7 @@ public class PokemonUtils {
     }
 
     public static int getHPStat(Pokemon pokemon) {
-        return pokemon.getHp();//TODO don't forget to replace this one,this will be deprecated
+        return pokemon.getMaxHealth();
     }
 
     public static int getMaxHealth(Pokemon pokemon) {
@@ -340,11 +341,11 @@ public class PokemonUtils {
         return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
     }
 
-    public static PokeStaff.CMDMODE getCommandMode(PokemonEntity pokemon) {
+    public static PokeStaffComponent.CMDMODE getCommandMode(PokemonEntity pokemon) {
         try {
-            return PokeStaff.CMDMODE.valueOf(((PokemonInterface) (Object) pokemon).getCommand());
+            return PokeStaffComponent.CMDMODE.valueOf(((PokemonInterface) (Object) pokemon).getCommand());
         } catch (IllegalArgumentException e) {
-            return PokeStaff.CMDMODE.NOCMD;
+            return PokeStaffComponent.CMDMODE.NOCMD;
         }
     }
 
@@ -354,23 +355,23 @@ public class PokemonUtils {
 
 
     public static boolean moveCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaff.CMDMODE.MOVE == getCommandMode(pokemonEntity);
+        return PokeStaffComponent.CMDMODE.MOVE == getCommandMode(pokemonEntity);
     }
 
     public static boolean moveAttackCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaff.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
+        return PokeStaffComponent.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
     }
 
     public static boolean stayCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaff.CMDMODE.STAY == getCommandMode(pokemonEntity);
+        return PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
     }
 
     public static boolean attackPositionAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaff.CMDMODE.STAY == getCommandMode(pokemonEntity);
+        return PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
     }
 
     public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
-        PokeStaff.CMDMODE cmd = getCommandMode(pokemon);
+        PokeStaffComponent.CMDMODE cmd = getCommandMode(pokemon);
         switch (cmd) {
             case ATTACK, ATTACK_POSITION, MOVE_ATTACK, STAY, MOVE -> {
                 return true;
@@ -382,13 +383,13 @@ public class PokemonUtils {
     }
 
     public static void clearCommand(PokemonEntity pokemonEntity) {
-        ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.NOCMD.name());
+        ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
         ((PokemonInterface) (Object) pokemonEntity).setCommandData("");
     }
 
     public static void finishMoving(PokemonEntity pokemonEntity) {
         if (CobblemonFightOrFlight.commonConfig().stay_after_move_command) {
-            ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaff.CMDMODE.STAY.name());
+            ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.STAY.name());
         } else {
             clearCommand(pokemonEntity);
         }
