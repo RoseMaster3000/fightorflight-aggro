@@ -25,6 +25,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean dark_light_level_aggro = true;
     @Comment("Are Ghost types more aggressive at or below light level 7 and less aggressive at or above light level 12")
     public boolean ghost_light_level_aggro = true;
+    @Comment("Pokemon below this map height (y) will always be aggressive")
+    public double always_aggro_below = -128;
     @Comment("Forms that will always be aggressive")
     public String[] always_aggro_aspects = {
             "alolan"
