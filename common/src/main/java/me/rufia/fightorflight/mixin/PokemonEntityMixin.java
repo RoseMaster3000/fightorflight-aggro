@@ -11,6 +11,7 @@ import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
+import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.FOFEVCalculator;
 import me.rufia.fightorflight.utils.FOFExpCalculator;
 import me.rufia.fightorflight.utils.FOFUtils;
@@ -34,7 +35,6 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,8 +48,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
@@ -270,8 +268,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
-        if (Objects.equals(getCommand(), PokeStaff.CMDMODE.CLEAR.name())) {
-            setCommand(PokeStaff.CMDMODE.NOCMD.name());
+        if (Objects.equals(getCommand(), PokeStaffComponent.CMDMODE.CLEAR.name())) {
+            setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
         }
         var targetEntity = getTarget();
         if (targetEntity != null && targetEntity.isAlive()) {

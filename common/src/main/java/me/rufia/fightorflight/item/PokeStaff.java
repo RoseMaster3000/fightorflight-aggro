@@ -4,10 +4,10 @@ import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.item.component.ItemComponentFOF;
+import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.RayTrace;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -25,74 +25,52 @@ import java.util.List;
 import java.util.Objects;
 
 public class PokeStaff extends Item {
-    enum MODE {
-        SEND, SETMOVE, SETCMDMODE
-    }
-
-    public enum CMDMODE {
-        MOVE_ATTACK, MOVE, STAY, ATTACK, ATTACK_POSITION, NOCMD, CLEAR
-    }
-
     public PokeStaff(Item.Properties properties) {
         super(properties);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        /*
-        CompoundTag tag = stack.getOrDefault(DataComponents.DAMAGE);
-
-        if (tag.contains("command")) {
-            String modeTag = tag.getCompound("command").getString("mode");
-            if (!modeTag.isEmpty()) {
-                int d = getMoveSlot(stack);
-                String cmdMode = getCommandMode(stack);
-                Component component;
-                switch (MODE.valueOf(modeTag)) {
-                    case SEND -> component = Component.translatable("item.fightorflight.pokestaff.mode.send");
-                    case SETMOVE ->
-                            component = Component.translatable("item.fightorflight.pokestaff.mode.selectmoveslot");
-                    case SETCMDMODE ->
-                            component = Component.translatable("item.fightorflight.pokestaff.mode.selectcommand");
-                    default -> component = Component.literal("");
-                }
-
-                tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc1").append(component));
-                tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc2", d + 1));
-                tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc3", getTranslatedCmdModeName(cmdMode).getString()));
+        String mode = getMode(stack);
+        if (!mode.isEmpty()) {
+            int d = getMoveSlot(stack);
+            String cmdMode = getCommandMode(stack);
+            Component component;
+            //CobblemonFightOrFlight.LOGGER.info(mode);
+            switch (PokeStaffComponent.MODE.valueOf(mode)) {
+                case SEND -> component = Component.translatable("item.fightorflight.pokestaff.mode.send");
+                case SETMOVE -> component = Component.translatable("item.fightorflight.pokestaff.mode.selectmoveslot");
+                case SETCMDMODE ->
+                        component = Component.translatable("item.fightorflight.pokestaff.mode.selectcommand");
+                default -> component = Component.literal("");
             }
-        }*/
+
+            tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc1").append(component));
+            tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc2", d + 1));
+            tooltipComponents.add(Component.translatable("item.fightorflight.pokestaff.desc3", getTranslatedCmdModeName(cmdMode).getString()));
+        }
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        /*ItemStack stack = player.getItemInHand(usedHand);
-
-        CompoundTag tag = stack.getOrCreateTag();
-        initTag(stack);
+        ItemStack stack = player.getItemInHand(usedHand);
 
         if (player.isSecondaryUseActive()) {
-            //CobblemonFightOrFlight.LOGGER.info("SNEAKING");
-            CompoundTag tag2 = tag.getCompound("command");
-            switch (MODE.valueOf(tag2.getString("mode"))) {
+            setMode(stack, PokeStaffComponent.getNextMode(getMode(stack)));
+            switch (PokeStaffComponent.MODE.valueOf(getMode(stack))) {
                 case SETMOVE -> {
-                    tag2.putString("mode", MODE.SETCMDMODE.name());
-                    if (player.level().isClientSide) {
-                        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.mode.selectcommand"));
-                    }
-                    //CobblemonFightOrFlight.LOGGER.info("sending");
-                }
-                case SEND -> {
-                    tag2.putString("mode", MODE.SETMOVE.name());
                     if (player.level().isClientSide) {
                         player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.mode.selectmoveslot"));
                     }
-                    //CobblemonFightOrFlight.LOGGER.info("SETTING Moves");
                 }
-                case SETCMDMODE -> {
-                    tag2.putString("mode", MODE.SEND.name());
+                case SEND -> {
                     if (player.level().isClientSide) {
                         player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.mode.send"));
+                    }
+                }
+                case SETCMDMODE -> {
+                    if (player.level().isClientSide) {
+                        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.mode.selectcommand"));
                     }
                 }
             }
@@ -100,26 +78,26 @@ public class PokeStaff extends Item {
         }
 
         String mode = getMode(stack);
-        if (MODE.valueOf(tag.getCompound("command").getString("mode")) == MODE.SETMOVE) {
+        if (mode.equals(PokeStaffComponent.MODE.SETMOVE.name())) {
             //CobblemonFightOrFlight.LOGGER.info("SELECTING MOVES");
             int nextMoveSlot = getMoveSlot(stack) + 1;
-            setMoveSlot(stack, nextMoveSlot, player);
-            setCommandMode(stack, CMDMODE.NOCMD.name());
+            setMoveSlot(stack, nextMoveSlot);
+            setCommandMode(stack, PokeStaffComponent.CMDMODE.NOCMD.name());
             if (player.level().isClientSide) {
                 player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.desc2", nextMoveSlot % 4 + 1));
             }
         }
-        if (MODE.valueOf(tag.getCompound("command").getString("mode")) == MODE.SETCMDMODE) {
+        if (mode.equals(PokeStaffComponent.MODE.SETCMDMODE.name())) {
             commandModeSelectNext(stack, getCommandMode(stack));
-            setMoveSlot(stack, -1, player);
+            setMoveSlot(stack, -1);
             if (player.level().isClientSide) {
                 player.sendSystemMessage(getTranslatedCmdModeName(getCommandMode(stack)));
             }
         }
 
-        if (mode.equals(MODE.SEND.name())) {
+        if (mode.equals(PokeStaffComponent.MODE.SEND.name())) {
             //CobblemonFightOrFlight.LOGGER.info("SENDING COMMAND");
-            CMDMODE cmdmode = CMDMODE.valueOf(getCommandMode(stack));
+            PokeStaffComponent.CMDMODE cmdmode = PokeStaffComponent.CMDMODE.valueOf(getCommandMode(stack));
             String cmdData = "";
 
             switch (cmdmode) {
@@ -139,7 +117,7 @@ public class PokeStaff extends Item {
                 }
                 default -> cmdData = "";
             }
-            if (!Objects.equals(getCommandMode(stack), CMDMODE.NOCMD.name())) {
+            if (!Objects.equals(getCommandMode(stack), PokeStaffComponent.CMDMODE.NOCMD.name())) {
                 for (PokemonEntity pokemonEntity : player.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.position(), 8, 8, 8), (pokemonEntity -> Objects.equals(pokemonEntity.getOwner(), player)))) {
                     ((PokemonInterface) (Object) pokemonEntity).setCommand(getCommandMode(stack));
                     ((PokemonInterface) (Object) pokemonEntity).setCommandData(cmdData);
@@ -149,104 +127,71 @@ public class PokeStaff extends Item {
                 }
             }
 
-        }*/
+        }
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        initTag(stack);
         super.inventoryTick(stack, level, entity, slotId, isSelected);
     }
 
     public boolean canSend(ItemStack stack) {
-        /*
-        CompoundTag tag = stack.getOrCreateTag();
-        if (!(tag.contains("command") && stack.is(ItemFightOrFlight.POKESTAFF.get()))) {
-            return false;
-        }
-        return Objects.equals(tag.getCompound("command").getString("mode"), MODE.SEND.name());
-    */
-        return true;
+        return Objects.equals(getMode(stack), PokeStaffComponent.MODE.SEND.name());
     }
 
-
     public void sendMoveSlot(Player player, LivingEntity livingEntity, ItemStack itemStack) {
-        /*
         if (!livingEntity.level().isClientSide && livingEntity instanceof PokemonEntity pokemonEntity) {
             if (pokemonEntity.getOwner() == player) {
                 ItemStack heldItem = pokemonEntity.getPokemon().heldItem();
                 if (heldItem.is(CobblemonItems.CHOICE_SCARF) || heldItem.is(CobblemonItems.CHOICE_BAND) || heldItem.is(CobblemonItems.CHOICE_SPECS)) {
                     return;
                 }
-                CompoundTag tag = itemStack.getOrCreateTag();
-                if (tag.contains("command") && itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
-                    int moveSlot = getMoveSlot(itemStack);
-                    String cmdMode = getCommandMode(itemStack);
-                    if (moveSlot != -1) {
-                        Move move = pokemonEntity.getPokemon().getMoveSet().get(moveSlot);
-                        if (move == null) {
-                            move = pokemonEntity.getPokemon().getMoveSet().get(0);
-                        }
-                        ((PokemonInterface) (Object) pokemonEntity).setCurrentMove(move);
-                        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.send.result.move").append(move.getDisplayName()));
-                        //CobblemonFightOrFlight.LOGGER.info(moveSlot + pokemonEntity.getPokemon().getMoveSet().get(moveSlot).getName());
+                int moveSlot = getMoveSlot(itemStack);
+                String cmdMode = getCommandMode(itemStack);
+                if (moveSlot != -1) {
+                    Move move = pokemonEntity.getPokemon().getMoveSet().get(moveSlot);
+                    if (move == null) {
+                        move = pokemonEntity.getPokemon().getMoveSet().get(0);
                     }
-
-                    ((PokemonInterface) (Object) pokemonEntity).setCommand(cmdMode);
+                    ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.send.result.move").append(move.getDisplayName()));
+                    //CobblemonFightOrFlight.LOGGER.info(moveSlot + pokemonEntity.getPokemon().getMoveSet().get(moveSlot).getName());
                 }
+                ((PokemonInterface) pokemonEntity).setCommand(cmdMode);
             }
         }
-
-         */
-    }
-
-    private void initTag(ItemStack itemStack) {
-        /*
-        CompoundTag tag = itemStack.getOrCreateTag();
-        if (!tag.contains("command")) {
-            CompoundTag tag2 = itemStack.getOrCreateTagElement("command");
-            tag2.putString("mode", MODE.SETMOVE.name());
-            tag2.putInt("move_slot", 0);
-            tag2.putString("command_mode", CMDMODE.NOCMD.name());
-            tag.put("commnad", tag2);
-        }*/
     }
 
     protected String getMode(ItemStack itemStack) {
-        /*
-        CompoundTag tag = itemStack.getOrCreateTag();
-        if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
-            if (tag.contains("command")) {
-                return tag.getCompound("command").getString("mode");
+        if (itemStack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
+            PokeStaffComponent component = itemStack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
+            if (component != null) {
+                return component.mode();//if it has the component it shouldn't be null, I'm not sure.
             }
         }
-
-         */
         return "";
 
     }
 
     public int getMoveSlot(ItemStack itemStack) {
-        /*
-        CompoundTag tag = itemStack.getOrCreateTag();
-        if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
-            if (tag.contains("command")) {
-                return tag.getCompound("command").getInt("move_slot");
+        if (itemStack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
+            PokeStaffComponent component = itemStack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
+            if (component != null) {
+                return component.moveSlot();//if it has the component it shouldn't be null, I'm not sure.
             }
-        }*/
+        }
         return -1;
     }
 
     public String getCommandMode(ItemStack itemStack) {
-        /*
-        CompoundTag tag = itemStack.getOrCreateTag();
-        if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
-            if (tag.contains("command")) {
-                return tag.getCompound("command").getString("command_mode");
+        if (itemStack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
+            PokeStaffComponent component = itemStack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
+            if (component != null) {
+                return component.cmdmode();//if it has the component it shouldn't be null, I'm not sure.
             }
-        }*/
-        return CMDMODE.NOCMD.name();
+        }
+        return PokeStaffComponent.CMDMODE.NOCMD.name();
     }
 
     @Override
@@ -254,32 +199,51 @@ public class PokeStaff extends Item {
         return true;
     }
 
-    protected void setMoveSlot(ItemStack stack, int moveSlot, Player player) {
-        //stack.getOrCreateTag().getCompound("command").putInt("move_slot", moveSlot % 4);
+    protected void setMoveSlot(ItemStack stack, int moveSlot) {
+        if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
+            PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
+            if (component != null) {
+                component.setMoveSlot(moveSlot % 4, stack);//if it has the component it shouldn't be null, I'm not sure.
+            }
+        }
     }
 
     protected void setCommandMode(ItemStack stack, String mode) {
-        //stack.getOrCreateTag().getCompound("command").putString("command_mode", mode);
+        if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
+            PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
+            if (component != null) {
+                component.setCmdmode(mode, stack);//if it has the component it shouldn't be null, I'm not sure.
+            }
+        }
+    }
+
+    protected void setMode(ItemStack stack, String mode) {
+        if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
+            PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
+            if (component != null) {
+                component.setMode(mode, stack);//if it has the component it shouldn't be null, I'm not sure.
+            }
+        }
     }
 
     protected void commandModeSelectNext(ItemStack stack, String mode) {
         String cmd;
-        switch (CMDMODE.valueOf(mode)) {
-            case MOVE_ATTACK -> cmd = CMDMODE.MOVE.name();
-            case MOVE -> cmd = CMDMODE.STAY.name();
-            case STAY -> cmd = CMDMODE.ATTACK.name();
-            case ATTACK -> cmd = CMDMODE.ATTACK_POSITION.name();
-            case ATTACK_POSITION -> cmd = CMDMODE.NOCMD.name();
-            case NOCMD -> cmd = CMDMODE.CLEAR.name();
-            case CLEAR -> cmd = CMDMODE.MOVE_ATTACK.name();
-            default -> cmd = CMDMODE.NOCMD.name();
+        switch (PokeStaffComponent.CMDMODE.valueOf(mode)) {
+            case MOVE_ATTACK -> cmd = PokeStaffComponent.CMDMODE.MOVE.name();
+            case MOVE -> cmd = PokeStaffComponent.CMDMODE.STAY.name();
+            case STAY -> cmd = PokeStaffComponent.CMDMODE.ATTACK.name();
+            case ATTACK -> cmd = PokeStaffComponent.CMDMODE.ATTACK_POSITION.name();
+            case ATTACK_POSITION -> cmd = PokeStaffComponent.CMDMODE.NOCMD.name();
+            case NOCMD -> cmd = PokeStaffComponent.CMDMODE.CLEAR.name();
+            case CLEAR -> cmd = PokeStaffComponent.CMDMODE.MOVE_ATTACK.name();
+            default -> cmd = PokeStaffComponent.CMDMODE.NOCMD.name();
         }
         setCommandMode(stack, cmd);
     }
 
     protected Component getTranslatedCmdModeName(String cmdModeName) {
         Component component;
-        switch (CMDMODE.valueOf(cmdModeName)) {
+        switch (PokeStaffComponent.CMDMODE.valueOf(cmdModeName)) {
             case MOVE_ATTACK -> component = Component.translatable("item.fightorflight.pokestaff.command.move_attack");
             case MOVE -> component = Component.translatable("item.fightorflight.pokestaff.command.move");
             case STAY -> component = Component.translatable("item.fightorflight.pokestaff.command.stay");

@@ -11,6 +11,7 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
@@ -49,16 +50,17 @@ public abstract class MinecraftClientInject {
 
         Pokemon pokemon = CobblemonClient.INSTANCE.getStorage().getMyParty().get(CobblemonClient.INSTANCE.getStorage().getSelectedSlot());
         if (pokemon != null && pokemon.getCurrentHealth() > 0) {
-            var entities = player.clientLevel.getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.getPosition(player.tickCount), 20, 20, 20),
+            var entities = player.clientLevel.getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.getPosition(player.tickCount), 16, 16, 16),
                     (pokemonEntity) -> pokemonEntity.getTarget() == player
             );
             for (PokemonEntity pokemonEntity : entities) {
                 if (pokemonEntity.getOwner() == null && pokemonEntity.canBattle(player)) {
                     BattleChallengePacket packet=new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid(), BattleFormat.Companion.getGEN_9_SINGLES());
-                    packet.sendToServer();
-                    //CobblemonNetwork.INSTANCE.sendToServer(packet);
+                    //packet.sendToServer();
+                    CobblemonNetwork.INSTANCE.sendToServer(packet);
                     //CobblemonFightOrFlight.LOGGER.info("sending battle packet");
-                    //break;
+                    //player.sendSystemMessage(Component.literal("Sending battle packet - message"));
+                    break;
                 } else if (pokemonEntity.getOwner() != player) {
                     if (pokemonEntity.getOwner() instanceof Player) {
                         CobblemonNetwork.INSTANCE.sendToServer(new RequestPlayerInteractionsPacket(pokemonEntity.getUUID(), pokemonEntity.getId(), pokemon.getUuid()));
