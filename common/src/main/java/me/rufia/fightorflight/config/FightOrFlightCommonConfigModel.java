@@ -25,12 +25,16 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean dark_light_level_aggro = true;
     @Comment("Are Ghost types more aggressive at or below light level 7 and less aggressive at or above light level 12")
     public boolean ghost_light_level_aggro = true;
+    @Comment("Forms that will always be aggressive")
+    public String[] always_aggro_aspects = {
+            "alolan"
+    };
     @Comment("Pokemon that will always be aggressive")
     public String[] always_aggro = {
             "mankey",
             "primeape"
     };
-    @Comment("Pokemon that will never be aggressive")
+    @Comment("Pokemon that will never be aggressive, priority over always aggresive species/forms")
     public String[] never_aggro = {
             "slowpoke",
             "pyukumuku"
@@ -39,7 +43,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public String[] provoke_only_aggro = {
 
     };
-    @Comment("Pokemon that will always flee away from the player")
+    @Comment("Pokemon that will always flee away from the player, priority over always aggresive species/forms")
     public String[] always_flee = {
             "wimpod"
     };

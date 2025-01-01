@@ -1,6 +1,7 @@
 package me.rufia.fightorflight;
 
 
+import com.cobblemon.mod.common.api.pokemon.feature.SpeciesFeature;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -28,6 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
@@ -96,12 +100,16 @@ public class CobblemonFightOrFlight {
 
         Pokemon pokemon = pokemonEntity.getPokemon();
         String speciesName = pokemon.getSpecies().getName().toLowerCase();
-        if (SpeciesAlwaysAggro(speciesName)) {
-            return 100;
-        }
+        Set<String> pokemonAspects = pokemon.getAspects();
+
         if (SpeciesNeverAggro(speciesName) || SpeciesAlwaysFlee(speciesName)) {
             return -100;
         }
+
+        if (SpeciesAlwaysAggro(speciesName) || AspectsAlwaysAggro(pokemonAspects)) {
+            return 100;
+        }
+
         float levelMultiplier = CobblemonFightOrFlight.commonConfig().aggression_level_multiplier;
         double pkmnLevel = levelMultiplier * pokemon.getLevel();
         double lowStatPenalty = (pkmnLevel * 1.5) + 30;
@@ -176,6 +184,23 @@ public class CobblemonFightOrFlight {
 
         return finalResult;
     }
+
+    public static boolean AspectsAlwaysAggro(Set<String> pokemonAspects) {
+        // Retrieve the list of always aggressive features from the config
+        String[] alwaysAggroFeatures = CobblemonFightOrFlight.commonConfig().always_aggro_aspects;
+
+        // Convert the array to a Set for faster lookup
+        Set<String> aggroFeatureSet = new HashSet<>(Arrays.asList(alwaysAggroFeatures));
+
+        // Check if any of the pokemon aspects are in the aggroFeatureSet
+        for (String aspect : pokemonAspects) {
+            if (aggroFeatureSet.contains(aspect)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static boolean SpeciesAlwaysAggro(String speciesName) {
         //LogUtils.getLogger().info("Are " + speciesName + " always aggro?");
