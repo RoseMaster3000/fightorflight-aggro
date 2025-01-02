@@ -124,7 +124,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     }
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    protected void defineSynchedData(SynchedEntityData.Builder builder,CallbackInfo callbackInfo) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder, CallbackInfo callbackInfo) {
         builder.define(DATA_ID_ATTACK_TARGET, 0);
         builder.define(ATTACK_TIME, 0);
         builder.define(MOVE, "");
@@ -245,6 +245,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             PokemonAttackEffect.pokemonRecallWithAnimation((PokemonEntity) (Object) this);
             return 0;
         }
+
         Pokemon pokemon = getPokemon();
         float def = Math.max(pokemon.getDefence(), pokemon.getSpecialDefence());
         return amount * (1 - Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
@@ -255,6 +256,13 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private void hurtDamageToPokemon(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (PokemonUtils.isUsingNewHealthMechanic()) {
             PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, amount, false);
+        }
+    }
+
+    @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
+    private void hurtImmune(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (CobblemonFightOrFlight.commonConfig().suffocation_immunity && source.type().equals(damageSources().inWall().type())) {
+            cir.setReturnValue(false);
         }
     }
 

@@ -27,6 +27,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean ghost_light_level_aggro = true;
     @Comment("Pokemon below this map height (y) will always be aggressive")
     public double always_aggro_below = -128;
+    @Comment("Pokemon stops running away if the hp is not full.")
+    public boolean stop_running_after_hurt = true;
     @Comment("Forms that will always be aggressive")
     public String[] always_aggro_aspects = {
             "alolan"
@@ -85,6 +87,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle")
     public boolean can_progress_use_move_evoluiton = true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
+    @Comment("If the Pokemon should be immune to suffocation damage")
+    public boolean suffocation_immunity = true;
     @Comment("The  damage a pokemon would do on hit if it had 0 ATK")
     public float minimum_attack_damage = 1.0f;
     @Comment("The  damage a pokemon would do on hit if it had reached the max stat")

@@ -425,4 +425,11 @@ public class PokemonUtils {
     public static float getAttackRadius() {
         return 16.0f;
     }
+
+    public static boolean shouldStopRunningAfterHurt(PokemonEntity pokemonEntity) {
+        if (CobblemonFightOrFlight.commonConfig().stop_running_after_hurt) {
+            return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth();
+        }
+        return false;
+    }
 }

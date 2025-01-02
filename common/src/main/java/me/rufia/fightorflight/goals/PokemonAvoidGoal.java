@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.mojang.logging.LogUtils;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -49,12 +50,12 @@ public class PokemonAvoidGoal extends Goal {
             return false;
         }
         String species = pokemonEntity.getPokemon().getSpecies().getName().toLowerCase();
-
+        if (PokemonUtils.shouldStopRunningAfterHurt(pokemonEntity)) {
+            return false;
+        }
         if (CobblemonFightOrFlight.SpeciesAlwaysFlee(species)) {
             //These pokemon won't run away from creative mode player,I thought I had to switch it on manually so I spent an hour debugging...
-            this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(Player.class, this.mob.getBoundingBox().inflate((double) this.maxDist, 3.0, (double) this.maxDist), (livingEntity) -> {
-                return true;
-            }), this.avoidEntityTargeting, this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
+            this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(Player.class, this.mob.getBoundingBox().inflate((double) this.maxDist, 3.0, (double) this.maxDist), (livingEntity) -> true), this.avoidEntityTargeting, this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
         } else {
             if (this.mob.getTarget() != null) {
                 if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) {
