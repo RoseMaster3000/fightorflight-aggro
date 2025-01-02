@@ -51,7 +51,9 @@
 * Ball projectiles will cause an explosion when hitting something. Explosion caused by fire type moves will ignite the ground.(I personally doesn't like mob griefing, so I disabled it by default.You need to enable it manually. Sorry about that.)
 * More aggro configurations
 ### Features that is not released currently:
-- Nope. I will be busy for a few days so the development should slow down.
+* Pokemon entity is immune to the suffocation damage.(can be disabled in the config)
+* Pokemon stops running away if the health isn't full(can be disabled in the config).
+- Not much. I will be busy for a few days so the development should slow down.
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Give more special effects to different moves.

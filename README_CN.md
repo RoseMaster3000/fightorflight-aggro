@@ -51,7 +51,9 @@
 * 弹类弹射物会产生一个小爆炸，火系技能的爆炸会点燃地面(我自己不喜欢，默认关掉了，你要在config里手动启用。骚瑞。)
 * 更多敌意相关设定
 ### Features that is not released currently(will be released after I fix the bug):
-- Nope. I will be busy for a few days so the development should slow down.
+* 宝可梦实体免疫窒息伤害。(可以在config禁用)
+* 非满血宝可梦不会尝试逃跑(可以在config禁用).
+- 不多。我最近有点忙所以开发速度会减慢。
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Give more special effects to different moves.
