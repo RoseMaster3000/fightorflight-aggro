@@ -53,6 +53,8 @@
 ### Features that is not released currently:
 * Pokemon entity is immune to the suffocation damage.(can be disabled in the config)
 * Pokemon stops running away if the health isn't full(can be disabled in the config).
+* Fixed the recipe of the items.
+* Added multipliers for player's Pokemon
 - Not much. I will be busy for a few days so the development should slow down.
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)

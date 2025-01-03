@@ -329,7 +329,7 @@ public class PokemonUtils {
 
     public static void entityHpToPokemonHp(PokemonEntity pokemonEntity, float amount, boolean isHealing) {
         Pokemon pokemon = pokemonEntity.getPokemon();
-        if (pokemon.getCurrentHealth() == 0) {
+        if (pokemon.getCurrentHealth() == 0 || pokemonEntity.isBattling()) {
             return;
         }
         float ratio = amount / getMaxHealth(pokemonEntity);

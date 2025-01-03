@@ -12,10 +12,7 @@ import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
-import me.rufia.fightorflight.utils.FOFEVCalculator;
-import me.rufia.fightorflight.utils.FOFExpCalculator;
-import me.rufia.fightorflight.utils.FOFUtils;
-import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
@@ -245,10 +242,10 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             PokemonAttackEffect.pokemonRecallWithAnimation((PokemonEntity) (Object) this);
             return 0;
         }
-
+        PokemonMultipliers pokemonMultipliers = new PokemonMultipliers((PokemonEntity) (Object) this);
         Pokemon pokemon = getPokemon();
         float def = Math.max(pokemon.getDefence(), pokemon.getSpecialDefence());
-        return amount * (1 - Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
+        return amount * (1 - pokemonMultipliers.getMaximumDamageReduction() * Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
         //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
     }
 

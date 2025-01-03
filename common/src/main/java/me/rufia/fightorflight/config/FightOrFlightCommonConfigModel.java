@@ -89,10 +89,14 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Pokemon Damage and Effects")
     @Comment("If the Pokemon should be immune to suffocation damage")
     public boolean suffocation_immunity = true;
-    @Comment("The  damage a pokemon would do on hit if it had 0 ATK")
+    @Comment("The damage a pokemon would do on hit if it had 0 ATK")
     public float minimum_attack_damage = 1.0f;
-    @Comment("The  damage a pokemon would do on hit if it had reached the max stat")
+    @Comment("The multiplier for player's Pokemon for minimum attack damage")
+    public float minimum_attack_damage_player = 1.2f;
+    @Comment("The damage a pokemon would do on hit if it had reached the max stat")
     public float maximum_attack_damage = 10.0f;
+    @Comment("The multiplier for player's Pokemon for maximum attack damage")
+    public float maximum_attack_damage_player = 1.2f;
     @Comment("Attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
     public int maximum_attack_stat = 200;
     @Comment("The movement speed multiplier of a pokemon if the Spe stat of this Pokemon is 0.")
@@ -103,6 +107,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public int speed_stat_limit = 548;
     @Comment("The maximum damage reduction a pokemon can get from its defense/special defense(uses the highest one)")
     public float max_damage_reduction_multiplier = 0.4f;
+    @Comment("The multiplier for player's Pokemon for maximum damage reduction")
+    public float max_damage_reduction_multiplier_player = 1.2f;
     @Comment("The highest defense stat needed to get the highest damage reduction.")
     public int defense_stat_limit = 161;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
@@ -118,8 +124,12 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float maximum_ranged_attack_interval = 3.0f;
     @Comment("The amount of damage a pokemon would do on contact if it had 0 Sp.ATK.")
     public float minimum_ranged_attack_damage = 1.0f;
+    @Comment("The multiplier for player's Pokemon for minimum range attack damage")
+    public float minimum_ranged_attack_damage_player = 1.2f;
     @Comment("The amount of damage a pokemon would do on contact if it had reached the max stat")
     public float maximum_ranged_attack_damage = 10.0f;
+    @Comment("The multiplier for player's Pokemon for maximum range attack damage")
+    public float maximum_ranged_attack_damage_player = 1.2f;
     @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
     public int maximum_special_attack_stat = 200;
     @ConfigEntry.Category("Pokemon Damage Multiplier(misc),These modifiers doesn't stack currently")

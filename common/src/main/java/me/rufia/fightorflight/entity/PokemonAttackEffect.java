@@ -13,6 +13,7 @@ import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import me.rufia.fightorflight.entity.projectile.PokemonArrow;
 import me.rufia.fightorflight.entity.projectile.PokemonBullet;
 import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
+import me.rufia.fightorflight.utils.PokemonMultipliers;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
@@ -100,10 +101,11 @@ public class PokemonAttackEffect {
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial, float movePower, ElementalType type) {
         int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         int maxStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
+        PokemonMultipliers multipliers=new PokemonMultipliers(pokemonEntity);
         float attackModifier = (float) Math.min(attack, maxStat) / maxStat;
         float moveModifier = movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
-        float minDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().minimum_attack_damage;
-        float maxDmg = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_damage : CobblemonFightOrFlight.commonConfig().maximum_attack_damage;
+        float minDmg = isSpecial ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
+        float maxDmg = isSpecial ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
         float sheerForceMultiplier = PokemonUtils.isSheerForce(pokemonEntity) ? 1.3f : 1.0f;
         float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier;
         //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
