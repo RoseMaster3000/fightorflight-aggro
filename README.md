@@ -1,4 +1,6 @@
 ## Untested on server. Use at your own risk.
+ This version is no longer server-side only. I added new items and entities to support some features. I heard that someone is developing a server-side version in the Cobblemon discord. Please wait for that if you can't accept adding this to your server. I'm just too busy to solve this problem. Sorry.  
+Though I haven't made contact with them, I don't mind they use my code if necessary.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
 ### Features included in v0.7.1:
@@ -50,11 +52,13 @@
 * Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more at the early game.
 * Ball projectiles will cause an explosion when hitting something. Explosion caused by fire type moves will ignite the ground.(I personally doesn't like mob griefing, so I disabled it by default.You need to enable it manually. Sorry about that.)
 * More aggro configurations
-### Features that is not released currently:
+### Features/Changes that is not released currently:
 * Pokemon entity is immune to the suffocation damage.(can be disabled in the config)
 * Pokemon stops running away if the health isn't full(can be disabled in the config).
 * Fixed the recipe of the items.
 * Added multipliers for player's Pokemon
+* Added a new config to disable the health sync for wild pokemon(the health sync for wild pokemon will disabled by default)
+* Bug fixes.
 - Not much. I will be busy for a few days so the development should slow down.
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
