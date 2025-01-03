@@ -4,7 +4,6 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
-import me.shedaniel.cloth.clothconfig.shadowed.com.moandjiezana.toml;
 
 @Config(name = "fightorflight")
 public class FightOrFlightCommonConfigModel implements ConfigData {
