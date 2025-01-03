@@ -146,6 +146,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Health Calculation & Synchronization")
     @Comment("If the original updateMaxHealth() will be replaced by my version. This version uses the hp stat instead of the base hp stat.The following configurations needs this one to work.")
     public boolean shouldOverrideUpdateMaxHealth = true;
+    @Comment("If health sync will work on the wild pokemon")
+    public boolean health_sync_for_wild_pokemon = true;
     @Comment("The minimum hp of a pokemon entity,shedinja is set to 1.0 and can't be changed.")
     public int min_HP = 8;
     @Comment("The medium hp value of a pokemon entity,the medium value is designed to allow you to better tweak the growth of HP value for the entity")
