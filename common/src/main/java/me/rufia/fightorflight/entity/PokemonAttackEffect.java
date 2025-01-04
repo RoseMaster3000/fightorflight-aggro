@@ -15,6 +15,7 @@ import me.rufia.fightorflight.entity.projectile.PokemonBullet;
 import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
 import me.rufia.fightorflight.utils.PokemonMultipliers;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -101,7 +102,7 @@ public class PokemonAttackEffect {
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial, float movePower, ElementalType type) {
         int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         int maxStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
-        PokemonMultipliers multipliers=new PokemonMultipliers(pokemonEntity);
+        PokemonMultipliers multipliers = new PokemonMultipliers(pokemonEntity);
         float attackModifier = (float) Math.min(attack, maxStat) / maxStat;
         float moveModifier = movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
         float minDmg = isSpecial ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
@@ -178,7 +179,6 @@ public class PokemonAttackEffect {
     }
 
     public static float getHeldItemDmgMultiplier(PokemonEntity pokemonEntity, Entity target) {
-        //TODO W.I.P.
         //Variables that might be needed.
         ItemStack heldItem = PokemonUtils.getHeldItem(pokemonEntity);
         Move move = PokemonUtils.getMove(pokemonEntity);
@@ -509,9 +509,13 @@ public class PokemonAttackEffect {
 
     public static void pokemonExplode(PokemonEntity entity, Level level, boolean isSpecial) {
         if (!level.isClientSide) {
-            Pokemon pokemon = entity.getPokemon();
-            int power = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
-            level.explode(entity, level.damageSources().mobAttack(entity), null, entity.getX(), entity.getY(), entity.getZ(), getAoERadius(power) + 1, false, Level.ExplosionInteraction.MOB);
+            FOFExplosion explosion = FOFExplosion.createExplosion(entity, entity, entity.getX(), entity.getY(), entity.getZ(), true, false);
+            if (explosion != null) {
+                explosion.explode();
+                explosion.finalizeExplosion();
+            } else {
+                CobblemonFightOrFlight.LOGGER.warn("Failed to create the explosion");
+            }
         }
     }
 
@@ -521,6 +525,7 @@ public class PokemonAttackEffect {
         }
         Move move = isSpecial ? PokemonUtils.getRangeAttackMove(pokemonEntity) : PokemonUtils.getMeleeMove(pokemonEntity);
         if (move == null) {
+            CobblemonFightOrFlight.LOGGER.warn("No move for aoe.");
             return;
         }
         double radius = getAoERadius(pokemonEntity, move);
@@ -556,6 +561,8 @@ public class PokemonAttackEffect {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
                 dealAoEDamage(pokemonEntity, centerEntity, PokemonUtils.isSpecialMove(move), shouldHurtAlly);
+            } else {
+                CobblemonFightOrFlight.LOGGER.warn("Failed to get move for aoe damage");
             }
         }
 
@@ -593,7 +600,7 @@ public class PokemonAttackEffect {
         boolean isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
         int stat = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
         int requiredStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
-        return Math.min(Mth.lerp((float) stat / requiredStat, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);
+        return Math.min(Mth.lerp(((float) stat) / requiredStat, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);
     }
 
     public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {

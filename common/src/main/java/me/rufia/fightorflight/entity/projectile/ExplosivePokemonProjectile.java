@@ -43,7 +43,7 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
         if (owner == null) {
             return;
         }
-        FOFExplosion explosion = FOFExplosion.createExplosion(this, owner, getX(), getY(), getZ(), true);
+        FOFExplosion explosion = FOFExplosion.createExplosion(this, owner, getX(), getY(), getZ(), true,true);
         if (explosion != null) {
             explosion.explode();
             explosion.finalizeExplosion();

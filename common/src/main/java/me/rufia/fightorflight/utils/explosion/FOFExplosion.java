@@ -61,14 +61,14 @@ public class FOFExplosion extends Explosion {
     protected final ObjectArrayList<BlockPos> toBlow;
     protected final Map<Player, Vec3> hitPlayers;
 
-    public FOFExplosion(Level level, @Nullable Entity source, PokemonEntity pokemon, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double toBlowX, double toBlowY, double toBlowZ, float radius, boolean fire, Explosion.BlockInteraction blockInteraction, boolean shouldHurtAlly) {
-        super(level, source, damageSource, damageCalculator, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction,null,null,SoundEvents.GENERIC_EXPLODE);
+    public FOFExplosion(Level level, @Nullable Entity source, PokemonEntity pokemon, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double toBlowX, double toBlowY, double toBlowZ, float radius, boolean fire, Explosion.BlockInteraction blockInteraction, boolean shouldHurtAlly, boolean isProjectileExplosion) {
+        super(level, source, damageSource, damageCalculator, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction, null, null, SoundEvents.GENERIC_EXPLODE);
         this.random = RandomSource.create();
         this.toBlow = new ObjectArrayList<>();
         this.hitPlayers = Maps.newHashMap();
         this.level = level;
         this.source = source;
-        this.radius = radius;
+        this.radius = radius * pokemonExplosionMultiplier(isProjectileExplosion);
         this.x = toBlowX;
         this.y = toBlowY;
         this.z = toBlowZ;
@@ -122,7 +122,7 @@ public class FOFExplosion extends Explosion {
 
                             Optional<Float> optional = getBlockExplosionResistance(blockState, fluidState);
                             if (optional.isPresent()) {
-                                h -= ((Float) optional.get() + 0.3F) * 0.3F;
+                                h -= (optional.get() + 0.3F) * 0.3F;
                                 //CobblemonFightOrFlight.LOGGER.info(Float.toString(h));
                             }
 
@@ -130,9 +130,9 @@ public class FOFExplosion extends Explosion {
                                 set.add(blockPos);
                             }
 
-                            m += d * 0.30000001192092896;
-                            n += e * 0.30000001192092896;
-                            o += f * 0.30000001192092896;
+                            m += d * 0.3;
+                            n += e * 0.3;
+                            o += f * 0.3;
                         }
                     }
                 }
@@ -145,12 +145,12 @@ public class FOFExplosion extends Explosion {
 
     public void finalizeExplosion() {
         if (this.level.isClientSide) {
-            this.level.playLocalSound(this.x, this.y, this.z, this.getExplosionSound().value(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
+            this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
         }
-
+        //CobblemonFightOrFlight.LOGGER.info("Explosion finalizing");
         boolean bl = this.interactsWithBlocks();
 
-        if (!(this.radius < 2.0F) && bl) {
+        if (!(this.radius < 2.0F)) {
             this.level.addParticle(ParticleTypes.EXPLOSION_EMITTER, this.x, this.y, this.z, 1.0, 0.0, 0.0);
         } else {
             this.level.addParticle(ParticleTypes.EXPLOSION, this.x, this.y, this.z, 1.0, 0.0, 0.0);
@@ -223,31 +223,34 @@ public class FOFExplosion extends Explosion {
         dropPositionArray.add(Pair.of(stack, pos));
     }
 
-    public static FOFExplosion createExplosion(Entity source, PokemonEntity pokemonEntity, double x, double y, double z, boolean shouldHurtAlly) {
+    public static FOFExplosion createExplosion(Entity source, PokemonEntity pokemonEntity, double x, double y, double z, boolean shouldHurtAlly, boolean isProjectileExplosion) {
         if (pokemonEntity == null) {
             CobblemonFightOrFlight.LOGGER.warn("trying to create a new FOFExplosion without PokemonEntity");
             return null;
         }
-        boolean isSpecial = true;
-        float radius = calculateRadius(pokemonEntity, isSpecial);
+        float radius = calculateRadius(pokemonEntity);
         ElementalType type1 = pokemonEntity.getPokemon().getPrimaryType();
         ElementalType type2 = pokemonEntity.getPokemon().getSecondaryType();
         boolean shouldCreateFire = CobblemonFightOrFlight.moveConfig().should_create_fire && (type1.equals(ElementalTypes.INSTANCE.getFIRE()) || (type2 != null && type2.equals(ElementalTypes.INSTANCE.getFIRE())));
         BlockInteraction blockInteraction1;
         if (CobblemonFightOrFlight.moveConfig().pokemon_griefing) {
             blockInteraction1 = BlockInteraction.DESTROY_WITH_DECAY;
+            CobblemonFightOrFlight.LOGGER.info("will destroy blocks");
         } else {
             blockInteraction1 = BlockInteraction.KEEP;
         }
-        return new FOFExplosion(source.level(), source, pokemonEntity, source.damageSources().mobAttack(pokemonEntity), null, x, y, z, radius, shouldCreateFire, blockInteraction1, shouldHurtAlly);
+        return new FOFExplosion(source.level(), source, pokemonEntity, source.damageSources().mobAttack(pokemonEntity), null, x, y, z, radius, shouldCreateFire, blockInteraction1, shouldHurtAlly, isProjectileExplosion);
     }
 
-    protected static float calculateRadius(PokemonEntity pokemonEntity, boolean isSpecial) {
-        Move move = isSpecial ? PokemonUtils.getRangeAttackMove(pokemonEntity) : PokemonUtils.getMeleeMove(pokemonEntity);
+    protected static float calculateRadius(PokemonEntity pokemonEntity) {
+        Move move = PokemonUtils.shouldShoot(pokemonEntity) ? PokemonUtils.getRangeAttackMove(pokemonEntity) : PokemonUtils.getMeleeMove(pokemonEntity);
         if (move == null) {
             return 0.0f;
         }
         return PokemonAttackEffect.getAoERadius(pokemonEntity, move);
     }
 
+    protected float pokemonExplosionMultiplier(boolean isProjectileExplosion) {
+        return (isProjectileExplosion ? 1.0f : 2.0f);
+    }
 }

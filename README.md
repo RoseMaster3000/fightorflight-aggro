@@ -71,7 +71,6 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
-- The explosion damage calculation might not follow the damage categories.
 ### Known issues for 1.21.1 version(not released yet)
 - I'm not sure why the battle does not start when using the key bind I added.
 ## How to use the Poke Staff
