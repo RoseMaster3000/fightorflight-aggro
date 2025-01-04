@@ -14,6 +14,8 @@ import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -68,7 +70,7 @@ public class FOFExplosion extends Explosion {
         this.hitPlayers = Maps.newHashMap();
         this.level = level;
         this.source = source;
-        this.radius = radius * pokemonExplosionMultiplier(isProjectileExplosion);
+        this.radius = radius + pokemonExplosionBaseValue(isProjectileExplosion);
         this.x = toBlowX;
         this.y = toBlowY;
         this.z = toBlowZ;
@@ -150,11 +152,20 @@ public class FOFExplosion extends Explosion {
         //CobblemonFightOrFlight.LOGGER.info("Explosion finalizing");
         boolean bl = this.interactsWithBlocks();
 
+        ParticleOptions particleType;
         if (!(this.radius < 2.0F)) {
-            this.level.addParticle(ParticleTypes.EXPLOSION_EMITTER, this.x, this.y, this.z, 1.0, 0.0, 0.0);
+            particleType = ParticleTypes.EXPLOSION_EMITTER;
         } else {
-            this.level.addParticle(ParticleTypes.EXPLOSION, this.x, this.y, this.z, 1.0, 0.0, 0.0);
-        }//replace it with type-specific particle
+            particleType = ParticleTypes.EXPLOSION;
+        }
+        if (level.isClientSide) {
+            this.level.addParticle(particleType, this.x, this.y, this.z, 1.0, 0.0, 0.0);
+        } else {
+            if (this.level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(particleType, this.x, this.y, this.z, 1, 1.0, 0.0, 0.0,1.0f);
+            }
+        }
+        //replace it with type-specific particle
 
         if (bl) {
             ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList = new ObjectArrayList<>();
@@ -250,7 +261,7 @@ public class FOFExplosion extends Explosion {
         return PokemonAttackEffect.getAoERadius(pokemonEntity, move);
     }
 
-    protected float pokemonExplosionMultiplier(boolean isProjectileExplosion) {
-        return (isProjectileExplosion ? 1.0f : 2.0f);
+    protected float pokemonExplosionBaseValue(boolean isProjectileExplosion) {
+        return (isProjectileExplosion ? 0.0f : 5.0f);
     }
 }

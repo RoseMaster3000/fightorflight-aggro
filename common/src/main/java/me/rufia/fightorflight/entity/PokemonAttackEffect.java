@@ -519,7 +519,7 @@ public class PokemonAttackEffect {
         }
     }
 
-    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean isSpecial, boolean shouldHurtAlly) {
+    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean isSpecial, boolean shouldHurtAlly, boolean decreaseOverDistance) {
         if (pokemonEntity == null) {
             return;
         }
@@ -543,7 +543,19 @@ public class PokemonAttackEffect {
             if (livingEntity == pokemonEntity || !shouldHurtAlly && livingEntity instanceof TamableAnimal animal && animal.getOwner().equals(pokemonEntity.getOwner())) {
                 continue;
             }
-            float dmgMultiplier = CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;
+            float dmgMultiplier;
+            if (decreaseOverDistance) {
+                float distance = centerEntity.distanceTo(livingEntity);
+                if (distance < CobblemonFightOrFlight.moveConfig().min_AoE_radius) {
+                    dmgMultiplier = 1.0f;
+                }else {
+                    //TODO unfinished
+                    dmgMultiplier=CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;//Will be replaced when I have enough free time
+                }
+
+            } else {
+                dmgMultiplier = CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;
+            }
 
             //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
             boolean bl = livingEntity.hurt(centerEntity.damageSources().mobAttack(pokemonEntity), calculatePokemonDamage(pokemonEntity, livingEntity, move) * dmgMultiplier);
@@ -554,6 +566,10 @@ public class PokemonAttackEffect {
                 makeTypeEffectParticle(10, livingEntity, move.getType().getName());
             }
         }
+    }
+
+    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean isSpecial, boolean shouldHurtAlly) {
+        dealAoEDamage(pokemonEntity, centerEntity, isSpecial, shouldHurtAlly, false);
     }
 
     public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean shouldHurtAlly) {

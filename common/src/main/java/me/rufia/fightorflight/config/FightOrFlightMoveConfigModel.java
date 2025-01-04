@@ -177,7 +177,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     @Comment("Moves that start an explode")
     public String[] explosive_moves = {
-            "self-destruct",
+            "selfdestruct",
             "explosion",
             "mindblown",
             "mistyexplosion"
