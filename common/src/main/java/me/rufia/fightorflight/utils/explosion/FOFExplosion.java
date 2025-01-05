@@ -148,6 +148,8 @@ public class FOFExplosion extends Explosion {
     public void finalizeExplosion() {
         if (this.level.isClientSide) {
             this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
+        }else{
+            this.level.playSound(null,x,y,z,SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS,4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F);
         }
         //CobblemonFightOrFlight.LOGGER.info("Explosion finalizing");
         boolean bl = this.interactsWithBlocks();
