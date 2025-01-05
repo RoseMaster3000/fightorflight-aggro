@@ -89,6 +89,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Pokemon Damage and Effects")
     @Comment("Pokemons should be immune to suffocation damage? (cant die to wall damage, like when sand drops into them)")
     public boolean suffocation_immunity = true;
+    @Comment("Should player-owned pokemons be immune to damage from players?)")
+    public boolean pvp_immunity = true;
     @Comment("The damage wild pokemon would do on hit if it had 0 ATK")
     public float minimum_attack_damage = 1.0f;
     @Comment("The damage wild pokemon would do on hit if it had reached the max stat")

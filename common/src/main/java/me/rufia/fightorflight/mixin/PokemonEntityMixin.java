@@ -263,6 +263,13 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
     }
 
+    @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
+    private void hurtImmunepPvP(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (CobblemonFightOrFlight.commonConfig().pvp_immunity && source.getEntity() instanceof Player && this.getPokemon().getOwnerPlayer() != null) {
+            cir.setReturnValue(false);
+        }
+    }
+
     @Override
     public void heal(float healAmount) {
         if (PokemonUtils.isUsingNewHealthMechanic()) {
