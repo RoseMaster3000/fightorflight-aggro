@@ -3,7 +3,7 @@
 Though I haven't made contact with them, I don't mind they use my code if necessary.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in v0.7.1:
+### Features included in v0.7.2:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -52,16 +52,16 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 * Balance change: increase the maximum damage and increased the stat requirement slightly to encourage to player to try damage-enhancing items more at the early game.
 * Ball projectiles will cause an explosion when hitting something. Explosion caused by fire type moves will ignite the ground.(I personally doesn't like mob griefing, so I disabled it by default.You need to enable it manually. Sorry about that.)
 * More aggro configurations
-### Features/Changes that is not released currently:
 * Pokemon entity is immune to the suffocation damage.(can be disabled in the config)
 * Pokemon stops running away if the health isn't full(can be disabled in the config).
-* Fixed the recipe of the items.
 * Added multipliers for player's Pokemon
 * Added a new config to disable the health sync for wild pokemon(the health sync for wild pokemon will disabled by default)
-* Bug fixes.
+
+### Features/Changes that is not released currently:
 - Not much. I will be busy for a few days so the development should slow down.
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
+- Friendly fire config.
 - Give more special effects to different moves.
 - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
 - Special effect for abilities like aftermath,bulletproof,soundproof,etc.

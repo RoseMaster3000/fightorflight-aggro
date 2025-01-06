@@ -72,11 +72,11 @@ public class CobblemonFightOrFlight {
         float fleeSpeed = 1.3f * speedMultiplier;
         float pursuitSpeed = 1.2f * speedMultiplier;
 
-        goalAdder.accept(pokemonEntity,3,new PokemonGoToPosGoal(pokemonEntity,pursuitSpeed));
+        goalAdder.accept(pokemonEntity, 3, new PokemonGoToPosGoal(pokemonEntity, pursuitSpeed));
         goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
         goalAdder.accept(pokemonEntity, 3, new PokemonRangedAttackGoal(pokemonEntity, pursuitSpeed, PokemonUtils.getAttackRadius()));
         //goalAdder.accept(pokemonEntity,3,new PokemonPassiveAbilityGoal(pokemonEntity));
-        goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, PokemonUtils.getAttackRadius()*3, 1.0f, fleeSpeed));
+        goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, PokemonUtils.getAttackRadius() * 3, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
 
         goalAdder.accept(pokemonEntity, 1, new PokemonCommandedTargetGoal<>(pokemonEntity, LivingEntity.class, false));
@@ -85,7 +85,7 @@ public class CobblemonFightOrFlight {
         goalAdder.accept(pokemonEntity, 3, new PokemonTauntedTargetGoal<>(pokemonEntity, PokemonEntity.class, false));
         goalAdder.accept(pokemonEntity, 4, new HurtByTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 5, new CaughtByTargetGoal(pokemonEntity));
-        goalAdder.accept(pokemonEntity, 6, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius()*3, true, true));
+        goalAdder.accept(pokemonEntity, 6, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
         goalAdder.accept(pokemonEntity, 6, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(arg instanceof Creeper)));
 
     }
@@ -113,39 +113,21 @@ public class CobblemonFightOrFlight {
         double lowStatPenalty = (pkmnLevel * 1.5) + 30;
         double levelAggressionCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - lowStatPenalty;
         double atkDefRatioCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - (pokemon.getDefence() + pokemon.getSpecialDefence());
-        double natureAggressionCoefficient = 0;
+        double natureAggressionCoefficient;
         double darknessAggressionCoefficient = 0;
         double intimidateCoefficient = 0;
-        switch (pokemon.getNature().getDisplayName().toLowerCase()) {
-            case "cobblemon.nature.docile":
-            case "cobblemon.nature.timid":
-            case "cobblemon.nature.gentle":
-            case "cobblemon.nature.careful":
-                natureAggressionCoefficient = -2;
-                break;
-            case "cobblemon.nature.relaxed":
-            case "cobblemon.nature.lax":
-            case "cobblemon.nature.quiet":
-            case "cobblemon.nature.bashful":
-            case "cobblemon.nature.calm":
-                natureAggressionCoefficient = -1;
-                break;
-            case "cobblemon.nature.sassy":
-            case "cobblemon.nature.hardy":
-            case "cobblemon.nature.bold":
-            case "cobblemon.nature.impish":
-            case "cobblemon.nature.hasty":
-                natureAggressionCoefficient = 1;
-                break;
-            case "cobblemon.nature.brave":
-            case "cobblemon.nature.rash":
-            case "cobblemon.nature.adamant":
-            case "cobblemon.nature.naughty":
-                natureAggressionCoefficient = 2;
-                break;
-            default:
-                natureAggressionCoefficient = 0;
-                break;
+        String natureName = pokemon.getNature().getDisplayName().toLowerCase().replace("cobblemon.nature.", "");
+
+        if (Arrays.stream(CobblemonFightOrFlight.commonConfig().more_aggressive_nature).toList().contains(natureName)) {
+            natureAggressionCoefficient = CobblemonFightOrFlight.commonConfig().more_aggressive_nature_multiplier;
+        } else if (Arrays.stream(CobblemonFightOrFlight.commonConfig().aggressive_nature).toList().contains(natureName)) {
+            natureAggressionCoefficient = CobblemonFightOrFlight.commonConfig().aggressive_nature_multiplier;
+        } else if (Arrays.stream(CobblemonFightOrFlight.commonConfig().peaceful_nature).toList().contains(natureName)) {
+            natureAggressionCoefficient = CobblemonFightOrFlight.commonConfig().peaceful_nature_multiplier;
+        } else if (Arrays.stream(CobblemonFightOrFlight.commonConfig().more_peaceful_nature).toList().contains(natureName)) {
+            natureAggressionCoefficient = CobblemonFightOrFlight.commonConfig().more_peaceful_nature_multiplier;
+        } else {
+            natureAggressionCoefficient = 0;
         }
 
         var pokemons = pokemonEntity.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(pokemonEntity.position(), 18, 18, 18), (pokemonEntity1) -> pokemonEntity1.getOwner() != null && Arrays.stream(CobblemonFightOrFlight.commonConfig().aggro_reducing_abilities).toList().contains(pokemonEntity1.getPokemon().getAbility().getName()));
@@ -176,7 +158,7 @@ public class CobblemonFightOrFlight {
 
         //Weights and Clamps:
         levelAggressionCoefficient = Math.max(-(pkmnLevel + 5), Math.min(pkmnLevel, 1.5d * levelAggressionCoefficient));//5.0d * levelAggressionCoefficient;
-        atkDefRatioCoefficient = Math.max(-pkmnLevel, 1.0d * atkDefRatioCoefficient);
+        atkDefRatioCoefficient = Math.max(-pkmnLevel, atkDefRatioCoefficient);
         natureAggressionCoefficient = (pkmnLevel * 0.5) * natureAggressionCoefficient;//25.0d * natureAggressionCoefficient;
         double finalResult = levelAggressionCoefficient + atkDefRatioCoefficient + natureAggressionCoefficient + darknessAggressionCoefficient + intimidateCoefficient;
 
