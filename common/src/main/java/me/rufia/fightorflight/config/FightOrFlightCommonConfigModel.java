@@ -29,21 +29,21 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public double always_aggro_below = -128;
     @Comment("Pokemon stops running away if the hp is not full.")
     public boolean stop_running_after_hurt = true;
-    @Comment("Pokemon with these natures are slightly easier to be aggressive.")
+    @Comment("Pokemon with these natures are slightly more aggressive.")
     public String[] aggressive_nature = {"sassy", "hardy", "bold", "impish", "hasty"};
-    @Comment("The aggression multiplier of the aggressive natures.")
+    @Comment("The aggression multiplier for natures above.")
     public float aggressive_nature_multiplier = 1;
-    @Comment("Pokemon with these natures are easier to be aggressive.")
+    @Comment("Pokemon with these natures are much more aggressive.")
     public String[] more_aggressive_nature = {"brave", "rash", "adamant", "naughty"};
-    @Comment("The aggression multiplier of the aggressive natures.")
+    @Comment("The aggression multiplier for natures above.")
     public float more_aggressive_nature_multiplier = 2f;
-    @Comment("Pokemon with these natures are slightly easier to be peaceful.")
+    @Comment("Pokemon with these natures are slightly more peaceful.")
     public String[] peaceful_nature = {"relaxed", "lax", "quiet", "bashful", "calm"};
-    @Comment("The aggression multiplier of the aggressive natures.")
+    @Comment("The aggression multiplier for natures above.")
     public float peaceful_nature_multiplier = -1;
-    @Comment("Pokemon with these natures are easier to be peaceful.")
+    @Comment("Pokemon with these natures are much more peaceful.")
     public String[] more_peaceful_nature = {"docile", "timid", "gentle", "careful"};
-    @Comment("The aggression multiplier of the aggressive natures.")
+    @Comment("The aggression multiplier for natures above.")
     public float more_peaceful_nature_multiplier = -2f;
 
     @Comment("Forms that will always be aggressive")
