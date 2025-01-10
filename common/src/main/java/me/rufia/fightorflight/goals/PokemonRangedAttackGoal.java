@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class PokemonRangedAttackGoal extends PokemonAttackGoal{
+public class PokemonRangedAttackGoal extends PokemonAttackGoal {
     public int ticksUntilNewAngerParticle = 0;
 
     public int ticksUntilNewAngerCry = 0;
@@ -74,7 +74,10 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal{
     }
 
     public boolean canContinueToUse() {
-        return this.canUse() || this.target.isAlive() && !this.pokemonEntity.getNavigation().isDone();
+        if (target == null) {
+            return false;
+        }
+        return (this.canUse() || !this.pokemonEntity.getNavigation().isDone()) && !isTargetInBattle();
     }
 
     public void stop() {
@@ -174,7 +177,7 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal{
     }
 
     @Override
-    protected PokemonEntity getPokemonEntity(){
+    protected PokemonEntity getPokemonEntity() {
         return pokemonEntity;
     }
 
