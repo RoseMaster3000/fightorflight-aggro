@@ -1,8 +1,10 @@
 ## 没有在服务端经过测试，请自行承担可能的风险
+这个版本添加了新实体和物品，不再是仅服务端的mod。我听说有人在Cobblemon的discord频道里面写仅服务端的版本，如果你无法接受客户端和服务端都需要安装那可以等他们做好。我没有什么时间和办法处理这件事，抱歉。
 ### 施工中
 ### 需要[Architectury](https://modrinth.com/mod/architectury-api) !!!
 ## 自 0.5.3 （原mod最后一个版本） 之后的特性/改动
-### v0.7.1 已经实现的特性/改动:
+自己录的一个简单的演示视频：https://www.bilibili.com/video/BV1yac2ehEEH
+### v0.7.2 已经实现的特性/改动:
 - **关闭野生宝可梦主动攻击** 我个人不喜欢这个特性，宝可梦无时无刻不在刷，尽管不是所有宝可梦都会主动攻击，但是当主动攻击开启时你很容易就会获得在朱/紫被肯泰罗群殴的糟糕的游戏体验。 当然你要想开可以在config中打开
 - **更低的最高伤害值:** 我看到有人在curseforge页面上说宝可梦伤害太高了，所以我把最高伤害的默认值调低了。作为补偿，达到最高伤害所需的能力值也被调低了。你也可以使用config进一步调整
 - **可配置的敌意:** 加了一个系数来影响等级在仇恨计算里的影响.
@@ -23,14 +25,14 @@
 - - 特攻的接触类技能是近战攻击。伤害结算使用特攻。(举个栗子，吸取之吻) 
 - - 大部分物理弹类技能使用投射物而不是近战，伤害结算使用物攻(冰球和磁力炸弹都是球和弹类招式。但根据技能效果来看我不认为它需要射什么物体，但磁力炸弹确实射了个炸弹。所以冰球默认并没有射投射物的设定)
 - **被宝可梦击杀的生物掉落物与被驯服的狼击杀类似（即可以爆经验等）**
-- Your pokemon can gain experience and ev by killing pokemon without starting a pokemon battle(needs to be **the last mob** that deals the damage,can be disabled in the config)
-- Your pokemon can evolve by using the move to hit other mobs instead of starting a Pokemon Battle(e.g. Primeape needs to use Rage Fist 20 times to evolve,now you can do it without a traditional Pokemon Battle)(Configurable).
-- Adds the Oran Lucky Egg(held item) to gain more experience from pokemon killed by your pokemon,right-click your pokemon while sneaking to give the item to the pokemon.(**The Oran Lucky Egg won't give you extra xp from any other ways!**)
+- 你的宝可梦可以在战斗外击杀宝可梦获取经验和努力值(只有**最后一个造成伤害的**宝可梦才有经验，可以在config禁用)
+- 使用招式一定次数进化的宝可梦可以在战斗外使用来进化(比如：火暴猴使用20次愤怒之拳进化，你可以通过攻击非宝可梦实体进化)(可以在config关闭).
+- 加入橙橙幸运蛋（携带物品）来让你的宝可梦从被战斗外击败的宝可梦获取更多经验，潜行右键来给予携带物(**橙橙幸运蛋不会提升其他渠道的经验！**)
 - **动画支持** 支持Cobblemon的技能动画(这些动画不是为了这个mod设计的，看着怪很正常)
 - 你的宝可梦可以嘲讽攻击你的宝可梦(玩家的宝可梦不吃嘲讽)
 - - 需要特殊技能(挑衅,看我嘛,愤怒粉,无理取闹) (可以在config禁用)
-- Pokemon with higher defense stat can lower the damage it take.(configurable)
-- A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you.（not working currently)
+- 防御能力值有一定减伤效果(可以配置)
+- 加的快捷键1.21.1用不了了，目前不知道怎么修
 - 部分特性（威吓，压迫感，紧张感）会降低野生宝可梦敌意。
 - 具甲武者一家血量在一半以下时受到伤害会免疫这次伤害并被收回。
 * 地震等aoe在击中目标时会伤害附近的实体.(会导致特殊攻击变成近战)
@@ -50,10 +52,15 @@
 * 不同于主系列，强行会增强所有招式，但不会再有附加状态效果等特效（比如火系技能不会再让生物着火。
 * 弹类弹射物会产生一个小爆炸，火系技能的爆炸会点燃地面(我自己不喜欢，默认关掉了，你要在config里手动启用。骚瑞。)
 * 更多敌意相关设定
-### Features that is not released currently(will be released after I fix the bug):
 * 宝可梦实体免疫窒息伤害。(可以在config禁用)
 * 非满血宝可梦不会尝试逃跑(可以在config禁用).
-- 不多。我最近有点忙所以开发速度会减慢。
+* 给玩家宝可梦添加额外伤害和防御系数
+* 加入config设置来禁用野生宝可梦血量同步(野生宝可梦血量同步将默认关闭)
+
+### Features that is not released currently:
+- 友伤设置
+- 性格的敌意系数设置.(性格对敌意的影响之前是写死的)
+
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Give more special effects to different moves.
@@ -65,7 +72,6 @@
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
 ## Known Issues
 - 电球这类需要双方能力值计算的技能威力无法正常计算(我目前还不确认怎么处理对非宝可梦实体使用这些招式的伤害计算所以直接一刀切了)
-- 爆炸伤害的计算可能没有按照招式类型计算
 ### Known issues for 1.21.1 version(not released yet)
 - 我原本加的快捷键不管用，目前尚未弄清楚原因。
 ## 如何使用宝可杖

@@ -45,7 +45,6 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 * * Use a mixin to replace the original max health calculation function,set shouldOverrideUpdateMaxHealth in config/fightorflight.json5 to false to disable it if you don't like the changes I made.
 * * The hp of the pokemon entity is no longer decided by the base stat,it is decided by the hp stat of the pokemon directly now.
 * * The damage a Pokemon entity takes will be dealt to the pokemon,causing the hp to drop,healing the entity will also heal the pokemon(Recommended to use with [Healing Campfire](https://modrinth.com/mod/healing-campfire)). (This feature uses some function used by my max health calculation function. Disabling the function will also disable this feature.)
-* * Please notice that healing the Pokemon won't heal the entity currently.Just recall your pokemon,use your sitrus berries or anything else and get back to fight. Or use the items,recall and send it out again.
 * Some held item will offer damage boost(type-enhancing items,Choice Specs, Choice Band,Muscle Band,Choice Glasses,Life orb)
 * * The life orb will also deal damage to the pokemon like the core series.A pokemon is immune to the damage if the pokemon's ability is Sheer Force or Magic Guard.
 * The sheer force will boost all moves' damage,but the move can no longer apply effects to the entities.(e.g. fire type move will no longer set the entity on fire)
@@ -55,10 +54,11 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 * Pokemon entity is immune to the suffocation damage.(can be disabled in the config)
 * Pokemon stops running away if the health isn't full(can be disabled in the config).
 * Added multipliers for player's Pokemon
-* Added a new config to disable the health sync for wild pokemon(the health sync for wild pokemon will disabled by default)
+* Added a new config to disable the health sync for wild pokemon(the health sync for wild pokemon will be disabled by default)
 
 ### Features/Changes that is not released currently:
-- Not much. I will be busy for a few days so the development should slow down.
+- Options to enable friendly fire
+- Nature multipliers.(It can't be edited in the config before.)
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Friendly fire config.
@@ -71,7 +71,7 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
-### Known issues for 1.21.1 version(not released yet)
+### Known issues for 1.21.1 version
 - I'm not sure why the battle does not start when using the key bind I added.
 ## How to use the Poke Staff
 1. Get one Poke Staff by crafting or get it in the creative mode.

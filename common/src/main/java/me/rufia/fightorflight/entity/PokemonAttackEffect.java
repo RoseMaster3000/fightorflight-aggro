@@ -27,14 +27,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class PokemonAttackEffect {
     public static SimpleParticleType getParticleFromType(String name) {
@@ -491,6 +490,7 @@ public class PokemonAttackEffect {
                 target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                 PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, move);
+                PokemonAttackEffect.applyTypeEffect(pokemonEntity, target);
             } else if (b6) {
                 //Nothing to do now.
             } else {
@@ -548,9 +548,9 @@ public class PokemonAttackEffect {
                 float distance = centerEntity.distanceTo(livingEntity);
                 if (distance < CobblemonFightOrFlight.moveConfig().min_AoE_radius) {
                     dmgMultiplier = 1.0f;
-                }else {
+                } else {
                     //TODO unfinished
-                    dmgMultiplier=CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;//Will be replaced when I have enough free time
+                    dmgMultiplier = CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;//Will be replaced when I have enough free time
                 }
 
             } else {
@@ -654,5 +654,41 @@ public class PokemonAttackEffect {
             pokemonEntity.setLastHurtMob(hurtTarget);
         }
         return flag;
+    }
+
+    public static boolean shouldHurtAllyMob(PokemonEntity pokemonEntity, LivingEntity target) {
+        if (pokemonEntity == null || target == null) {
+            return true;
+        }
+        if (pokemonEntity.getOwner() instanceof Player owner) {
+            if (CobblemonFightOrFlight.commonConfig().pvp_immunity) {
+                return !(target instanceof Player);
+            }
+            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
+                return !Objects.equals(owner.getTeam(), target.getTeam());
+            }
+            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
+                return !owner.equals(target);
+            }
+        }
+        return true;
+    }
+
+    public static boolean shouldBeHurtByAllyMob(PokemonEntity pokemonEntity, LivingEntity attacker) {
+        if (pokemonEntity == null || attacker == null) {
+            return true;
+        }
+        if (pokemonEntity.getOwner() instanceof Player owner) {
+            if (CobblemonFightOrFlight.commonConfig().pvp_immunity) {
+                return !(attacker instanceof Player);
+            }
+            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
+                return !Objects.equals(owner.getTeam(), attacker.getTeam());
+            }
+            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
+                return !owner.equals(attacker);
+            }
+        }
+        return true;
     }
 }
