@@ -60,6 +60,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     private static final EntityDataAccessor<Integer> DATA_ID_ATTACK_TARGET;
     @Unique
+    private static final EntityDataAccessor<Integer> DATA_ID_CAPTURED_BY;
+    @Unique
     private static final EntityDataAccessor<Integer> ATTACK_TIME;
     @Unique
     private static final EntityDataAccessor<String> MOVE;
@@ -74,6 +76,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
+        DATA_ID_CAPTURED_BY = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
@@ -123,6 +126,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
     protected void defineSynchedData(SynchedEntityData.Builder builder, CallbackInfo callbackInfo) {
         builder.define(DATA_ID_ATTACK_TARGET, 0);
+        builder.define(DATA_ID_CAPTURED_BY, 0);
         builder.define(ATTACK_TIME, 0);
         builder.define(MOVE, "");
         builder.define(CRY_CD, 0);
@@ -234,6 +238,16 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public void setTargetBlockPos(BlockPos blockPos) {
         this.entityData.set(TARGET_BLOCK_POS, blockPos);
+    }
+
+    @Override
+    public int getCapturedBy() {
+        return entityData.get(DATA_ID_CAPTURED_BY);
+    }
+
+    @Override
+    public void setCapturedBy(int id) {
+        entityData.set(DATA_ID_CAPTURED_BY, id);
     }
 
     @ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)

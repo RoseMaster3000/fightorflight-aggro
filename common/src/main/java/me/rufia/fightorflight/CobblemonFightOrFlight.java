@@ -33,7 +33,6 @@ import java.util.Set;
 public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
-    //public static final DeferredRegister<PokemonTracingBullet>;
     public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
     private static FightOrFlightCommonConfigModel commonConfig;
     private static FightOrFlightMoveConfigModel moveConfig;
@@ -84,9 +83,9 @@ public class CobblemonFightOrFlight {
         goalAdder.accept(pokemonEntity, 3, new PokemonOwnerHurtTargetGoal(pokemonEntity));
         goalAdder.accept(pokemonEntity, 3, new PokemonTauntedTargetGoal<>(pokemonEntity, PokemonEntity.class, false));
         goalAdder.accept(pokemonEntity, 4, new HurtByTargetGoal(pokemonEntity));
-        goalAdder.accept(pokemonEntity, 5, new CaughtByTargetGoal(pokemonEntity));
-        goalAdder.accept(pokemonEntity, 6, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
-        goalAdder.accept(pokemonEntity, 6, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(arg instanceof Creeper)));
+        goalAdder.accept(pokemonEntity, 4, new CaughtByTargetGoal(pokemonEntity));
+        goalAdder.accept(pokemonEntity, 5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
+        goalAdder.accept(pokemonEntity, 5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(arg instanceof Creeper)));
 
     }
 

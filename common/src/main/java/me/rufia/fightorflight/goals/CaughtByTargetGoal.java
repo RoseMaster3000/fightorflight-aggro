@@ -2,6 +2,9 @@ package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.entity.pokeball.EmptyPokeBallEntity;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.PokemonInterface;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -17,30 +20,41 @@ import java.util.List;
 
 public class CaughtByTargetGoal extends TargetGoal {
     private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
-    private static final int ALERT_RANGE_Y = 10;
     private LivingEntity lastCaughtByMob;
     private int lastCaughtByMobTimestamp;
 
     public CaughtByTargetGoal(Mob mob) {
-        super(mob, true);
+        super(mob, true, false);
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
     }
 
     public boolean canUse() {
-        PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
+        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
+        //I guess AI is disabled if the pokemon entity has busy locks
+        /*
         List<Object> busyLocks = pokemonEntity.getBusyLocks();
-        for (int i = 0; i < busyLocks.size(); i++){
-            if (busyLocks.get(i) instanceof EmptyPokeBallEntity){
-//                LogUtils.getLogger().info("Pokemon in process of being caught");
-                EmptyPokeBallEntity pokeBallEntity = (EmptyPokeBallEntity)busyLocks.get(i);
+        for (Object busyLock : busyLocks) {
+            CobblemonFightOrFlight.LOGGER.info("locked");
+            if (busyLock instanceof EmptyPokeBallEntity pokeBallEntity) {
+                CobblemonFightOrFlight.LOGGER.info("Pokemon in process of being caught");
 
-                if (pokeBallEntity.getOwner() instanceof LivingEntity){
-                    lastCaughtByMob = (LivingEntity)pokeBallEntity.getOwner();
+                if (pokeBallEntity.getOwner() instanceof LivingEntity livingEntity) {
+                    lastCaughtByMob = livingEntity;
                     lastCaughtByMobTimestamp = this.mob.tickCount;
                 }
             }
         }
-
+*/
+        int mobID = ((PokemonInterface) pokemonEntity).getCapturedBy();
+        if (mobID != 0) {
+            Entity target = mob.level().getEntity(mobID);
+            if (target instanceof LivingEntity livingEntity) {
+                lastCaughtByMob = livingEntity;
+                CobblemonFightOrFlight.LOGGER.info("Converted");
+            } else {
+                CobblemonFightOrFlight.LOGGER.info("Failed to convert");
+            }
+        }
         if (lastCaughtByMob != null) {
             if (lastCaughtByMob.getType() == EntityType.PLAYER && this.mob.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
                 return false;
@@ -56,8 +70,8 @@ public class CaughtByTargetGoal extends TargetGoal {
         this.mob.setTarget(lastCaughtByMob);
         this.targetMob = this.mob.getTarget();
         this.mob.setLastHurtByMob(this.mob.getTarget());
-        if (this.mob.getTarget() instanceof Player){
-            this.mob.setLastHurtByPlayer((Player)this.mob.getTarget());
+        if (this.mob.getTarget() instanceof Player) {
+            this.mob.setLastHurtByPlayer((Player) this.mob.getTarget());
         }
 //        this.timestamp = this.mob.getLastHurtByMobTimestamp();
         this.unseenMemoryTicks = 300;

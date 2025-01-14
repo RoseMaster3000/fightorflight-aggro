@@ -70,4 +70,12 @@ public interface PokemonInterface {
 
     default void setTargetBlockPos(BlockPos blockPos) {
     }
+
+    default int getCapturedBy() {
+        return 0;
+    }
+
+    default void setCapturedBy(int id) {
+
+    }
 }
