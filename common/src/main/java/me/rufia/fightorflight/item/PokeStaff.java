@@ -1,11 +1,16 @@
 package me.rufia.fightorflight.item;
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
+import com.cobblemon.mod.common.client.CobblemonClient;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import dev.architectury.networking.NetworkManager;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.component.ItemComponentFOF;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
+import me.rufia.fightorflight.net.SendCommandPacket;
 import me.rufia.fightorflight.utils.RayTrace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -118,15 +123,18 @@ public class PokeStaff extends Item {
                 default -> cmdData = "";
             }
             if (!Objects.equals(getCommandMode(stack), PokeStaffComponent.CMDMODE.NOCMD.name())) {
+                if (player.level().isClientSide) {
+                    int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+                    NetworkManager.sendToServer(new SendCommandPacket(slot, getCommandMode(stack),cmdData));
+                }
+                //Old mechanic, select the pokemon around you.
+                /*
                 for (PokemonEntity pokemonEntity : player.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.position(), 8, 8, 8), (pokemonEntity -> Objects.equals(pokemonEntity.getOwner(), player)))) {
                     ((PokemonInterface) (Object) pokemonEntity).setCommand(getCommandMode(stack));
                     ((PokemonInterface) (Object) pokemonEntity).setCommandData(cmdData);
-                    if (player.level().isClientSide) {
-                        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.recv.command", pokemonEntity.getName().getString(), cmdmode.name()));
-                    }
-                }
-            }
 
+                }*/
+            }
         }
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }

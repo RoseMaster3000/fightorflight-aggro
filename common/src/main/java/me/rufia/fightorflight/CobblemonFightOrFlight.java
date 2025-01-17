@@ -3,14 +3,18 @@ package me.rufia.fightorflight;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import dev.architectury.networking.NetworkManager;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.goals.*;
+import me.rufia.fightorflight.net.SendCommandHandler;
+import me.rufia.fightorflight.net.SendCommandPacket;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -59,6 +63,10 @@ public class CobblemonFightOrFlight {
         commonConfig = AutoConfig.getConfigHolder(FightOrFlightCommonConfigModel.class).getConfig();
         moveConfig = AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, SendCommandPacket.TYPE, SendCommandPacket.STREAM_CODEC, ((packet, context) -> {
+            SendCommandHandler handler = new SendCommandHandler();
+            handler.handle(packet, context);
+        }));
     }
 
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {

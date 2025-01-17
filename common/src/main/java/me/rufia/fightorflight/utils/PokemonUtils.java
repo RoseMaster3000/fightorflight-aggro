@@ -367,7 +367,7 @@ public class PokemonUtils {
     }
 
     public static boolean attackPositionAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
+        return PokeStaffComponent.CMDMODE.ATTACK_POSITION == getCommandMode(pokemonEntity);
     }
 
     public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
@@ -389,7 +389,9 @@ public class PokemonUtils {
 
     public static void finishMoving(PokemonEntity pokemonEntity) {
         if (CobblemonFightOrFlight.commonConfig().stay_after_move_command) {
-            ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.STAY.name());
+            if (moveCommandAvailable(pokemonEntity)) {
+                ((PokemonInterface) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.STAY.name());
+            }
         } else {
             clearCommand(pokemonEntity);
         }

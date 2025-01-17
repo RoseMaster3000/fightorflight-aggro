@@ -17,7 +17,7 @@ public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestA
     protected float safeDistanceSqr = 64;
 
     public PokemonCommandedTargetGoal(Mob mob, Class<T> targetType, boolean mustSee) {
-        super(mob, targetType, 10, mustSee, false, (entity) -> {
+        super(mob, targetType, 5, mustSee, false, (entity) -> {
             if (entity == mob) {
                 return false;
             }
@@ -28,7 +28,7 @@ public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestA
                         Pattern pattern = Pattern.compile("ENTITY_([a-z\\d]{8}-[a-z\\d]{4}-[a-z\\d]{4}-[a-z\\d]{4}-[a-z\\d]{12})");
                         Matcher m = pattern.matcher(data);
                         if (m.find()) {
-                            CobblemonFightOrFlight.LOGGER.info(m.group(1));
+                            //CobblemonFightOrFlight.LOGGER.info(m.group(1));
                             return entity.getStringUUID().equals(m.group(1));
                         }
                     }

@@ -50,9 +50,9 @@ public class CaughtByTargetGoal extends TargetGoal {
             Entity target = mob.level().getEntity(mobID);
             if (target instanceof LivingEntity livingEntity) {
                 lastCaughtByMob = livingEntity;
-                CobblemonFightOrFlight.LOGGER.info("Converted");
+                //CobblemonFightOrFlight.LOGGER.info("Converted");
             } else {
-                CobblemonFightOrFlight.LOGGER.info("Failed to convert");
+                //CobblemonFightOrFlight.LOGGER.info("Failed to convert");
             }
         }
         if (lastCaughtByMob != null) {
