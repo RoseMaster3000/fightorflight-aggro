@@ -9,6 +9,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.goals.*;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
@@ -28,7 +29,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -115,6 +119,20 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         return super.getTarget();
     }
+
+    @Inject(method = "registerGoals", at = @At("TAIL"))
+    protected void registerFOFGoals(CallbackInfo ci) {
+        PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+        targetSelector.addGoal(1, new PokemonCommandedTargetGoal<>(pokemonEntity, LivingEntity.class, false));
+        targetSelector.addGoal(2, new PokemonOwnerHurtByTargetGoal(pokemonEntity));
+        targetSelector.addGoal(3, new PokemonOwnerHurtTargetGoal(pokemonEntity));
+        targetSelector.addGoal(3, new PokemonTauntedTargetGoal<>(pokemonEntity, PokemonEntity.class, false));
+        targetSelector.addGoal(4, new HurtByTargetGoal(pokemonEntity));
+        targetSelector.addGoal(4, new CaughtByTargetGoal(pokemonEntity));
+        targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
+        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(arg instanceof Creeper)));
+    }
+
 
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
     public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {

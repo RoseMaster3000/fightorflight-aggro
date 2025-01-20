@@ -23,6 +23,7 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -155,6 +156,18 @@ public class PokemonUtils {
         return b1 || b2;
     }
 
+    public static boolean isRangeAttackMove(Move move) {
+        if (move == null) {
+            return true;
+        }
+        String moveName = move.getName();
+        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        boolean b1 = isPhysical && (Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
+        boolean b2 = isSpecial && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
+        return b1 || b2;
+    }
+
     public static Move getMeleeMove(PokemonEntity pokemonEntity) {
         Move move = getMove(pokemonEntity);
         if (move == null) {
@@ -173,7 +186,7 @@ public class PokemonUtils {
         if (move == null) {
             return null;
         }
-        if (!isMeleeAttackMove(move)) {
+        if (isRangeAttackMove(move)) {
             ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
@@ -349,6 +362,11 @@ public class PokemonUtils {
         }
     }
 
+
+    public static boolean WildPokemonCanPerformUnprovokedAttack(PokemonEntity pokemonEntity) {//It doesn't include the aggro check.
+        return pokemonEntity != null && CobblemonFightOrFlight.commonConfig().do_pokemon_attack_unprovoked && pokemonEntity.getPokemon().getLevel() >= CobblemonFightOrFlight.commonConfig().minimum_attack_unprovoked_level && !pokemonEntity.getPokemon().isPlayerOwned();
+    }
+
     public static String getCommandData(PokemonEntity pokemonEntity) {
         return ((PokemonInterface) (Object) pokemonEntity).getCommandData();
     }
@@ -391,6 +409,7 @@ public class PokemonUtils {
         if (CobblemonFightOrFlight.commonConfig().stay_after_move_command) {
             if (moveCommandAvailable(pokemonEntity)) {
                 ((PokemonInterface) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.STAY.name());
+                pokemonEntity.getNavigation().stop();
             }
         } else {
             clearCommand(pokemonEntity);
@@ -400,26 +419,9 @@ public class PokemonUtils {
     public static void pokemonEntityApproachPos(PokemonEntity pokemonEntity, BlockPos pos, double speedModifier) {
         if (pos != BlockPos.ZERO) {
             //CobblemonFightOrFlight.LOGGER.info("Pathfinding");
+
             if (pokemonEntity.getNavigation().isDone()) {
-                Vec3 vec3 = Vec3.atBottomCenterOf(pos);
-                Vec3 vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 8, 3, vec3, 0.3141592741012573);
-                if (vec32 == null) {
-                    vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 4, 7, vec3, 1.5707963705062866);
-                }
-
-                if (vec32 != null) {
-                    int i = Mth.floor(vec32.x);
-                    int j = Mth.floor(vec32.z);
-                    if (!((LivingEntity) pokemonEntity).level().hasChunksAt(i - 34, j - 34, i + 34, j + 34)) {
-                        vec32 = null;
-                    }
-                }
-
-                if (vec32 == null) {
-                    return;
-                }
-
-                pokemonEntity.getNavigation().moveTo(vec32.x, vec32.y, vec32.z, speedModifier);
+                pokemonEntity.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
             }
         }
     }

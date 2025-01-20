@@ -25,9 +25,6 @@ import java.util.EnumSet;
 import java.util.Random;
 
 public class PokemonRangedAttackGoal extends PokemonAttackGoal {
-    public int ticksUntilNewAngerParticle = 0;
-
-    public int ticksUntilNewAngerCry = 0;
     private final PokemonEntity pokemonEntity;
     private final LivingEntity livingEntity;
     @Nullable
@@ -98,27 +95,13 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
     }
 
     public void tick() {
+        super.tick();
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
             if (isTargetInBattle()) {
                 this.pokemonEntity.getNavigation().setSpeedModifier(0);
             }
         }
 
-        if (pokemonEntity.getOwner() == null) {
-            if (ticksUntilNewAngerParticle < 1) {
-                CobblemonFightOrFlight.PokemonEmoteAngry((Mob) this.livingEntity);
-                ticksUntilNewAngerParticle = 10;
-            } else {
-                ticksUntilNewAngerParticle = ticksUntilNewAngerParticle - 1;
-            }
-
-            if (ticksUntilNewAngerCry < 1) {
-                pokemonEntity.cry();
-                ticksUntilNewAngerCry = 100 + (int) (Math.random() * 200);
-            } else {
-                ticksUntilNewAngerCry = ticksUntilNewAngerCry - 1;
-            }
-        }
         if (target != null) {
             double d = this.pokemonEntity.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
             boolean bl = this.pokemonEntity.getSensing().hasLineOfSight(this.target);

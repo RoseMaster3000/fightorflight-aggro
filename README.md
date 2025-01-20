@@ -59,6 +59,7 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 ### Features/Changes that is not released currently:
 - Options to enable friendly fire
 - Nature multipliers.(It can't be edited in the config before.)
+- Wild Pokemon will no longer be taunted if do_pokemon_attack_unprovoked is set to false.
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Friendly fire config.

@@ -21,9 +21,6 @@ import java.util.Arrays;
 
 
 public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
-    public int ticksUntilNewAngerParticle = 0;
-
-    public int ticksUntilNewAngerCry = 0;
     private final double speedModifier;
 
     public PokemonMeleeAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
@@ -32,26 +29,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     public void tick() {
-        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
-        LivingEntity owner = pokemonEntity.getOwner();
-        if (owner == null) {
-            if (ticksUntilNewAngerParticle < 1) {
-                CobblemonFightOrFlight.PokemonEmoteAngry(this.mob);
-                ticksUntilNewAngerParticle = 10;
-            } else {
-                ticksUntilNewAngerParticle = ticksUntilNewAngerParticle - 1;
-            }
-
-            if (ticksUntilNewAngerCry < 1) {
-                pokemonEntity.cry();
-                ticksUntilNewAngerCry = 100 + (int) (Math.random() * 200);
-            } else {
-                ticksUntilNewAngerCry = ticksUntilNewAngerCry - 1;
-            }
-        }
-
         super.tick();
-
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
             if (isTargetInBattle()) {
                 this.mob.getNavigation().setSpeedModifier(0);
@@ -77,7 +55,6 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
     public boolean canContinueToUse() {
         return PokemonUtils.shouldFightTarget((PokemonEntity) mob) && super.canContinueToUse();
-
     }
 
     protected void checkAndPerformAttack(LivingEntity target) {

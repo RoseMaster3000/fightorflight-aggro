@@ -31,7 +31,7 @@ public class PokemonTauntedTargetGoal<T extends LivingEntity> extends NearestAtt
         for (PokemonEntity pokemonEntity1 : pokemonEntity.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(pokemonEntity.position(), safeDistanceSqr, safeDistanceSqr, safeDistanceSqr), (entity) -> entity.getOwner() != null || CobblemonFightOrFlight.moveConfig().wild_pokemon_taunt)) {
             if (PokemonUtils.canTaunt(pokemonEntity1)) {
                 targetPokemon = pokemonEntity1;
-                return true;
+                return PokemonUtils.WildPokemonCanPerformUnprovokedAttack(pokemonEntity);
             }
         }
         targetPokemon = null;
