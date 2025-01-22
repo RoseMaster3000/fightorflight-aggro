@@ -14,6 +14,7 @@ import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.net.NetworkPacketHandler;
 import me.rufia.fightorflight.net.packet.SendCommandPacket;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -51,6 +52,7 @@ public class SendCommandHandler implements NetworkPacketHandler<SendCommandPacke
                         //CobblemonFightOrFlight.LOGGER.info("MODE:%s DATA:%s".formatted(cmdMode, cmdData));
                         ((PokemonInterface) pokemonEntity).setCommand(cmdMode);
                         ((PokemonInterface) pokemonEntity).setCommandData(cmdData);
+                        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.command", pokemon.getDisplayName(), PokeStaff.getTranslatedCmdModeName(cmdMode)));
                     }
                 }
             }

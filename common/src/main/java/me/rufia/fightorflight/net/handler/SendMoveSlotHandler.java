@@ -8,7 +8,6 @@ import com.cobblemon.mod.common.pokemon.activestate.ActivePokemonState;
 import com.cobblemon.mod.common.pokemon.activestate.PokemonState;
 import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import dev.architectury.networking.NetworkManager;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
@@ -16,6 +15,7 @@ import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.net.NetworkPacketHandler;
 import me.rufia.fightorflight.net.packet.SendMoveSlotPacket;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -52,6 +52,7 @@ public class SendMoveSlotHandler implements NetworkPacketHandler<SendMoveSlotPac
                         if (move != null) {
                             //CobblemonFightOrFlight.LOGGER.info(move.getDisplayName().toString());
                             ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+                            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemon.getDisplayName(), move.getDisplayName()));
                         }
                     }
                 }

@@ -201,7 +201,7 @@ public class PokeStaff extends Item {
         setCommandMode(stack, cmd);
     }
 
-    protected Component getTranslatedCmdModeName(String cmdModeName) {
+    public static Component getTranslatedCmdModeName(String cmdModeName) {
         Component component;
         switch (PokeStaffComponent.CMDMODE.valueOf(cmdModeName)) {
             case MOVE_ATTACK -> component = Component.translatable("item.fightorflight.pokestaff.command.move_attack");

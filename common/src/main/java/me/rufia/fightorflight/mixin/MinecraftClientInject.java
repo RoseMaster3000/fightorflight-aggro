@@ -41,20 +41,20 @@ public abstract class MinecraftClientInject {
 
     @Inject(method = "handleKeybinds", at = @At("TAIL"))
     private void postTick(CallbackInfo ci) {
-        if (KeybindFightOrFlight.START_BATTLE.isDown()) {
+        if (KeybindFightOrFlight.START_BATTLE.consumeClick()) {
             startBattle();
         }
-        if (KeybindFightOrFlight.MOVE_SLOT_1.isDown()) {
+        if (KeybindFightOrFlight.MOVE_SLOT_1.consumeClick()) {
             sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_1.getMoveSlot());
-        } else if (KeybindFightOrFlight.MOVE_SLOT_2.isDown()) {
+        } else if (KeybindFightOrFlight.MOVE_SLOT_2.consumeClick()) {
             sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_2.getMoveSlot());
-        } else if (KeybindFightOrFlight.MOVE_SLOT_3.isDown()) {
+        } else if (KeybindFightOrFlight.MOVE_SLOT_3.consumeClick()) {
             sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_3.getMoveSlot());
-        } else if (KeybindFightOrFlight.MOVE_SLOT_4.isDown()) {
+        } else if (KeybindFightOrFlight.MOVE_SLOT_4.consumeClick()) {
             sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_4.getMoveSlot());
         }
         for (CommandKeybind keybind : KeybindFightOrFlight.commandKeybinds) {
-            if (keybind.isDown()) {
+            if (keybind.consumeClick()) {
                 sendCommandModePacket(keybind.getCmdmode());
                 break;
             }
