@@ -60,9 +60,15 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - Options to enable friendly fire
 - Nature multipliers.(It can't be edited in the config before.)
 - Wild Pokemon will no longer be taunted if do_pokemon_attack_unprovoked is set to false.
+- Failed captures will be counted as provocation.
+- Fix the bug that status moves are considered special moves.
+- Rework the Poke Staff
+- - It will affect the party Pokemon you selected on the left side of your screen now.
+- - Finish most of the command system, attack position is still not available.
+- - Keybind for Poke Staff, no default keybind since that's too much. Choose the ones you need.
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
-- Friendly fire config.
+- Repel effect.
 - Give more special effects to different moves.
 - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
 - Special effect for abilities like aftermath,bulletproof,soundproof,etc.

@@ -1,6 +1,7 @@
-package me.rufia.fightorflight.net;
+package me.rufia.fightorflight.net.handler;
 
 import com.cobblemon.mod.common.Cobblemon;
+import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.activestate.ActivePokemonState;
@@ -12,16 +13,18 @@ import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
+import me.rufia.fightorflight.net.NetworkPacketHandler;
+import me.rufia.fightorflight.net.packet.SendMoveSlotPacket;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class SendCommandHandler implements NetworkPacketHandler<SendCommandPacket> {
+public class SendMoveSlotHandler implements NetworkPacketHandler<SendMoveSlotPacket> {
     @Override
-    public void handle(SendCommandPacket packet, NetworkManager.PacketContext context) {
-        CobblemonFightOrFlight.LOGGER.info("Handling packet");
+    public void handle(SendMoveSlotPacket packet, NetworkManager.PacketContext context) {
         Player player = context.getPlayer();
-        int slot = packet.slot;
+        int slot = packet.getSlot();
         if (player instanceof ServerPlayer serverPlayer) {
             Pokemon pokemon = Cobblemon.INSTANCE.getStorage().getParty(serverPlayer).get(slot);
             if (pokemon != null) {
@@ -31,16 +34,25 @@ public class SendCommandHandler implements NetworkPacketHandler<SendCommandPacke
                 } else {
                     PokemonEntity pokemonEntity = activePokemonState.getEntity();
                     if (pokemonEntity != null) {
+                        int moveSlot = packet.getMoveSlot();
                         ItemStack stack = getStack(player);
                         if (stack == null) {
-                            return;
+                            if (PokemonUtils.shouldCheckPokeStaff()) {
+                                return;
+                            }
+                        } else {
+                            PokeStaff staff = (PokeStaff) stack.getItem();
+                            if (!packet.isFromPokeStaff()) {
+                                staff.setMoveSlot(stack, moveSlot);
+                                staff.setCommandMode(stack, PokeStaffComponent.CMDMODE.NOCMD.name());
+                                staff.setMode(stack, PokeStaffComponent.MODE.SEND.name());
+                            }
                         }
-                        //CobblemonFightOrFlight.LOGGER.info("ITEM ACQUIRED");
-                        String cmdData = packet.getCommandData();
-                        String cmdMode = packet.command;
-                        CobblemonFightOrFlight.LOGGER.info("MODE:%s DATA:%s".formatted(cmdMode, cmdData));
-                        ((PokemonInterface) pokemonEntity).setCommand(cmdMode);
-                        ((PokemonInterface) pokemonEntity).setCommandData(cmdData);
+                        Move move = pokemon.getMoveSet().get(moveSlot);
+                        if (move != null) {
+                            //CobblemonFightOrFlight.LOGGER.info(move.getDisplayName().toString());
+                            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+                        }
                     }
                 }
             }

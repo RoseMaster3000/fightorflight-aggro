@@ -436,4 +436,8 @@ public class PokemonUtils {
         }
         return false;
     }
+
+    public static boolean shouldCheckPokeStaff(){
+        return true;//TODO replace it with the config.
+    }
 }

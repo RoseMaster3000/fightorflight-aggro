@@ -91,13 +91,18 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     protected void createTargetBlockPos() {
         String data = this.getCommandData();
-        Vec3i vec3i = FOFUtils.stringToVec3i(data);
-        if (vec3i != null) {
-            BlockPos blockPos = new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ());
-            setTargetBlockPos(blockPos);
-            return;
+        BlockPos blockPos = BlockPos.ZERO;
+        if (data.startsWith("POS_")) {
+            if (data.equals("POS_SELF")) {
+                blockPos = new BlockPos(getBlockX(), getBlockZ(), getBlockZ());
+            }
+        } else {
+            Vec3i vec3i = FOFUtils.stringToVec3i(data);
+            if (vec3i != null) {
+                blockPos = new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ());
+            }
         }
-        setTargetBlockPos(BlockPos.ZERO);
+        setTargetBlockPos(blockPos);
     }
 
     protected PokemonEntityMixin(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
@@ -334,6 +339,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     //Don't use @Override for this function, or you will find that you can't change your pokemon's held item
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
     private void mobInteractInject(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        /*
         ItemStack itemStack = player.getItemInHand(hand);
         if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
             PokeStaff staff = (PokeStaff) itemStack.getItem();
@@ -342,6 +348,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                 cir.setReturnValue(InteractionResult.SUCCESS);
             }
         }
+        */
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))

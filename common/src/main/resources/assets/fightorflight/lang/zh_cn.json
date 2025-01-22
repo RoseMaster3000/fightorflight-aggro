@@ -17,7 +17,18 @@
   "item.fightorflight.pokestaff.send.result.command":"当前指令: ",
   "item.fightorflight.pokestaff.recv.command": "[ %s ] 当前指令: %s",
   "item.fightorflight.oran_lucky_egg":"橙橙幸运蛋",
-  "key.fightorflight.startbattle": "向被激怒的宝可梦发起战斗"
-
+  "key.fightorflight.startbattle": "向被激怒的宝可梦发起战斗",
+  "key.fightorflight.moveslot1": "选择第1个技能",
+  "key.fightorflight.moveslot2": "选择第2个技能",
+  "key.fightorflight.moveslot3": "选择第3个技能",
+  "key.fightorflight.moveslot4": "选择第4个技能",
+  "key.fightorflight.cmdmode.attack": "攻击目标",
+  "key.fightorflight.cmdmode.attack_position": "攻击位置",
+  "key.fightorflight.cmdmode.clear": "清除指令",
+  "key.fightorflight.cmdmode.move": "移动",
+  "key.fightorflight.cmdmode.move_attack": "移动攻击",
+  "key.fightorflight.cmdmode.nocmd": "无指令",
+  "key.fightorflight.cmdmode.stay": "原地驻守",
+  "key.fightorflight.categories.fightorflight.pokestaff": "Cobblemon Fight of Flight: 宝可杖"
 
 }

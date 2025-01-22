@@ -1,9 +1,8 @@
-package me.rufia.fightorflight.net;
+package me.rufia.fightorflight.net.packet;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import net.minecraft.network.FriendlyByteBuf;
+import me.rufia.fightorflight.net.NetworkPacket;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -14,6 +13,7 @@ public class SendCommandPacket implements NetworkPacket, CustomPacketPayload {
     protected int slot;
     protected String command;
     protected String commandData;
+    private final boolean isFromPokeStaff;
     public static final StreamCodec<ByteBuf, SendCommandPacket> STREAM_CODEC;
     public static final Type<SendCommandPacket> TYPE = new Type<>(SEND_COMMAND_PACKET_ID);
 
@@ -29,10 +29,22 @@ public class SendCommandPacket implements NetworkPacket, CustomPacketPayload {
         return commandData;
     }
 
+    public boolean isFromPokeStaff(){
+        return isFromPokeStaff;
+    }
+
+    public SendCommandPacket(int slot, String command, String commandData, boolean isFromPokeStaff) {
+        this.slot = slot;
+        this.command = command;
+        this.commandData = commandData;
+        this.isFromPokeStaff = isFromPokeStaff;
+    }
+
     public SendCommandPacket(int slot, String command, String commandData) {
         this.slot = slot;
         this.command = command;
         this.commandData = commandData;
+        this.isFromPokeStaff = false;
     }
 
     static {

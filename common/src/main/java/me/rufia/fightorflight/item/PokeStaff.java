@@ -1,16 +1,16 @@
 package me.rufia.fightorflight.item;
 
-import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.client.CobblemonClient;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import dev.architectury.networking.NetworkManager;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.component.ItemComponentFOF;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
-import me.rufia.fightorflight.net.SendCommandPacket;
+import me.rufia.fightorflight.net.packet.SendCommandPacket;
+import me.rufia.fightorflight.net.packet.SendMoveSlotPacket;
+import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.RayTrace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -23,7 +23,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
@@ -103,37 +102,18 @@ public class PokeStaff extends Item {
         if (mode.equals(PokeStaffComponent.MODE.SEND.name())) {
             //CobblemonFightOrFlight.LOGGER.info("SENDING COMMAND");
             PokeStaffComponent.CMDMODE cmdmode = PokeStaffComponent.CMDMODE.valueOf(getCommandMode(stack));
-            String cmdData = "";
+            String cmdData = FOFUtils.createCommandData(player, cmdmode);
 
-            switch (cmdmode) {
-                case MOVE, ATTACK_POSITION, MOVE_ATTACK, STAY -> {
-                    BlockHitResult result = RayTrace.rayTraceBlock(player, 16);
-                    BlockPos blockPos = result.getBlockPos();
-                    //CobblemonFightOrFlight.LOGGER.info("VEC3_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
-                    cmdData = "VEC3i_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                }
-                case ATTACK -> {
-                    LivingEntity livingEntity = RayTrace.rayTraceEntity(player, 16);
-                    if (livingEntity != null) {
-                        cmdData = "ENTITY_%s".formatted(livingEntity.getStringUUID());
-
-                        //CobblemonFightOrFlight.LOGGER.info("ENTITY_%s".formatted(livingEntity.getStringUUID()));
-                    }
-                }
-                default -> cmdData = "";
-            }
             if (!Objects.equals(getCommandMode(stack), PokeStaffComponent.CMDMODE.NOCMD.name())) {
                 if (player.level().isClientSide) {
                     int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
-                    NetworkManager.sendToServer(new SendCommandPacket(slot, getCommandMode(stack),cmdData));
+                    NetworkManager.sendToServer(new SendCommandPacket(slot, getCommandMode(stack), cmdData, true));
                 }
-                //Old mechanic, select the pokemon around you.
-                /*
-                for (PokemonEntity pokemonEntity : player.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.position(), 8, 8, 8), (pokemonEntity -> Objects.equals(pokemonEntity.getOwner(), player)))) {
-                    ((PokemonInterface) (Object) pokemonEntity).setCommand(getCommandMode(stack));
-                    ((PokemonInterface) (Object) pokemonEntity).setCommandData(cmdData);
-
-                }*/
+            } else {
+                if (player.level().isClientSide) {
+                    int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+                    NetworkManager.sendToServer(new SendMoveSlotPacket(slot, getMoveSlot(stack), true));
+                }
             }
         }
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
@@ -144,33 +124,6 @@ public class PokeStaff extends Item {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
     }
 
-    public boolean canSend(ItemStack stack) {
-        return Objects.equals(getMode(stack), PokeStaffComponent.MODE.SEND.name());
-    }
-
-    public void sendMoveSlot(Player player, LivingEntity livingEntity, ItemStack itemStack) {
-        if (!livingEntity.level().isClientSide && livingEntity instanceof PokemonEntity pokemonEntity) {
-            if (pokemonEntity.getOwner() == player) {
-                ItemStack heldItem = pokemonEntity.getPokemon().heldItem();
-                if (heldItem.is(CobblemonItems.CHOICE_SCARF) || heldItem.is(CobblemonItems.CHOICE_BAND) || heldItem.is(CobblemonItems.CHOICE_SPECS)) {
-                    return;
-                }
-                int moveSlot = getMoveSlot(itemStack);
-                String cmdMode = getCommandMode(itemStack);
-                if (moveSlot != -1) {
-                    Move move = pokemonEntity.getPokemon().getMoveSet().get(moveSlot);
-                    if (move == null) {
-                        move = pokemonEntity.getPokemon().getMoveSet().get(0);
-                    }
-                    ((PokemonInterface) pokemonEntity).setCurrentMove(move);
-                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.send.result.move").append(move.getDisplayName()));
-                    //CobblemonFightOrFlight.LOGGER.info(moveSlot + pokemonEntity.getPokemon().getMoveSet().get(moveSlot).getName());
-                }
-                ((PokemonInterface) pokemonEntity).setCommand(cmdMode);
-            }
-        }
-    }
-
     protected String getMode(ItemStack itemStack) {
         if (itemStack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
             PokeStaffComponent component = itemStack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
@@ -179,7 +132,6 @@ public class PokeStaff extends Item {
             }
         }
         return "";
-
     }
 
     public int getMoveSlot(ItemStack itemStack) {
@@ -207,7 +159,7 @@ public class PokeStaff extends Item {
         return true;
     }
 
-    protected void setMoveSlot(ItemStack stack, int moveSlot) {
+    public void setMoveSlot(ItemStack stack, int moveSlot) {
         if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
             PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
             if (component != null) {
@@ -216,7 +168,7 @@ public class PokeStaff extends Item {
         }
     }
 
-    protected void setCommandMode(ItemStack stack, String mode) {
+    public void setCommandMode(ItemStack stack, String mode) {
         if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
             PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
             if (component != null) {
@@ -225,7 +177,7 @@ public class PokeStaff extends Item {
         }
     }
 
-    protected void setMode(ItemStack stack, String mode) {
+    public void setMode(ItemStack stack, String mode) {
         if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
             PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
             if (component != null) {

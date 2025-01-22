@@ -11,7 +11,6 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -22,6 +21,8 @@ import java.util.Arrays;
 
 public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     private final double speedModifier;
+    public int ticksUntilNewAngerParticle = 0;
+    public int ticksUntilNewAngerCry = 0;
 
     public PokemonMeleeAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
@@ -29,13 +30,32 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     public void tick() {
-        super.tick();
-        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
-            if (isTargetInBattle()) {
-                this.mob.getNavigation().setSpeedModifier(0);
+        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
+        LivingEntity owner = pokemonEntity.getOwner();
+        if (owner == null) {
+            if (ticksUntilNewAngerParticle < 1) {
+                CobblemonFightOrFlight.PokemonEmoteAngry(this.mob);
+                ticksUntilNewAngerParticle = 10;
             } else {
-                this.mob.getNavigation().setSpeedModifier(this.speedModifier);
+                ticksUntilNewAngerParticle = ticksUntilNewAngerParticle - 1;
             }
+            if (ticksUntilNewAngerCry < 1) {
+                pokemonEntity.cry();
+                ticksUntilNewAngerCry = 100 + (int) (Math.random() * 200);
+            } else {
+                ticksUntilNewAngerCry = ticksUntilNewAngerCry - 1;
+            }
+        }
+        super.tick();
+        changeMoveSpeed();
+    }
+
+    private void changeMoveSpeed() {
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle && isTargetInBattle()) {
+            this.mob.getNavigation().setSpeedModifier(0);
+        } else {
+
+            this.mob.getNavigation().setSpeedModifier(this.speedModifier);
         }
     }
 
@@ -54,7 +74,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     public boolean canContinueToUse() {
-        return PokemonUtils.shouldFightTarget((PokemonEntity) mob) && super.canContinueToUse();
+        return PokemonUtils.shouldFightTarget((PokemonEntity) mob) && super.canContinueToUse() && !PokemonUtils.moveCommandAvailable((PokemonEntity) mob);
     }
 
     protected void checkAndPerformAttack(LivingEntity target) {

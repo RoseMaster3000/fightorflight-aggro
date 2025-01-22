@@ -7,11 +7,18 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.server.BattleChallengePacket;
 import com.cobblemon.mod.common.net.messages.server.RequestPlayerInteractionsPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import dev.architectury.networking.NetworkManager;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.client.keybinds.CommandKeybind;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
+import me.rufia.fightorflight.item.ItemFightOrFlight;
+import me.rufia.fightorflight.item.component.PokeStaffComponent;
+import me.rufia.fightorflight.net.packet.SendCommandPacket;
+import me.rufia.fightorflight.net.packet.SendMoveSlotPacket;
+import me.rufia.fightorflight.utils.FOFUtils;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
@@ -32,11 +39,55 @@ public abstract class MinecraftClientInject {
     @Nullable
     public LocalPlayer player;
 
-    @Inject(method = "tick", at = @At("TAIL"))
+    @Inject(method = "handleKeybinds", at = @At("TAIL"))
     private void postTick(CallbackInfo ci) {
         if (KeybindFightOrFlight.START_BATTLE.isDown()) {
             startBattle();
         }
+        if (KeybindFightOrFlight.MOVE_SLOT_1.isDown()) {
+            sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_1.getMoveSlot());
+        } else if (KeybindFightOrFlight.MOVE_SLOT_2.isDown()) {
+            sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_2.getMoveSlot());
+        } else if (KeybindFightOrFlight.MOVE_SLOT_3.isDown()) {
+            sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_3.getMoveSlot());
+        } else if (KeybindFightOrFlight.MOVE_SLOT_4.isDown()) {
+            sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_4.getMoveSlot());
+        }
+        for (CommandKeybind keybind : KeybindFightOrFlight.commandKeybinds) {
+            if (keybind.isDown()) {
+                sendCommandModePacket(keybind.getCmdmode());
+                break;
+            }
+        }
+    }
+
+    private void sendMoveSlotPacket(int moveSlot) {
+        if (getInstance() == null) {
+            return;
+        }
+        var player = getInstance().player;
+        if (player != null) {
+            if (PokemonUtils.shouldCheckPokeStaff()) {
+                var stack = player.getMainHandItem();
+                if (!stack.is(ItemFightOrFlight.POKESTAFF.get())) {
+                    if (!player.getOffhandItem().is(ItemFightOrFlight.POKESTAFF.get())) {
+                        return;
+                    }
+                }
+                int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+                NetworkManager.sendToServer(new SendMoveSlotPacket(slot, moveSlot));
+            }
+        }
+    }
+
+    private void sendCommandModePacket(PokeStaffComponent.CMDMODE cmdmode) {
+        var player = getInstance().player;
+        if (player == null) {
+            return;
+        }
+        String cmdData = FOFUtils.createCommandData(player, cmdmode);
+        int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+        NetworkManager.sendToServer(new SendCommandPacket(slot, cmdmode.name(), cmdData));
     }
 
     private void startBattle() {
@@ -55,10 +106,10 @@ public abstract class MinecraftClientInject {
             );
             for (PokemonEntity pokemonEntity : entities) {
                 if (pokemonEntity.getOwner() == null && pokemonEntity.canBattle(player)) {
-                    BattleChallengePacket packet=new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid(), BattleFormat.Companion.getGEN_9_SINGLES());
+                    BattleChallengePacket packet = new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid(), BattleFormat.Companion.getGEN_9_SINGLES());
                     //packet.sendToServer();
                     CobblemonNetwork.INSTANCE.sendToServer(packet);
-                    //CobblemonFightOrFlight.LOGGER.info("sending battle packet");
+                    CobblemonFightOrFlight.LOGGER.info("sending battle packet");
                     //player.sendSystemMessage(Component.literal("Sending battle packet - message"));
                     break;
                 } else if (pokemonEntity.getOwner() != player) {

@@ -18,7 +18,20 @@
   "item.fightorflight.pokestaff.recv.command": "[ %s ] Selected Command: %s",
   "item.fightorflight.oran_lucky_egg":"Oran Lucky Egg",
   "key.fightorflight.startbattle": "Start a battle with an angered pokemon",
-  "key.fightorflight.categories.fightorflight":"Cobblemon Fight of Flight"
+  "key.fightorflight.moveslot1": "Select Move Slot 1",
+  "key.fightorflight.moveslot2": "Select Move Slot 2",
+  "key.fightorflight.moveslot3": "Select Move Slot 3",
+  "key.fightorflight.moveslot4": "Select Move Slot 4",
+  "key.fightorflight.cmdmode.attack": "Attack Target",
+  "key.fightorflight.cmdmode.attack_position": "Attack Position",
+  "key.fightorflight.cmdmode.clear": "Clear Command",
+  "key.fightorflight.cmdmode.move": "Move",
+  "key.fightorflight.cmdmode.move_attack": "Move Attack",
+  "key.fightorflight.cmdmode.nocmd": "No Command",
+  "key.fightorflight.cmdmode.stay": "Hold Position",
+  "key.fightorflight.categories.fightorflight":"Cobblemon Fight of Flight",
+  "key.fightorflight.categories.fightorflight.pokestaff": "Cobblemon Fight of Flight: Poke Staff"
+
 
 
 }

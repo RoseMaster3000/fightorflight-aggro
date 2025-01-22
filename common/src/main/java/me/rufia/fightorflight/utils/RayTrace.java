@@ -34,7 +34,6 @@ public class RayTrace {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 100, 0));
         }//DEBUG ONLY
         */
-
         return livingEntity;
     }
 
