@@ -102,18 +102,19 @@ public class PokemonAttackEffect {
         int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         int maxStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
         PokemonMultipliers multipliers = new PokemonMultipliers(pokemonEntity);
-        float attackModifier = (float) Math.min(attack, maxStat) / maxStat;
-        float moveModifier = movePower / 100 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
+        float attackModifier = CobblemonFightOrFlight.commonConfig().max_bonus_from_stat * Mth.sqrt((float) Math.min(attack, maxStat) / maxStat);
+        float moveModifier = movePower / 40 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
         float minDmg = isSpecial ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
         float maxDmg = isSpecial ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
         float sheerForceMultiplier = PokemonUtils.isSheerForce(pokemonEntity) ? 1.3f : 1.0f;
         float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier;
+        float mobEffectBoost = getMobEffectBoost(pokemonEntity);
         //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
-        float value = Math.min(Mth.lerp(attackModifier * moveModifier * multiplier, minDmg, maxDmg), maxDmg);
+        float value = Math.min(Math.max(minDmg * moveModifier * multiplier * Math.max((attackModifier + mobEffectBoost), 0), minDmg), maxDmg);
         //CobblemonFightOrFlight.LOGGER.info("value:{} minDmg:{} maxDmg:{} attack:{} attackModifier:{} moveModifier:{} multiplier:{}", value, minDmg, maxDmg, attack, attackModifier, moveModifier, multiplier);
         return value;
     }
@@ -175,6 +176,24 @@ public class PokemonAttackEffect {
             // I doubt that Cobblemon doesn't have the type effectiveness logic,it might be sent to showdown to process.I need to write it myself.
         }
         return 1.0f;
+    }
+
+    public static int getMobEffectBoost(PokemonEntity pokemonEntity) {
+        int strengthLevel = 0;
+        int weaknessLevel = 0;
+        if (pokemonEntity.hasEffect(MobEffects.DAMAGE_BOOST)) {
+            var strengthEffect = pokemonEntity.getEffect(MobEffects.DAMAGE_BOOST);
+            if (strengthEffect != null) {
+                strengthLevel = strengthEffect.getAmplifier() + 1;
+            }
+        }
+        if (pokemonEntity.hasEffect(MobEffects.WEAKNESS)) {
+            var weaknessEffect = pokemonEntity.getEffect(MobEffects.WEAKNESS);
+            if (weaknessEffect != null) {
+                weaknessLevel = weaknessEffect.getAmplifier() + 1;
+            }
+        }
+        return strengthLevel * 3 - weaknessLevel * 4;
     }
 
     public static float getHeldItemDmgMultiplier(PokemonEntity pokemonEntity, Entity target) {

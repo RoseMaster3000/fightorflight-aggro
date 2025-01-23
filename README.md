@@ -66,10 +66,17 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - - It will affect the party Pokemon you selected on the left side of your screen now.
 - - Finish most of the command system, attack position is still not available.
 - - Keybind for Poke Staff, no default keybind since that's too much. Choose the ones you need.
+- Reworked damage calculation
+  - I know it might break the balance of a server or a modpack if it doesn't update the config on time. But the old damage calculation is becoming an obstacle now. We need something new.
+  - The pokemons' damage is slightly buffed.
+  - The maximum damage is still kept and increased to 50(take it easy,no pokemon can reach that by default), but it no longer takes part in the calculation directly. The higher limit makes high level pokemon a bigger threat.
+  - The minimum damage config still takes part in the damage calculation currently.
+  - Strength and weakness can influence the damage calculation now(follow the Minecraft rule).
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Repel effect.
 - Give more special effects to different moves.
+- - Moves that raises the user's attack will give the Pokemon entity strength mob effect.
 - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
 - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
 - More config options for fight of flight choices.

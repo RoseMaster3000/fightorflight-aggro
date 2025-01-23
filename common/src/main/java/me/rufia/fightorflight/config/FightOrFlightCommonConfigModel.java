@@ -112,10 +112,12 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean friendly_fire_immunity_team = true;
     @Comment("Should player-owned pokemons be immune to damage from the owner (friendly fire)?")
     public boolean friendly_fire_immunity_owner = true;
-    @Comment("The damage wild pokemon would do on hit if it had 0 ATK")
+    @Comment("The maximum damage bonus can get if it reached the maximum stat(the physical and the special moves both share one value currently)")
+    public float max_bonus_from_stat=4.0f;
+    @Comment("The minimum damage wild pokemon could do on hit")
     public float minimum_attack_damage = 1.0f;
-    @Comment("The damage wild pokemon would do on hit if it had reached the max stat")
-    public float maximum_attack_damage = 10.0f;
+    @Comment("The maximum damage wild pokemon could do on hit")
+    public float maximum_attack_damage = 50.0f;
     @Comment("Minimum damage multiplier player-owned pokemon would do")
     public float minimum_attack_damage_player = 1.2f;
     @Comment("Maximum damage multiplier player-owned pokemon would do")
@@ -148,7 +150,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Minimum damage wild pokemon will do with ranged attacks")
     public float minimum_ranged_attack_damage = 1.0f;
     @Comment("Maximum damage wild pokemon would do with ranged attacks")
-    public float maximum_ranged_attack_damage = 10.0f;
+    public float maximum_ranged_attack_damage = 50.0f;
     @Comment("Minimum damage multiplier player-owned pokemon would do with ranged attacks")
     public float minimum_ranged_attack_damage_player = 1.2f;
     @Comment("Maximum damage multiplier player-owned pokemon would do with ranged attacks")
