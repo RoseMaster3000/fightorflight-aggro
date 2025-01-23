@@ -286,7 +286,7 @@ public class PokemonUtils {
 
     public static boolean shouldRetreat(PokemonEntity pokemonEntity) {
         ItemStack i = pokemonEntity.getPokemon().heldItem();
-        return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
+        return pokemonEntity.getOwner() != null && pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 
     public static void makeCobblemonParticle(Entity entity, String particleName) {
@@ -437,7 +437,7 @@ public class PokemonUtils {
         return false;
     }
 
-    public static boolean shouldCheckPokeStaff(){
+    public static boolean shouldCheckPokeStaff() {
         return true;//TODO replace it with the config.
     }
 }

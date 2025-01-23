@@ -114,7 +114,7 @@ public class PokemonAttackEffect {
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
-        float value = Math.min(Math.max(minDmg * moveModifier * multiplier * Math.max((attackModifier + mobEffectBoost), 0), minDmg), maxDmg);
+        float value = Math.min(Math.max(multiplier * (minDmg * moveModifier * attackModifier + mobEffectBoost), minDmg), maxDmg);
         //CobblemonFightOrFlight.LOGGER.info("value:{} minDmg:{} maxDmg:{} attack:{} attackModifier:{} moveModifier:{} multiplier:{}", value, minDmg, maxDmg, attack, attackModifier, moveModifier, multiplier);
         return value;
     }

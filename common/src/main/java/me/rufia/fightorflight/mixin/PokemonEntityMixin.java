@@ -339,16 +339,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     //Don't use @Override for this function, or you will find that you can't change your pokemon's held item
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
     private void mobInteractInject(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-        /*
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (itemStack.is(ItemFightOrFlight.POKESTAFF.get())) {
-            PokeStaff staff = (PokeStaff) itemStack.getItem();
-            if (staff.canSend(itemStack)) {
-                staff.sendMoveSlot(player, this, itemStack);
-                cir.setReturnValue(InteractionResult.SUCCESS);
-            }
-        }
-        */
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
