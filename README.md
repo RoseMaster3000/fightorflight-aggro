@@ -62,16 +62,16 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - Wild Pokemon will no longer be taunted if do_pokemon_attack_unprovoked is set to false.
 - Failed captures will be counted as provocation.
 - Fix the bug that status moves are considered special moves.
-- Rework the Poke Staff
+- Reworked the Poke Staff
 - - It will affect the party Pokemon you selected on the left side of your screen now.
-- - Finish most of the command system, attack position is still not available.
-- - Keybind for Poke Staff, no default keybind since that's too much. Choose the ones you need.
+- - Most of the command system is finished, attack position is still not available.
+- - Keybind for Poke Staff, no default keybind. Choose the ones you need.
 - Reworked damage calculation
   - I know it might break the balance of a server or a modpack if it doesn't update the config on time. But the old damage calculation is becoming an obstacle now. We need something new.
   - The pokemons' damage is slightly buffed.
-  - The maximum damage is still kept and increased to 50(take it easy,no pokemon can reach that by default), but it no longer takes part in the calculation directly. The higher limit makes high level pokemon a bigger threat.
-  - The minimum damage config still takes part in the damage calculation currently.
-  - Strength and weakness can influence the damage calculation now(follow the Minecraft rule).
+  - The maximum damage is still kept and increased to 50(take it easy,no pokemon can reach that by default), but it no longer takes part in the calculation directly. The higher limit makes the high level pokemon a bigger threat.
+  - The minimum damage config no longer takes part in the damage calculation, too. But the value is not changed.
+  - Strength and weakness can influence the pokemon's damage now(follow the Minecraft rule, mostly). Both the range attack and melee attack can benefit from this(I know these effects don't increase the damage of the projectiles in Minecraft.)
 ## TODO
 - Attack Position for Poke Staff(not available currently. It is quite difficult.)
 - Repel effect.

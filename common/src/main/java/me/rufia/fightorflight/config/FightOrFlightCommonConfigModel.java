@@ -120,6 +120,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float maximum_attack_damage = 50.0f;
     @Comment("Minimum damage multiplier player-owned pokemon would do")
     public float minimum_attack_damage_player = 1.2f;
+    @Comment("Damage multiplier player-owned pokemon would do")
+    public float attack_damage_player = 1.2f;
     @Comment("Maximum damage multiplier player-owned pokemon would do")
     public float maximum_attack_damage_player = 1.2f;
     @Comment("Attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
@@ -153,6 +155,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float maximum_ranged_attack_damage = 50.0f;
     @Comment("Minimum damage multiplier player-owned pokemon would do with ranged attacks")
     public float minimum_ranged_attack_damage_player = 1.2f;
+    @Comment("Damage multiplier player-owned pokemon would do with ranged attacks")
+    public float ranged_attack_damage_player = 1.2f;
     @Comment("Maximum damage multiplier player-owned pokemon would do with ranged attacks")
     public float maximum_ranged_attack_damage_player = 1.2f;
     @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
