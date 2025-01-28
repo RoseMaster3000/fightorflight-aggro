@@ -14,11 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PokemonEntityCompanionMixin {
     @Inject(method = "createAttributes", at = @At("HEAD"), cancellable = true)
     private void addAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-        if (CobblemonFightOrFlight.commonConfig().add_attack_damage_attribute) {
-            cir.setReturnValue(LivingEntity.createLivingAttributes()
-                    .add(Attributes.FOLLOW_RANGE)
-                    .add(Attributes.ATTACK_KNOCKBACK)
-                    .add(Attributes.ATTACK_DAMAGE,1d));
-        }
+        cir.setReturnValue(LivingEntity.createLivingAttributes()
+                .add(Attributes.FOLLOW_RANGE)
+                .add(Attributes.ATTACK_KNOCKBACK)
+                .add(Attributes.ATTACK_DAMAGE, 1d));
     }
 }

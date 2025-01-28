@@ -239,6 +239,104 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public String[] burn_status_move = {
             "willowisp"
     };
+    @Comment("Moves that lowers the target's Attack / Special Attack stat by one stage")
+    public String[] offense_reducing_move_1 = {
+            "mysticalfire",
+            "bittermalice",
+            "breakingswipe",
+            "snarl",
+            "chillingwater",
+            "spiritbreak",
+            "tropkick",
+            "skittersmack",
+            "lunge",
+            "strugglebug"
+    };
+    @Comment("Moves that has a 50% chance to lower the target's Attack / Special Attack stat by one stage")
+    public String[] offense_reducing_move_1_50 = {
+            "mistball"
+
+    };
+    @Comment("Moves that has a 30% chance to lower the target's Attack / Special Attack stat by one stage")
+    public String[] offense_reducing_move_1_30 = {
+            "moonblast",
+            "springtidestorm"
+
+    };
+    @Comment("Moves that has a 10% chance to lower the target's Attack / Special Attack stat by one stage")
+    public String[] offense_reducing_move_1_10 = {
+            "playrough",
+            "aurorabeam"
+
+    };
+    @Comment("Moves that lowers the target's Attack / Special Defense stat by two stages")
+    public String[] defense_reducing_move_2 = {
+            "luminacrash"
+    };
+    @Comment("Moves that has a 40% chance to lower the target's Attack / Special Defense stat by two stages")
+    public String[] defense_reducing_move_2_40 = {
+            "seedflare",
+            "acidspray"
+    };
+    @Comment("Moves that lowers the target's Attack / Special Defense stat by one stage")
+    public String[] defense_reducing_move_1 = {
+            "gravapple",
+            "firelash",
+            "appleacid",
+            "thunderouskick"
+    };
+    @Comment("Moves that has a 50% chance to lower the target's Attack / Special Defense stat by one stage")
+    public String[] defense_reducing_move_1_50 = {
+            "triplearrows",
+            "crushclaw",
+            "lusterpurge",
+            "rocksmash",
+            "razorshell"
+    };
+    @Comment("Moves that has a 30% chance to lower the target's Attack / Special Defense stat by one stage")
+    public String[] defense_reducing_move_1_30 = {
+            "irontail"
+    };
+    @Comment("Moves that has a 20% chance to lower the target's Attack / Special Defense stat by one stage")
+    public String[] defense_reducing_move_1_20 = {
+            "crunch",
+            "shadowbone",
+            "shadowball",
+            "liquidation"
+    };
+    @Comment("Moves that has a 10% chance to lower the target's Attack / Special Defense stat by one stage")
+    public String[] defense_reducing_move_1_10 = {
+            "flashcannon",
+            "earthpower",
+            "acid",
+            "focusblast",
+            "psychic",
+            "energyball",
+            "bugbuzz"
+    };
+    @Comment("Moves that lowers the target's Speed stat by one stage")
+    public String[] speed_reducing_move_1 = {
+            "lowsweep",
+            "icywind",
+            "glaciate",
+            "rocktomb",
+            "tarshot",
+            "mudshot",
+            "electroweb",
+            "pounce",
+            "bulldoze",
+            "drumbeating"
+    };
+    @Comment("Moves that has a 30% chance to lower the target's Speed stat by one stage")
+    public String[] speed_reducing_move_1_30 = {
+            "bleakwindstorm"
+    };
+    @Comment("Moves that has a 10% chance to lower the target's Speed stat by one stage")
+    public String[] speed_reducing_move_1_10 = {
+            "bubblebeam",
+            "bubble",
+            "constrict"
+    };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
     public boolean pokemon_griefing = false;

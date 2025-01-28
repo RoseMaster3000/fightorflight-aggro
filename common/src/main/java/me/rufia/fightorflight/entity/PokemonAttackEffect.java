@@ -16,7 +16,6 @@ import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
 import me.rufia.fightorflight.utils.PokemonMultipliers;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.tags.EntityTypeTags;
@@ -26,7 +25,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -229,60 +227,61 @@ public class PokemonAttackEffect {
         }
         //Type-enhancing item.
         if (type != null) {
+            float typeEnhancingMultiplier = 1.2f;
             switch (type.getName()) {
                 case "fire":
-                    if (heldItem.is(CobblemonItems.CHARCOAL)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.CHARCOAL)) return typeEnhancingMultiplier;
                     break;
                 case "ice":
-                    if (heldItem.is(CobblemonItems.NEVER_MELT_ICE)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.NEVER_MELT_ICE)) return typeEnhancingMultiplier;
                     break;
                 case "poison":
-                    if (heldItem.is(CobblemonItems.POISON_BARB)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.POISON_BARB)) return typeEnhancingMultiplier;
                     break;
                 case "psychic":
-                    if (heldItem.is(CobblemonItems.TWISTED_SPOON)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.TWISTED_SPOON)) return typeEnhancingMultiplier;
                     break;
                 case "fairy":
-                    if (heldItem.is(CobblemonItems.FAIRY_FEATHER)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.FAIRY_FEATHER)) return typeEnhancingMultiplier;
                     break;
                 case "fighting":
-                    if (heldItem.is(CobblemonItems.BLACK_BELT)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.BLACK_BELT)) return typeEnhancingMultiplier;
                     break;
                 case "steel":
-                    if (heldItem.is(CobblemonItems.METAL_COAT)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.METAL_COAT)) return typeEnhancingMultiplier;
                     break;
                 case "ghost":
-                    if (heldItem.is(CobblemonItems.SPELL_TAG)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.SPELL_TAG)) return typeEnhancingMultiplier;
                     break;
                 case "dark":
-                    if (heldItem.is(CobblemonItems.BLACK_GLASSES)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.BLACK_GLASSES)) return typeEnhancingMultiplier;
                     break;
                 case "ground":
-                    if (heldItem.is(CobblemonItems.SOFT_SAND)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.SOFT_SAND)) return typeEnhancingMultiplier;
                     break;
                 case "rock":
-                    if (heldItem.is(CobblemonItems.HARD_STONE)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.HARD_STONE)) return typeEnhancingMultiplier;
                     break;
                 case "electric":
-                    if (heldItem.is(CobblemonItems.MAGNET)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.MAGNET)) return typeEnhancingMultiplier;
                     break;
                 case "bug":
-                    if (heldItem.is(CobblemonItems.SILVER_POWDER)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.SILVER_POWDER)) return typeEnhancingMultiplier;
                     break;
                 case "grass":
-                    if (heldItem.is(CobblemonItems.MIRACLE_SEED)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.MIRACLE_SEED)) return typeEnhancingMultiplier;
                     break;
                 case "dragon":
-                    if (heldItem.is(CobblemonItems.DRAGON_FANG)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.DRAGON_FANG)) return typeEnhancingMultiplier;
                     break;
                 case "flying":
-                    if (heldItem.is(CobblemonItems.SHARP_BEAK)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.SHARP_BEAK)) return typeEnhancingMultiplier;
                     break;
                 case "water":
-                    if (heldItem.is(CobblemonItems.MYSTIC_WATER)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.MYSTIC_WATER)) return typeEnhancingMultiplier;
                     break;
                 case "normal":
-                    if (heldItem.is(CobblemonItems.SILK_SCARF)) return 1.2f;
+                    if (heldItem.is(CobblemonItems.SILK_SCARF)) return typeEnhancingMultiplier;
                     break;
                 default:
                     break;
@@ -293,10 +292,7 @@ public class PokemonAttackEffect {
 
     public static boolean canChangeMove(PokemonEntity pokemonEntity) {
         ItemStack itemStack = PokemonUtils.getHeldItem(pokemonEntity);
-        if (itemStack.is(CobblemonItems.CHOICE_BAND) || itemStack.is(CobblemonItems.CHOICE_SCARF) || itemStack.is(CobblemonItems.CHOICE_SPECS)) {
-            return false;
-        }
-        return true;
+        return !itemStack.is(CobblemonItems.CHOICE_BAND) && !itemStack.is(CobblemonItems.CHOICE_SCARF) && !itemStack.is(CobblemonItems.CHOICE_SPECS);
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
@@ -318,7 +314,7 @@ public class PokemonAttackEffect {
                     livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.POISON, effectStrength * 20, 0), pokemonEntity);
                     break;
                 case "psychic":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.LEVITATION, effectStrength * 20, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, effectStrength * 20, 0), pokemonEntity);
                     break;
                 case "fairy":
                 case "fighting":
@@ -327,28 +323,25 @@ public class PokemonAttackEffect {
                     break;
                 case "ghost":
                 case "dark":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, effectStrength  * 25, 0), pokemonEntity);
                     break;
                 case "ground":
                 case "rock":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, effectStrength * 25, 0), pokemonEntity);
                     break;
                 case "electric":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, effectStrength  * 25, 0), pokemonEntity);
                     break;
                 case "bug":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.HUNGER, (effectStrength + 2) * 25, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.HUNGER, effectStrength  * 25, 0), pokemonEntity);
                     break;
                 case "grass":
-                    pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (effectStrength + 2) * 20, 0), pokemonEntity);
-                    break;
-                case "dragon":
-                    break;
-                case "flying":
+                    pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, effectStrength  * 40, 0), pokemonEntity);
                     break;
                 case "water":
                     livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
                     break;
+                case "dragon", "flying":
                 default:
                     break;
             }
@@ -375,7 +368,7 @@ public class PokemonAttackEffect {
         calculateTypeEffect(pokemonEntity, hurtTarget, primaryType, pkmLevel);
     }
 
-    public static void applyOnHitEffect(PokemonEntity pokemonEntity, Entity hurtTarget, Move move) {
+    public static void applyOnHitVisualEffect(PokemonEntity pokemonEntity, Entity hurtTarget, Move move) {
         if (move == null) {
             return;
         }
@@ -436,7 +429,7 @@ public class PokemonAttackEffect {
             pokemonRecallWithAnimation(pokemonEntity);
         }
         if (b2) {
-            pokemonExplode(pokemonEntity, level, move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL());
+            pokemonExplode(pokemonEntity, level);
         }
         if (b3) {
             pokemonRecoilSelf(pokemonEntity, 1.0f);
@@ -512,9 +505,11 @@ public class PokemonAttackEffect {
             } else if (b5 || b7 || b8) {
                 target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-                PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, move);
-                PokemonAttackEffect.applyTypeEffect(pokemonEntity, target);
+                PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
+                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
+                //applyTypeEffect(pokemonEntity, target);
             } else if (b6) {
+                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
                 //Nothing to do now.
             } else {
                 bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
@@ -526,11 +521,10 @@ public class PokemonAttackEffect {
             shootProjectileEntity(pokemonEntity, target, bullet);
             addProjectileEntity(pokemonEntity, target, bullet);
         }
-        PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
     }
 
 
-    public static void pokemonExplode(PokemonEntity entity, Level level, boolean isSpecial) {
+    public static void pokemonExplode(PokemonEntity entity, Level level) {
         if (!level.isClientSide) {
             FOFExplosion explosion = FOFExplosion.createExplosion(entity, entity, entity.getX(), entity.getY(), entity.getZ(), true, false);
             if (explosion != null) {
@@ -542,11 +536,11 @@ public class PokemonAttackEffect {
         }
     }
 
-    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean isSpecial, boolean shouldHurtAlly, boolean decreaseOverDistance) {
+    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean shouldHurtAlly, boolean decreaseOverDistance) {
         if (pokemonEntity == null) {
             return;
         }
-        Move move = isSpecial ? PokemonUtils.getRangeAttackMove(pokemonEntity) : PokemonUtils.getMeleeMove(pokemonEntity);
+        Move move = PokemonUtils.getMove(pokemonEntity);
         if (move == null) {
             CobblemonFightOrFlight.LOGGER.warn("No move for aoe.");
             return;
@@ -563,7 +557,7 @@ public class PokemonAttackEffect {
                 }
                 livingEntity = it.next();
             } while (centerEntity.distanceToSqr(livingEntity) > 25.0);
-            if (livingEntity == pokemonEntity || !shouldHurtAlly && livingEntity instanceof TamableAnimal animal && animal.getOwner().equals(pokemonEntity.getOwner())) {
+            if (livingEntity == pokemonEntity || !(shouldHurtAlly && PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, livingEntity))) {
                 continue;
             }
             float dmgMultiplier;
@@ -583,33 +577,23 @@ public class PokemonAttackEffect {
             //CobblemonFightOrFlight.LOGGER.info(livingEntity.getDisplayName().getString());
             boolean bl = livingEntity.hurt(centerEntity.damageSources().mobAttack(pokemonEntity), calculatePokemonDamage(pokemonEntity, livingEntity, move) * dmgMultiplier);
             if (bl) {
-                applyTypeEffect(pokemonEntity, livingEntity);
+                //applyTypeEffect(pokemonEntity, livingEntity);
                 PokemonUtils.setHurtByPlayer(pokemonEntity, livingEntity);
-                applyOnHitEffect(pokemonEntity, livingEntity, move);
+                applyOnHitVisualEffect(pokemonEntity, livingEntity, move);
                 makeTypeEffectParticle(10, livingEntity, move.getType().getName());
             }
         }
-    }
-
-    public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean isSpecial, boolean shouldHurtAlly) {
-        dealAoEDamage(pokemonEntity, centerEntity, isSpecial, shouldHurtAlly, false);
     }
 
     public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean shouldHurtAlly) {
         if (pokemonEntity != null) {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
-                dealAoEDamage(pokemonEntity, centerEntity, PokemonUtils.isSpecialMove(move), shouldHurtAlly);
+                dealAoEDamage(pokemonEntity, centerEntity, shouldHurtAlly, true);
             } else {
                 CobblemonFightOrFlight.LOGGER.warn("Failed to get move for aoe damage");
             }
         }
-
-    }
-
-
-    public static void explode(PokemonEntity pokemonEntity, boolean isSpecial, Vec3i pos) {
-        //FOFExplosion.explode();
     }
 
     public static void pokemonRecoilSelf(PokemonEntity pokemonEntity, float percent) {
@@ -626,12 +610,6 @@ public class PokemonAttackEffect {
         if (pokemonEntity.getHealth() == 0f) {
             pokemon.setCurrentHealth(0);
         }
-    }
-
-    public static float getAoERadius(float power) {
-        float min = CobblemonFightOrFlight.moveConfig().min_AoE_radius;
-        float max = CobblemonFightOrFlight.moveConfig().max_AoE_radius;
-        return Math.min(Mth.lerp(power / 180, min, max), max);
     }
 
     public static float getAoERadius(PokemonEntity entity, Move move) {
@@ -656,16 +634,16 @@ public class PokemonAttackEffect {
             } else {
                 hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
             }
-            applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
+            //applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
             makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
             PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
             applyPostEffect(pokemonEntity, hurtTarget, move);
         } else {
-            applyTypeEffect(pokemonEntity, hurtTarget);
+            //applyTypeEffect(pokemonEntity, hurtTarget);
             makeTypeEffectParticle(6, hurtTarget, pokemonEntity.getPokemon().getPrimaryType().getName());
             hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, false);
         }
-        applyOnHitEffect(pokemonEntity, hurtTarget, move);
+        applyOnHitVisualEffect(pokemonEntity, hurtTarget, move);
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
         boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {

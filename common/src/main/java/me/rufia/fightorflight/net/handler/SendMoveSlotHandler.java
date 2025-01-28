@@ -9,6 +9,7 @@ import com.cobblemon.mod.common.pokemon.activestate.PokemonState;
 import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import dev.architectury.networking.NetworkManager;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
@@ -48,11 +49,13 @@ public class SendMoveSlotHandler implements NetworkPacketHandler<SendMoveSlotPac
                                 staff.setMode(stack, PokeStaffComponent.MODE.SEND.name());
                             }
                         }
-                        Move move = pokemon.getMoveSet().get(moveSlot);
-                        if (move != null) {
-                            //CobblemonFightOrFlight.LOGGER.info(move.getDisplayName().toString());
-                            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
-                            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemon.getDisplayName(), move.getDisplayName()));
+                        if (PokemonAttackEffect.canChangeMove(pokemonEntity)) {
+                            Move move = pokemon.getMoveSet().get(moveSlot);
+                            if (move != null) {
+                                //CobblemonFightOrFlight.LOGGER.info(move.getDisplayName().toString());
+                                ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+                                player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemon.getDisplayName(), move.getDisplayName()));
+                            }
                         }
                     }
                 }

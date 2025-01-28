@@ -2,7 +2,7 @@ This version is no longer server-side only. I added new items and entities to su
 Though I haven't made contact with them, I don't mind they use my code if necessary.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in v0.7.3:
+### Features included in v0.7.4:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -60,16 +60,27 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - Strength and weakness can influence the pokemon's damage now(follow the Minecraft rule, mostly). Both the range attack and melee attack can benefit from this(I know these effects don't increase the damage of the projectiles in Minecraft.)
 ### Features/Changes that is not released currently:
 ## TODO
-- Attack Position for Poke Staff(not available currently. It is quite difficult.)
-- Repel effect.
-- Give more special effects to different moves.
-- - Moves that raises the user's attack will give the Pokemon entity strength mob effect.
-- Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
-- Special effect for abilities like aftermath,bulletproof,soundproof,etc.
-- More config options for fight of flight choices.
-- Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
-- Use the berry/heal items that heal the pokemon to heal the Pokemon entity(The healing items don't share a unique base class, they just extends PokemonSelectingItem(the base class for many items that can open the party menu and select a Pokemon to use). I don't think adding the mixin to every class and implements an interface is a good idea.)
-- The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
+- Main Goal For the Next Update:
+  - Combat overhaul
+    - Remove the type effect(levitate for psychic, weakness for fight,etc.)
+    - Give more special effect to different move(Pokemon gain strength after using Power-up Punch, gain weakness after using Close Combat)
+      - I want to make it easy so the effect level won't stack
+  - New config options: light level based aggression for all Pokemon
+- Things that might be done in a short period of time(1~3 big updates):
+  - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
+    - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
+    - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
+    - The indicator for the cooldown might come later than this feature.
+  - Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
+- Things that might not be done in a short period of time:
+  - Repel effect.(It's being worked on by the Cobblemon team according to their roadmap.)
+  - Attack Position for Poke Staff(not available currently. It is quite difficult.)
+  - Limit the number of pokemon in combat(It's a little bit difficult to check, )
+- Long term plans:
+  - Give more special effects to different moves.
+  - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
+  - More config options for fight of flight choices.
+  - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
 ### Known issues for 1.21.1 version

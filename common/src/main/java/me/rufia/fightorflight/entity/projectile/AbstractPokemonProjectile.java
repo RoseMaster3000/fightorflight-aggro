@@ -1,10 +1,7 @@
 package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.pokemon.Pokemon;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.BlockPos;
@@ -12,18 +9,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
@@ -92,9 +85,9 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     public void applyTypeEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget) {
         if (!Objects.equals(getElementalType(), pokemonEntity.getPokemon().getPrimaryType().getName())) {
-            PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget, getElementalType());
+            //PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget, getElementalType());
         } else {
-            PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget);
+            //PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget);
         }
     }
 
@@ -109,8 +102,10 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         Entity owner = getOwner();
         Entity target = result.getEntity();
         if (owner instanceof PokemonEntity pokemonEntity) {
+            Move move=PokemonUtils.getMove(pokemonEntity);
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-            PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity));
+            PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
+            PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
         }
     }
 

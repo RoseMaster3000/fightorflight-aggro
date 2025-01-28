@@ -96,7 +96,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().self_centered_aoe_moves).toList().contains(move.getName())) {
-                    PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity, false, true);
+                    PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity,  true);
                     if (PokemonUtils.isMeleeAttackMove(move)) {
                         PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
                     } else {

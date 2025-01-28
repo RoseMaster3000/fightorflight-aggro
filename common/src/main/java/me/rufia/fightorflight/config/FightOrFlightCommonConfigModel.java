@@ -104,8 +104,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle? For example Primeape can use Rage Fist 20x to evolve without a traditional Pokemon Battle.")
     public boolean can_progress_use_move_evoluiton = true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
-    @Comment("We don't use this attribute, but some other mods use. However, I uses a mixin to add this attribute and it might lead to some conflicts about attributes. Set to false if that happens.")
-    public boolean add_attack_damage_attribute=true;
     @Comment("Pokemons should be immune to suffocation damage? (cant die to wall damage, like when sand drops into them)")
     public boolean suffocation_immunity = true;
     @Comment("Should player-owned pokemons be immune to damage from all players?")
