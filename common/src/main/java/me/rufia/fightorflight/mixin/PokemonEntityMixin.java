@@ -10,8 +10,6 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.goals.*;
-import me.rufia.fightorflight.item.ItemFightOrFlight;
-import me.rufia.fightorflight.item.PokeStaff;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;
@@ -34,7 +32,6 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -156,7 +153,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(COMMAND, "");
         builder.define(COMMAND_DATA, "");
         builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
-
+        PokemonEntity.Companion.createAttributes();
     }
 
     @Inject(method = "saveWithoutId", at = @At("HEAD"))

@@ -1,4 +1,4 @@
-rootProject.name = "fightorflight"
+ rootProject.name = "fightorflight"
 
 pluginManagement.repositories {
     maven("https://maven.fabricmc.net/")
