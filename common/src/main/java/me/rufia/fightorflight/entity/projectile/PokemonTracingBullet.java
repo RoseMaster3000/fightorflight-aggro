@@ -56,7 +56,6 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
         this.finalTarget = finalTarget;
         this.currentMoveDirection = Direction.UP;
         this.selectNextMoveDirection(axis);
-        this.setNoGravity(true);
     }
 
     @Override
@@ -107,10 +106,10 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
     private void selectNextMoveDirection(@Nullable Direction.Axis axis) {
         double d = 0.5;
         BlockPos blockPos;
-        if (this.finalTarget == null) {
+        if (this.finalTarget == null || !this.finalTarget.isAlive()) {
             blockPos = this.blockPosition().below();
         } else {
-            d = (double) this.finalTarget.getBbHeight() * 0.5;
+            d = (double) this.finalTarget.getBbHeight() * 0.7;
             blockPos = BlockPos.containing(this.finalTarget.getX(), this.finalTarget.getY() + d, this.finalTarget.getZ());
         }
 
@@ -147,7 +146,7 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
 
             direction = Direction.getRandom(this.random);
             if (!list.isEmpty()) {
-                direction = (Direction) list.get(this.random.nextInt(list.size()));
+                direction = list.get(this.random.nextInt(list.size()));
             }
             for (int i = 5; !this.level().isEmptyBlock(blockPos2.relative(direction)) && i > 0; --i) {
                 direction = Direction.getRandom(this.random);
@@ -199,9 +198,7 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
             }
 
             if (this.finalTarget == null || !this.finalTarget.isAlive() || this.finalTarget instanceof Player && this.finalTarget.isSpectator()) {
-                if (!this.isNoGravity()) {
-                    this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.04, 0.0));
-                }
+                applyGravity();
             } else {
                 this.targetDeltaX = Mth.clamp(this.targetDeltaX * 1.025, -1.0, 1.0);
                 this.targetDeltaY = Mth.clamp(this.targetDeltaY * 1.025, -1.0, 1.0);
@@ -221,7 +218,7 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
         this.setPos(this.getX() + vec3.x, this.getY() + vec3.y, this.getZ() + vec3.z);
         ProjectileUtil.rotateTowardsMovement(this, 0.5F);
         if (this.level().isClientSide) {
-            makeParticle(4);
+            makeParticle(1);
         } else if (this.finalTarget != null && !this.finalTarget.isRemoved()) {
             if (this.flightSteps > 0) {
                 --this.flightSteps;
@@ -256,10 +253,6 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
 
     public boolean shouldRenderAtSqrDistance(double distance) {
         return distance < 16384.0;
-    }
-
-    public float getLightLevelDependentMagicValue() {
-        return 1.0F;
     }
 
     protected void onHitEntity(EntityHitResult result) {

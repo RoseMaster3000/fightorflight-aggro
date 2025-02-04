@@ -323,20 +323,20 @@ public class PokemonAttackEffect {
                     break;
                 case "ghost":
                 case "dark":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, effectStrength  * 25, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, effectStrength * 25, 0), pokemonEntity);
                     break;
                 case "ground":
                 case "rock":
                     livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, effectStrength * 25, 0), pokemonEntity);
                     break;
                 case "electric":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, effectStrength  * 25, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, effectStrength * 25, 0), pokemonEntity);
                     break;
                 case "bug":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.HUNGER, effectStrength  * 25, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.HUNGER, effectStrength * 25, 0), pokemonEntity);
                     break;
                 case "grass":
-                    pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, effectStrength  * 40, 0), pokemonEntity);
+                    pokemonEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, effectStrength * 40, 0), pokemonEntity);
                     break;
                 case "water":
                     livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (effectStrength + 2) * 25, 0), pokemonEntity);
@@ -413,7 +413,7 @@ public class PokemonAttackEffect {
         PokemonUtils.makeParticle(particleAmount, entity, getParticleFromType(typeName));
     }
 
-    public static void applyPostEffect(PokemonEntity pokemonEntity, Entity hurtTarget, Move move) {
+    public static void applyPostEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget, Move move) {
         Level level = hurtTarget.level();
         if (move == null) {
             return;
@@ -425,6 +425,16 @@ public class PokemonAttackEffect {
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
         boolean b6 = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.LIFE_ORB);
+        boolean b_attack_down_1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1).toList().contains(move.getName());
+        boolean b_attack_down_1_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_50).toList().contains(move.getName());
+        boolean b_attack_down_1_30 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_30).toList().contains(move.getName());
+        boolean b_attack_down_1_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_10).toList().contains(move.getName());
+        boolean b_attack_up_1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1).toList().contains(move.getName());
+        boolean b_attack_up_1_70 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_70).toList().contains(move.getName());
+        boolean b_attack_up_1_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_50).toList().contains(move.getName());
+        boolean b_attack_up_1_20 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_20).toList().contains(move.getName());
+        boolean b_attack_up_1_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_10).toList().contains(move.getName());
+        int effectStrength = Math.max(pokemonEntity.getPokemon().getLevel() / 10, 1);
         if (b1) {
             pokemonRecallWithAnimation(pokemonEntity);
         }
@@ -445,6 +455,17 @@ public class PokemonAttackEffect {
             if (!(abilityName.equals("sheerforce") || abilityName.equals("magicguard"))) {
                 pokemonRecoilSelf(pokemonEntity, 0.1f);
             }
+        }
+        if (b_attack_up_1 || b_attack_up_1_70 || b_attack_up_1_50 || b_attack_up_1_20 || b_attack_up_1_10) {
+            float chance = pokemonEntity.getRandom().nextFloat();
+            if (b_attack_up_1 || b_attack_up_1_70 && chance > 0.7f || b_attack_up_1_50 && chance > 0.5f || b_attack_up_1_20 && chance > 0.2f || b_attack_up_1_10 && chance > 0.1f) {
+                pokemonEntity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, effectStrength * 20, 0));
+            }//I know, using json might be clearer.
+        }
+        if (b_attack_down_1 || b_attack_down_1_50 || b_attack_down_1_30 || b_attack_down_1_10) {
+            float chance = pokemonEntity.getRandom().nextFloat();
+            if (b_attack_down_1 || b_attack_down_1_50 && chance > 0.5f || b_attack_down_1_30 && chance > 0.3f || b_attack_down_1_10 && chance > 0.1f)
+                hurtTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, effectStrength * 20, 0));
         }
     }
 
@@ -634,10 +655,12 @@ public class PokemonAttackEffect {
             } else {
                 hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
             }
-            //applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
-            makeTypeEffectParticle(10, hurtTarget, move.getType().getName());
-            PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
-            applyPostEffect(pokemonEntity, hurtTarget, move);
+            if (hurtTarget instanceof LivingEntity livingEntity) {
+                //applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
+                makeTypeEffectParticle(10, livingEntity, move.getType().getName());
+                PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
+                applyPostEffect(pokemonEntity, livingEntity, move);
+            }
         } else {
             //applyTypeEffect(pokemonEntity, hurtTarget);
             makeTypeEffectParticle(6, hurtTarget, pokemonEntity.getPokemon().getPrimaryType().getName());
@@ -645,10 +668,10 @@ public class PokemonAttackEffect {
         }
         applyOnHitVisualEffect(pokemonEntity, hurtTarget, move);
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
-        boolean flag = hurtTarget.hurt(((Mob) pokemonEntity).level().damageSources().mobAttack(pokemonEntity), hurtDamage);
+        boolean flag = hurtTarget.hurt(pokemonEntity.level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
-            if (hurtTarget instanceof LivingEntity) {
-                ((LivingEntity) hurtTarget).knockback(hurtKnockback * 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
+            if (hurtTarget instanceof LivingEntity livingEntity) {
+                livingEntity.knockback(hurtKnockback * 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
                 pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
             }
 

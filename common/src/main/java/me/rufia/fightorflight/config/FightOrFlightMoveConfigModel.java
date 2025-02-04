@@ -136,8 +136,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "seedflare",
             "psyshock",
             "psystrike",
-            "psychoboost",
-            "earthpower"
+            "psychoboost"
     };
     @Comment("Moves that hurts the entity(including the allies) around the pokemon")
     public String[] self_centered_aoe_moves = {
@@ -255,7 +254,6 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     @Comment("Moves that has a 50% chance to lower the target's Attack / Special Attack stat by one stage")
     public String[] offense_reducing_move_1_50 = {
             "mistball"
-
     };
     @Comment("Moves that has a 30% chance to lower the target's Attack / Special Attack stat by one stage")
     public String[] offense_reducing_move_1_30 = {
@@ -268,6 +266,33 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "playrough",
             "aurorabeam"
 
+    };
+    @Comment("Moves that raises the user's Attack / Special Attack stat by one stage")
+    public String[] offense_raising_move_1 = {
+            "poweruppunch",
+            "meteorbeam",
+            "electroshot",
+            "mysticalpower",
+            "torchsong"
+    };
+    @Comment("Moves that has a 70% chance to raise the user's Attack / Special Attack stat by one stage")
+    public String[] offense_raising_move_1_70 = {
+            "chargebeam"
+    };
+    @Comment("Moves that has a 50% chance to raise the user's Attack / Special Attack stat by one stage")
+    public String[] offense_raising_move_1_50 = {
+            "fierydance"
+    };
+    @Comment("Moves that has a 20% chance to raise the user's Attack / Special Attack stat by one stage")
+    public String[] offense_raising_move_1_20 = {
+            "meteormash"
+    };
+    @Comment("Moves that has a 10% chance to raise the user's Attack / Special Attack stat by one stage")
+    public String[] offense_raising_move_1_10 = {
+            "ancienpower",
+            "ominouswind",
+            "sliverwind",
+            "metalclaw"
     };
     @Comment("Moves that lowers the target's Attack / Special Defense stat by two stages")
     public String[] defense_reducing_move_2 = {

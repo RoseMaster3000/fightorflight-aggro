@@ -285,7 +285,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Inject(method = "hurt", at = @At("RETURN"))
     private void hurtDamageToPokemon(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (PokemonUtils.isUsingNewHealthMechanic()) {
+        if (PokemonUtils.isUsingNewHealthMechanic() && invulnerableTime == 20) {
             PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, amount, false);
         }
     }
