@@ -4,18 +4,12 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 
-import java.awt.*;
-import java.util.Optional;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,5 +53,19 @@ public class FOFUtils {
             default -> cmdData = "";
         }
         return cmdData;
+    }
+
+    public static boolean chanceTest(List<Boolean> conditions, List<Float> chances, RandomSource source) {
+        if (conditions.size() != chances.size()) {
+            CobblemonFightOrFlight.LOGGER.info("The size of the two arrays are not the same");
+            return false;
+        }
+        float chance = source.nextFloat();
+        for (int i = 0; i < conditions.size(); ++i) {
+            if (conditions.get(i)) {
+                return chances.get(i) > chance;
+            }
+        }
+        return false;
     }
 }

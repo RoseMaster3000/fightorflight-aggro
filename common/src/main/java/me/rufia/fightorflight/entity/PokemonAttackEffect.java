@@ -13,6 +13,7 @@ import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import me.rufia.fightorflight.entity.projectile.PokemonArrow;
 import me.rufia.fightorflight.entity.projectile.PokemonBullet;
 import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
+import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonMultipliers;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
@@ -24,7 +25,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -415,7 +415,7 @@ public class PokemonAttackEffect {
 
     public static void applyPostEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget, Move move) {
         Level level = hurtTarget.level();
-        if (move == null) {
+        if (move == null || level.isClientSide) {
             return;
         }
         //These effects might stack, so a chain of ifs might be needed.
@@ -425,15 +425,18 @@ public class PokemonAttackEffect {
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
         boolean b6 = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.LIFE_ORB);
-        boolean b_attack_down_1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1).toList().contains(move.getName());
-        boolean b_attack_down_1_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_50).toList().contains(move.getName());
-        boolean b_attack_down_1_30 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_30).toList().contains(move.getName());
-        boolean b_attack_down_1_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_10).toList().contains(move.getName());
-        boolean b_attack_up_1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1).toList().contains(move.getName());
-        boolean b_attack_up_1_70 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_70).toList().contains(move.getName());
-        boolean b_attack_up_1_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_50).toList().contains(move.getName());
-        boolean b_attack_up_1_20 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_20).toList().contains(move.getName());
-        boolean b_attack_up_1_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_10).toList().contains(move.getName());
+        boolean b_attack_down_1_target = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target).toList().contains(move.getName());
+        boolean b_attack_down_1_target_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target_50).toList().contains(move.getName());
+        boolean b_attack_down_1_target_30 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target_30).toList().contains(move.getName());
+        boolean b_attack_down_1_target_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target_10).toList().contains(move.getName());
+        boolean b_attack_up_1_self = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self).toList().contains(move.getName());
+        boolean b_attack_up_1_self_70 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_70).toList().contains(move.getName());
+        boolean b_attack_up_1_self_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_50).toList().contains(move.getName());
+        boolean b_attack_up_1_self_20 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_20).toList().contains(move.getName());
+        boolean b_attack_up_1_self_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_10).toList().contains(move.getName());
+        boolean b_speed_down_1_target = Arrays.stream(CobblemonFightOrFlight.moveConfig().speed_reducing_move_1_target).toList().contains(move.getName());
+        boolean b_speed_down_1_target_30 = Arrays.stream(CobblemonFightOrFlight.moveConfig().speed_reducing_move_1_target_30).toList().contains(move.getName());
+        boolean b_speed_down_1_target_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().speed_reducing_move_1_target_10).toList().contains(move.getName());
         int effectStrength = Math.max(pokemonEntity.getPokemon().getLevel() / 10, 1);
         if (b1) {
             pokemonRecallWithAnimation(pokemonEntity);
@@ -456,17 +459,16 @@ public class PokemonAttackEffect {
                 pokemonRecoilSelf(pokemonEntity, 0.1f);
             }
         }
-        if (b_attack_up_1 || b_attack_up_1_70 || b_attack_up_1_50 || b_attack_up_1_20 || b_attack_up_1_10) {
-            float chance = pokemonEntity.getRandom().nextFloat();
-            if (b_attack_up_1 || b_attack_up_1_70 && chance > 0.7f || b_attack_up_1_50 && chance > 0.5f || b_attack_up_1_20 && chance > 0.2f || b_attack_up_1_10 && chance > 0.1f) {
-                pokemonEntity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, effectStrength * 20, 0));
-            }//I know, using json might be clearer.
+        if (FOFUtils.chanceTest(new ArrayList<>(Arrays.asList(b_attack_up_1_self, b_attack_up_1_self_70, b_attack_up_1_self_50, b_attack_up_1_self_20, b_attack_up_1_self_10)), new ArrayList<>(Arrays.asList(1f, 0.7f, 0.5f, 0.2f, 0.1f)), pokemonEntity.getRandom())) {
+            pokemonEntity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, effectStrength * 90, 0));
         }
-        if (b_attack_down_1 || b_attack_down_1_50 || b_attack_down_1_30 || b_attack_down_1_10) {
-            float chance = pokemonEntity.getRandom().nextFloat();
-            if (b_attack_down_1 || b_attack_down_1_50 && chance > 0.5f || b_attack_down_1_30 && chance > 0.3f || b_attack_down_1_10 && chance > 0.1f)
-                hurtTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, effectStrength * 20, 0));
+        if (FOFUtils.chanceTest(new ArrayList<>(Arrays.asList(b_attack_down_1_target, b_attack_down_1_target_50, b_attack_down_1_target_30, b_attack_down_1_target_10)), new ArrayList<>(Arrays.asList(1f, 0.5f, 0.3f, 0.1f)), pokemonEntity.getRandom())) {
+            pokemonEntity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, effectStrength * 90, 0));
         }
+        if (FOFUtils.chanceTest(new ArrayList<>(Arrays.asList(b_speed_down_1_target,  b_attack_down_1_target_30, b_speed_down_1_target_10)), new ArrayList<>(Arrays.asList(1f,  0.3f, 0.1f)), pokemonEntity.getRandom())) {
+            pokemonEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, effectStrength * 90, 0));
+        }
+
     }
 
     public static void pokemonRecallWithAnimation(PokemonEntity pokemonEntity) {

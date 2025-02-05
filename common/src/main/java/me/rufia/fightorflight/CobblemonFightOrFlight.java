@@ -3,14 +3,11 @@ package me.rufia.fightorflight;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import dev.architectury.networking.NetworkManager;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.goals.*;
 import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
-import me.rufia.fightorflight.net.handler.SendCommandHandler;
-import me.rufia.fightorflight.net.packet.SendCommandPacket;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -59,6 +56,7 @@ public class CobblemonFightOrFlight {
         moveConfig = AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
         CobblemonFightOrFlightNetwork.init();
+        //ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));//unfinished
     }
 
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {

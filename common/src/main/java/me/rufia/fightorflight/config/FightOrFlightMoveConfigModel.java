@@ -43,6 +43,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "iciclecrash",
             "iciclespear",
             "gunkshot",
+            "scaleshot",
             "spikecannon",
             "pinmissile",
             "thousandarrows"
@@ -239,7 +240,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "willowisp"
     };
     @Comment("Moves that lowers the target's Attack / Special Attack stat by one stage")
-    public String[] offense_reducing_move_1 = {
+    public String[] offense_reducing_move_1_target = {
             "mysticalfire",
             "bittermalice",
             "breakingswipe",
@@ -252,23 +253,25 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "strugglebug"
     };
     @Comment("Moves that has a 50% chance to lower the target's Attack / Special Attack stat by one stage")
-    public String[] offense_reducing_move_1_50 = {
+    public String[] offense_reducing_move_1_target_50 = {
             "mistball"
     };
     @Comment("Moves that has a 30% chance to lower the target's Attack / Special Attack stat by one stage")
-    public String[] offense_reducing_move_1_30 = {
+    public String[] offense_reducing_move_1_target_30 = {
             "moonblast",
             "springtidestorm"
-
     };
     @Comment("Moves that has a 10% chance to lower the target's Attack / Special Attack stat by one stage")
-    public String[] offense_reducing_move_1_10 = {
+    public String[] offense_reducing_move_1_target_10 = {
             "playrough",
             "aurorabeam"
-
+    };
+    @Comment("Moves that lowers the user's Attack / Special Attack stat by one stage")
+    public String[] offense_reducing_move_1_self = {
+            ""
     };
     @Comment("Moves that raises the user's Attack / Special Attack stat by one stage")
-    public String[] offense_raising_move_1 = {
+    public String[] offense_raising_move_1_self = {
             "poweruppunch",
             "meteorbeam",
             "electroshot",
@@ -276,61 +279,61 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "torchsong"
     };
     @Comment("Moves that has a 70% chance to raise the user's Attack / Special Attack stat by one stage")
-    public String[] offense_raising_move_1_70 = {
+    public String[] offense_raising_move_1_self_70 = {
             "chargebeam"
     };
     @Comment("Moves that has a 50% chance to raise the user's Attack / Special Attack stat by one stage")
-    public String[] offense_raising_move_1_50 = {
+    public String[] offense_raising_move_1_self_50 = {
             "fierydance"
     };
     @Comment("Moves that has a 20% chance to raise the user's Attack / Special Attack stat by one stage")
-    public String[] offense_raising_move_1_20 = {
+    public String[] offense_raising_move_1_self_20 = {
             "meteormash"
     };
     @Comment("Moves that has a 10% chance to raise the user's Attack / Special Attack stat by one stage")
-    public String[] offense_raising_move_1_10 = {
+    public String[] offense_raising_move_1_self_10 = {
             "ancienpower",
             "ominouswind",
             "sliverwind",
             "metalclaw"
     };
-    @Comment("Moves that lowers the target's Attack / Special Defense stat by two stages")
-    public String[] defense_reducing_move_2 = {
+    @Comment("Moves that lowers the target's Attack / Special Defense stat by two stages(WIP)")
+    public String[] defense_reducing_move_target_2 = {
             "luminacrash"
     };
-    @Comment("Moves that has a 40% chance to lower the target's Attack / Special Defense stat by two stages")
-    public String[] defense_reducing_move_2_40 = {
+    @Comment("Moves that has a 40% chance to lower the target's Attack / Special Defense stat by two stages(WIP)")
+    public String[] defense_reducing_move_2_target_40 = {
             "seedflare",
             "acidspray"
     };
-    @Comment("Moves that lowers the target's Attack / Special Defense stat by one stage")
-    public String[] defense_reducing_move_1 = {
+    @Comment("Moves that lowers the target's Attack / Special Defense stat by one stage(WIP)")
+    public String[] defense_reducing_move_1_target = {
             "gravapple",
             "firelash",
             "appleacid",
             "thunderouskick"
     };
-    @Comment("Moves that has a 50% chance to lower the target's Attack / Special Defense stat by one stage")
-    public String[] defense_reducing_move_1_50 = {
+    @Comment("Moves that has a 50% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
+    public String[] defense_reducing_move_1_target_50 = {
             "triplearrows",
             "crushclaw",
             "lusterpurge",
             "rocksmash",
             "razorshell"
     };
-    @Comment("Moves that has a 30% chance to lower the target's Attack / Special Defense stat by one stage")
-    public String[] defense_reducing_move_1_30 = {
+    @Comment("Moves that has a 30% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
+    public String[] defense_reducing_move_1_target_30 = {
             "irontail"
     };
-    @Comment("Moves that has a 20% chance to lower the target's Attack / Special Defense stat by one stage")
-    public String[] defense_reducing_move_1_20 = {
+    @Comment("Moves that has a 20% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
+    public String[] defense_reducing_move_1_target_20 = {
             "crunch",
             "shadowbone",
             "shadowball",
             "liquidation"
     };
-    @Comment("Moves that has a 10% chance to lower the target's Attack / Special Defense stat by one stage")
-    public String[] defense_reducing_move_1_10 = {
+    @Comment("Moves that has a 10% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
+    public String[] defense_reducing_move_1_target_10 = {
             "flashcannon",
             "earthpower",
             "acid",
@@ -340,7 +343,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "bugbuzz"
     };
     @Comment("Moves that lowers the target's Speed stat by one stage")
-    public String[] speed_reducing_move_1 = {
+    public String[] speed_reducing_move_1_target = {
             "lowsweep",
             "icywind",
             "glaciate",
@@ -353,14 +356,23 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "drumbeating"
     };
     @Comment("Moves that has a 30% chance to lower the target's Speed stat by one stage")
-    public String[] speed_reducing_move_1_30 = {
+    public String[] speed_reducing_move_1_target_30 = {
             "bleakwindstorm"
     };
     @Comment("Moves that has a 10% chance to lower the target's Speed stat by one stage")
-    public String[] speed_reducing_move_1_10 = {
+    public String[] speed_reducing_move_1_target_10 = {
             "bubblebeam",
             "bubble",
             "constrict"
+    };
+    @Comment("Moves that lowers the user's Speed stat by one stage")
+    public String[] speed_reducing_move_1_self = {
+            "icehammer",
+            "hammerarm"
+    };
+    @Comment("Moves that lowers the user's Speed stat by two stages")
+    public String[] speed_reducing_move_2_self = {
+            "spinout"
     };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
