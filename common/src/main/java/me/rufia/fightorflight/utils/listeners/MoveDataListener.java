@@ -1,27 +1,78 @@
 package me.rufia.fightorflight.utils.listeners;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
+import me.rufia.fightorflight.data.MoveData;
+import me.rufia.fightorflight.data.MoveDataContainer;
+import me.rufia.fightorflight.data.container.StatChangeMoveDataContainer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public abstract class MoveDataListener implements PreparableReloadListener {
+public class MoveDataListener extends SimplePreparableReloadListener<Map<ResourceLocation, MoveDataContainer>> {
+    public MoveDataListener() {
+    }
 
     @Override
-    public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
-        //TODO clear the list/set
-        for (var entry : resourceManager.listResources("move_data", fileName -> fileName.getPath().endsWith(".json")).entrySet()) {
+    protected Map<ResourceLocation, MoveDataContainer> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+        Map<ResourceLocation, MoveDataContainer> map = new HashMap<>();
+        CobblemonFightOrFlight.LOGGER.info("[FOF] Preparing to read");
+        for (var entry : resourceManager.listResources("fof_move_data/" + "stat", fileName -> fileName.getPath().endsWith(".json")).entrySet()) {
             var resourceLocation = entry.getKey();
             var resource = entry.getValue();
             try {
-                var reader=resource.open();
+                //CobblemonFightOrFlight.LOGGER.info(resourceLocation.getPath());
+                JsonReader reader = new JsonReader(new InputStreamReader(resource.open()));
+                Gson gson = new Gson();
+                StatChangeMoveDataContainer container = gson.fromJson(reader, StatChangeMoveDataContainer.class);
+                map.put(resourceLocation, container);
             } catch (Exception e) {
                 CobblemonFightOrFlight.LOGGER.warn("Failed to read " + resourceLocation);
             }
         }
-        return null;
+        return map;
     }
+
+    private void register(Map<String, ? extends MoveData> dataMap) {
+        for (var mapEntry : dataMap.entrySet()) {
+            if (MoveData.moveData.containsKey(mapEntry.getKey())) {
+                if (MoveData.moveData.get(mapEntry.getKey()) != null) {
+                    MoveData.moveData.get(mapEntry.getKey()).add(mapEntry.getValue());
+                    //CobblemonFightOrFlight.LOGGER.info("Added an effect");
+                }
+            } else {
+                MoveData.moveData.put(mapEntry.getKey(), new ArrayList<>());
+                MoveData.moveData.get(mapEntry.getKey()).add(mapEntry.getValue());
+            }
+        }
+    }
+
+    @Override
+    protected void apply(Map<ResourceLocation, MoveDataContainer> map, ResourceManager resourceManager, ProfilerFiller profiler) {
+        MoveData.moveData.clear();
+        for (var entry : map.entrySet()) {
+            CobblemonFightOrFlight.LOGGER.info("[FOF] Move Data is ready to be processed");
+            var location = entry.getKey();
+            var container = entry.getValue();
+            Map<String, ? extends MoveData> dataMap = null;
+            if (container instanceof StatChangeMoveDataContainer statChangeMoveDataContainer) {
+                dataMap = statChangeMoveDataContainer.build();
+            }
+            if (dataMap != null) {
+                register(dataMap);
+            }
+        }
+        CobblemonFightOrFlight.LOGGER.info("[FOF] Move Data processed.");
+    }
+
+
 }

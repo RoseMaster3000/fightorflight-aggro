@@ -1,0 +1,11 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 0.5,
+  "canActivateSheerForce": true,
+  "name": "attack",
+  "move_list": [
+    "mistball"
+  ],
+  "stage": -1
+}

@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "self",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "speed",
+  "move_list": [
+    "icehammer",
+    "hammerarm"
+  ],
+  "stage": -1
+}

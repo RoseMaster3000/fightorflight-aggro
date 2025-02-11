@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "attack",
+  "move_list": [
+    "playrough",
+    "aurorabeam"
+  ],
+  "stage": -1
+}

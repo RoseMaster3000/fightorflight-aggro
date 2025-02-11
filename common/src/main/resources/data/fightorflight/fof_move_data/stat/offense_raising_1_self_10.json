@@ -1,0 +1,14 @@
+{
+  "type": "stat",
+  "target": "self",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "attack",
+  "move_list": [
+    "ancienpower",
+    "ominouswind",
+    "sliverwind",
+    "metalclaw"
+  ],
+  "stage": 1
+}

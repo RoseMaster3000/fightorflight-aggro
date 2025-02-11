@@ -9,6 +9,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.data.MoveData;
 import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import me.rufia.fightorflight.entity.projectile.PokemonArrow;
 import me.rufia.fightorflight.entity.projectile.PokemonBullet;
@@ -115,7 +116,6 @@ public class PokemonAttackEffect {
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
-        CobblemonFightOrFlight.LOGGER.info(Double.toString(pokemonEntity.getAttributeBaseValue(Attributes.ATTACK_DAMAGE)));
         float value = Math.min(Math.max(multiplier * (moveModifier * attackModifier + mobEffectBoost), minDmg), maxDmg);
         //CobblemonFightOrFlight.LOGGER.info("value:{} minDmg:{} maxDmg:{} attack:{} attackModifier:{} moveModifier:{} multiplier:{}", value, minDmg, maxDmg, attack, attackModifier, moveModifier, multiplier);
         return value;
@@ -425,19 +425,6 @@ public class PokemonAttackEffect {
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
         boolean b6 = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.LIFE_ORB);
-        boolean b_attack_down_1_target = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target).toList().contains(move.getName());
-        boolean b_attack_down_1_target_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target_50).toList().contains(move.getName());
-        boolean b_attack_down_1_target_30 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target_30).toList().contains(move.getName());
-        boolean b_attack_down_1_target_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_reducing_move_1_target_10).toList().contains(move.getName());
-        boolean b_attack_up_1_self = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self).toList().contains(move.getName());
-        boolean b_attack_up_1_self_70 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_70).toList().contains(move.getName());
-        boolean b_attack_up_1_self_50 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_50).toList().contains(move.getName());
-        boolean b_attack_up_1_self_20 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_20).toList().contains(move.getName());
-        boolean b_attack_up_1_self_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().offense_raising_move_1_self_10).toList().contains(move.getName());
-        boolean b_speed_down_1_target = Arrays.stream(CobblemonFightOrFlight.moveConfig().speed_reducing_move_1_target).toList().contains(move.getName());
-        boolean b_speed_down_1_target_30 = Arrays.stream(CobblemonFightOrFlight.moveConfig().speed_reducing_move_1_target_30).toList().contains(move.getName());
-        boolean b_speed_down_1_target_10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().speed_reducing_move_1_target_10).toList().contains(move.getName());
-        int effectStrength = Math.max(pokemonEntity.getPokemon().getLevel() / 10, 1);
         if (b1) {
             pokemonRecallWithAnimation(pokemonEntity);
         }
@@ -459,14 +446,11 @@ public class PokemonAttackEffect {
                 pokemonRecoilSelf(pokemonEntity, 0.1f);
             }
         }
-        if (FOFUtils.chanceTest(new ArrayList<>(Arrays.asList(b_attack_up_1_self, b_attack_up_1_self_70, b_attack_up_1_self_50, b_attack_up_1_self_20, b_attack_up_1_self_10)), new ArrayList<>(Arrays.asList(1f, 0.7f, 0.5f, 0.2f, 0.1f)), pokemonEntity.getRandom())) {
-            pokemonEntity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, effectStrength * 90, 0));
-        }
-        if (FOFUtils.chanceTest(new ArrayList<>(Arrays.asList(b_attack_down_1_target, b_attack_down_1_target_50, b_attack_down_1_target_30, b_attack_down_1_target_10)), new ArrayList<>(Arrays.asList(1f, 0.5f, 0.3f, 0.1f)), pokemonEntity.getRandom())) {
-            pokemonEntity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, effectStrength * 90, 0));
-        }
-        if (FOFUtils.chanceTest(new ArrayList<>(Arrays.asList(b_speed_down_1_target,  b_attack_down_1_target_30, b_speed_down_1_target_10)), new ArrayList<>(Arrays.asList(1f,  0.3f, 0.1f)), pokemonEntity.getRandom())) {
-            pokemonEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, effectStrength * 90, 0));
+
+        if (MoveData.moveData.containsKey(move.getName())) {
+            for (MoveData data : MoveData.moveData.get(move.getName())) {
+                data.invoke(pokemonEntity, hurtTarget);
+            }
         }
 
     }

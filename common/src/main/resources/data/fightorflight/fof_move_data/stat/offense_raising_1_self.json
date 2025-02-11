@@ -1,0 +1,15 @@
+{
+  "type": "stat",
+  "target": "self",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "attack",
+  "move_list": [
+    "poweruppunch",
+    "meteorbeam",
+    "electroshot",
+    "mysticalpower",
+    "torchsong"
+  ],
+  "stage": 1
+}

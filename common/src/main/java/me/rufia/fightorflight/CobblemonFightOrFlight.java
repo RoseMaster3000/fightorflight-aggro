@@ -3,16 +3,20 @@ package me.rufia.fightorflight;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import dev.architectury.registry.ReloadListenerRegistry;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.goals.*;
 import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.listeners.MoveDataListener;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -56,7 +60,7 @@ public class CobblemonFightOrFlight {
         moveConfig = AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
         CobblemonFightOrFlightNetwork.init();
-        //ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));//unfinished
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));//unfinished
     }
 
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {

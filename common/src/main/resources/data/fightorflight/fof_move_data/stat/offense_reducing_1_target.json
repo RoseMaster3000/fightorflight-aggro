@@ -1,0 +1,20 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "attack",
+  "move_list": [
+    "mysticalfire",
+    "bittermalice",
+    "breakingswipe",
+    "snarl",
+    "chillingwater",
+    "spiritbreak",
+    "tropkick",
+    "skittersmack",
+    "lunge",
+    "strugglebug"
+  ],
+  "stage": -1
+}
