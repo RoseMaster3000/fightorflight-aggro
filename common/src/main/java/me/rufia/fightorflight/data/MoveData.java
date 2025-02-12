@@ -14,7 +14,7 @@ public abstract class MoveData {
     private final String target;
     private final float chance;
     private final boolean canActivateSheerForce;
-    private final String name;
+    private String name;
 
     protected LivingEntity pickTarget(PokemonEntity pokemonEntity, LivingEntity hurtTarget) {
         if (target.equals("self")) {
@@ -48,6 +48,10 @@ public abstract class MoveData {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int calculateEffectDuration(PokemonEntity pokemonEntity) {

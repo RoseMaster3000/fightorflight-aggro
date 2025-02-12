@@ -8,8 +8,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Objects;
 
-public class StatusMoveData extends MoveData {
-    public StatusMoveData(String target, float chance, boolean canActivateSheerForce, String name) {
+public class StatusEffectMoveData extends MoveData {
+    public StatusEffectMoveData(String target, float chance, boolean canActivateSheerForce, String name) {
         super("status", target, chance, canActivateSheerForce, name);
     }
 
@@ -23,8 +23,29 @@ public class StatusMoveData extends MoveData {
             return;
         }
         int duration = calculateEffectDuration(pokemonEntity);
+        if (Objects.equals(getName(), "direclaw")) {
+            float f = pokemonEntity.getRandom().nextFloat();
+            if (f < 0.34) {
+                setName("poison");
+            } else if (f < 0.67) {
+                setName("paralysis");
+            } else {
+                setName("sleep");
+            }
+        } else if (Objects.equals(getName(), "triattack")) {
+            float f = pokemonEntity.getRandom().nextFloat();
+            if (f < 0.34) {
+                setName("burn");
+            } else if (f < 0.67) {
+                setName("paralysis");
+            } else {
+                setName("freeze");
+            }
+        }
         if (Objects.equals(getName(), "poison")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.POISON, duration * 30, 0));
+        } else if (Objects.equals(getName(), "badly_poison")) {
+            finalTarget.addEffect(new MobEffectInstance(MobEffects.POISON, duration * 30, 1));
         } else if (Objects.equals(getName(), "sleep")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration * 25, 2));
             finalTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, duration * 25, 1));

@@ -1,0 +1,10 @@
+{
+  "type": "status",
+  "target": "target",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "sleep",
+  "move_list": [
+    "relicsong"
+  ]
+}

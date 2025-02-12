@@ -1,0 +1,19 @@
+{
+  "type": "status",
+  "target": "target",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "burn",
+  "move_list": [
+    "firepunch",
+    "ember",
+    "flamethrower",
+    "fireblast",
+    "flamewheel",
+    "heatwave",
+    "blazekick",
+    "flareblitz",
+    "firefang",
+    "pyroball"
+  ]
+}
