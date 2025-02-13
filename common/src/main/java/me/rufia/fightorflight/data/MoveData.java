@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class MoveData {
     public static final Map<String, List<MoveData>> moveData = new HashMap<>();
@@ -26,8 +27,16 @@ public abstract class MoveData {
     }
 
     protected boolean chanceTest(RandomSource source) {
+        return chanceTest(source, null);
+    }
+
+    protected boolean chanceTest(RandomSource source, PokemonEntity pokemonEntity) {
+        float sereneGraceMultiplier = 1f;
+        if (pokemonEntity != null) {
+            sereneGraceMultiplier = Objects.equals(pokemonEntity.getPokemon().getAbility().getName(), "serenegrace") ? 2f : 1f;
+        }
         float rand = source.nextFloat();
-        return chance > rand;
+        return chance * sereneGraceMultiplier > rand;
     }
 
     public String getType() {

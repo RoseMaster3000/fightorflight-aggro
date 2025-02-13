@@ -1,11 +1,14 @@
 package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
@@ -27,7 +30,7 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
         if (owner == null) {
             return;
         }
-        FOFExplosion explosion = FOFExplosion.createExplosion(this, owner, getX(), getY(), getZ(), true,true);
+        FOFExplosion explosion = FOFExplosion.createExplosion(this, owner, getX(), getY(), getZ(), true, true);
         if (explosion != null) {
             explosion.explode();
             explosion.finalizeExplosion();
@@ -48,7 +51,10 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
     protected void onHitEntity(EntityHitResult result) {
         Entity owner = getOwner();
         if (owner instanceof PokemonEntity pokemonEntity) {
-            explode(pokemonEntity);
+            if (result.getEntity() instanceof LivingEntity target) {
+                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity));
+                explode(pokemonEntity);
+            }
         }
     }
 

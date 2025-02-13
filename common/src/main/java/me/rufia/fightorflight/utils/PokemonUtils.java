@@ -10,6 +10,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.data.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -354,6 +355,22 @@ public class PokemonUtils {
         return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
     }
 
+    public static boolean canActivateSheerForce(PokemonEntity pokemonEntity) {
+        if (pokemonEntity != null && isSheerForce(pokemonEntity)) {
+            Move move = getMove(pokemonEntity);
+            if (move != null) {
+                if (MoveData.moveData.containsKey(move.getName())) {
+                    for (MoveData data : MoveData.moveData.get(move.getName())) {
+                        if (data.canActivateSheerForce()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static PokeStaffComponent.CMDMODE getCommandMode(PokemonEntity pokemon) {
         try {
             return PokeStaffComponent.CMDMODE.valueOf(((PokemonInterface) (Object) pokemon).getCommand());
@@ -361,7 +378,6 @@ public class PokemonUtils {
             return PokeStaffComponent.CMDMODE.NOCMD;
         }
     }
-
 
     public static boolean WildPokemonCanPerformUnprovokedAttack(PokemonEntity pokemonEntity) {//It doesn't include the aggro check.
         return pokemonEntity != null && CobblemonFightOrFlight.commonConfig().do_pokemon_attack_unprovoked && pokemonEntity.getPokemon().getLevel() >= CobblemonFightOrFlight.commonConfig().minimum_attack_unprovoked_level && !pokemonEntity.getPokemon().isPlayerOwned();

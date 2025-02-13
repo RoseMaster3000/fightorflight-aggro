@@ -33,8 +33,8 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - A new hotkey to let your pokemon start a battle with the pokemon that tries to attack you.(not working currently)
 - Some abilities(intimidate,unnerve,pressure) can lower the nearby pokemon's aggro.
 - The Wimpod line Pokemon will be recalled when taking damage and the health is below 50%.
-* Moves like earthquake that hurts all pokemon around will hurt the entities nearby when the Pokemon hits the target.(The special moves will use the melee attack,too.)
-  **Type effectiveness for some non-pokemon entities** These effects don't strictly follow the rules of Pokemon,instead,they are more closely related to minecraft itself:
+- Moves like earthquake that hurts all pokemon around will hurt the entities nearby when the Pokemon hits the target.(The special moves will use the melee attack,too.)  
+- **Type effectiveness for some non-pokemon entities** These effects don't strictly follow the rules of Pokemon,instead,they are more closely related to minecraft itself:
   * Water type damage will be more effective on mobs that takes damage from the water.
   * Fire type damage will be not very effective against fire immune entities(x0.1 by default,set to 0 might be confusing for new player).
   * Ice type damage will be not very effective against entities that don't take the frost damage(still x0.1).
@@ -59,13 +59,15 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - Failed captures will be counted as provocation.
 - Strength and weakness can influence the pokemon's damage now(follow the Minecraft rule, mostly). Both the range attack and melee attack can benefit from this(I know these effects don't increase the damage of the projectiles in Minecraft.)
 ### Features/Changes that is not released currently:
+- New config options: The aggression system will only work in the dark areas.(Similar to the spiders in Minecraft)
+- Bug fixes: The invulnerable time don't work properly for pokemon entity;
+- Bug fixes: The tracing projectiles should work correctly now.
 ## TODO
 - Main Goal For the Next Update:
   - Combat overhaul
     - Remove the type effect(levitate for psychic, weakness for fight,etc.)
-    - Give more special effect to different move(Pokemon gain strength after using Power-up Punch, gain weakness after using Close Combat)
+    - Give more special effect to different moves(Pokemon gain strength after using Power-up Punch, gain weakness after using Close Combat)
       - I want to make it easy so the effect level won't stack
-  - New config options: light level based aggression for all Pokemon
 - Things that might be done in a short period of time(1~3 big updates):
   - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
     - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
@@ -75,7 +77,7 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - Things that might not be done in a short period of time:
   - Repel effect.(It's being worked on by the Cobblemon team according to their roadmap.)
   - Attack Position for Poke Staff(not available currently. It is quite difficult.)
-  - Limit the number of pokemon in combat(It's a little bit difficult to check, )
+  - Limit the number of pokemon in combat(It's a little bit difficult to check)
 - Long term plans:
   - Give more special effects to different moves.
   - Special effect for abilities like aftermath,bulletproof,soundproof,etc.

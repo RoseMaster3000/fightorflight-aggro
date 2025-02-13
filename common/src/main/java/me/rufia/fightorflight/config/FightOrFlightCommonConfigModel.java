@@ -13,6 +13,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean do_pokemon_attack = true;
     @Comment("Do especially aggressive Pokemon attack unprovoked?")
     public boolean do_pokemon_attack_unprovoked = false;
+    @Comment("If the aggressive pokemon will only attack unprovoked in the dark area.(similar to the spider in Minecraft,do_pokemon_attack_unprovoked needs to be set to true")
+    public boolean light_dependent_unprovoked_attack = true;
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
@@ -113,7 +115,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Should player-owned pokemons be immune to damage from the owner (friendly fire)?")
     public boolean friendly_fire_immunity_owner = true;
     @Comment("The maximum damage bonus can get if it reached the maximum stat(the physical and the special moves both share one value currently)")
-    public float max_bonus_from_stat=4.0f;
+    public float max_bonus_from_stat = 4.0f;
     @Comment("The minimum damage wild pokemon could do on hit")
     public float minimum_attack_damage = 1.0f;
     @Comment("The maximum damage wild pokemon could do on hit")

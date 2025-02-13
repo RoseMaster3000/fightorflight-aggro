@@ -26,7 +26,7 @@ public class StatChangeMoveData extends MoveData {
 
     @Override
     public void invoke(PokemonEntity pokemonEntity, LivingEntity target) {
-        if (!chanceTest(pokemonEntity.getRandom()) || pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce") && canActivateSheerForce()) {
+        if (!chanceTest(pokemonEntity.getRandom(), pokemonEntity) || pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce") && canActivateSheerForce()) {
             return;
         }
         LivingEntity finalTarget = pickTarget(pokemonEntity, target);
