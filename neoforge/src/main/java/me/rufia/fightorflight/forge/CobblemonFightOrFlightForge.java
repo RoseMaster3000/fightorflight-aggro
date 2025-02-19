@@ -20,7 +20,6 @@ public final class CobblemonFightOrFlightForge {
         CobblemonFightOrFlight.LOGGER.info("Hello neoforge");
         EntityFightOrFlight.bootstrap();
         ItemFightOrFlight.bootstrap();
-        FOFEffects.bootstrap();
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
         NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
 

@@ -16,7 +16,6 @@ public final class CobblemonFightOrFlightFabric implements ModInitializer {
 		CobblemonFightOrFlight.LOGGER.info("Hello Fabric world from Fight or Flight!");
 		EntityFightOrFlight.bootstrap();
 		ItemFightOrFlight.bootstrap();
-		FOFEffects.bootstrap();
 		CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> ((MobEntityAccessor) (Object) pokemonEntity).goalSelector().addGoal(priority, goal));
 		ServerEntityEvents.ENTITY_LOAD.register(new EntityLoadHandler());
 	}

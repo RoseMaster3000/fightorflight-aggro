@@ -7,5 +7,4 @@ public class FOFStatusEffect extends MobEffect {
     public FOFStatusEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
-
 }

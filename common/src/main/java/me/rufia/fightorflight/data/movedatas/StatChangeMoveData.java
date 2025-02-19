@@ -45,7 +45,7 @@ public class StatChangeMoveData extends MoveData {
             if (isPositive()) {
                 finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
             } else if (isNegative()) {
-                //finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));//It's not working?
+                finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));//It's not working?
             }
         } else if (Objects.equals(getName(), "speed")) {
             if (isPositive()) {
@@ -61,6 +61,7 @@ public class StatChangeMoveData extends MoveData {
             } else if (isNegative()) {
                 finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
                 finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
             }
         }
     }
