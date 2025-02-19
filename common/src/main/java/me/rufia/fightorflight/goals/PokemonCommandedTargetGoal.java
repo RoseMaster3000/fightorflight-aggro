@@ -38,7 +38,14 @@ public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestA
         });
         pokemonEntity = (PokemonEntity) mob;
     }
-    public void stop(){
+
+    public void stop() {
         PokemonUtils.clearCommand(pokemonEntity);
+    }
+
+    @Override
+    public boolean canUse() {
+        if (pokemonEntity.isBusy() || pokemonEntity.getOwner() == null){return false;}
+        return super.canUse();
     }
 }

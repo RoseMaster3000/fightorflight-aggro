@@ -1,0 +1,17 @@
+{
+  "type": "stat",
+  "target": "self",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "speed",
+  "move_list": [
+    "esperwing",
+    "aquastep",
+    "flamecharge",
+    "trailblaze",
+    "rapidspin",
+    "scaleshot",
+    "aurawheel"
+  ],
+  "stage": 1
+}

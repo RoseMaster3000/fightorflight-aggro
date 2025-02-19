@@ -30,21 +30,9 @@ public class CaughtByTargetGoal extends TargetGoal {
 
     public boolean canUse() {
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
-        //I guess AI is disabled if the pokemon entity has busy locks
-        /*
-        List<Object> busyLocks = pokemonEntity.getBusyLocks();
-        for (Object busyLock : busyLocks) {
-            CobblemonFightOrFlight.LOGGER.info("locked");
-            if (busyLock instanceof EmptyPokeBallEntity pokeBallEntity) {
-                CobblemonFightOrFlight.LOGGER.info("Pokemon in process of being caught");
-
-                if (pokeBallEntity.getOwner() instanceof LivingEntity livingEntity) {
-                    lastCaughtByMob = livingEntity;
-                    lastCaughtByMobTimestamp = this.mob.tickCount;
-                }
-            }
+        if (pokemonEntity.getOwner() != null) {
+            return false;
         }
-*/
         int mobID = ((PokemonInterface) pokemonEntity).getCapturedBy();
         if (mobID != 0) {
             Entity target = mob.level().getEntity(mobID);

@@ -2,6 +2,7 @@ package me.rufia.fightorflight.data.movedatas;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.data.MoveData;
+import me.rufia.fightorflight.effects.FOFEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,14 +39,28 @@ public class StatChangeMoveData extends MoveData {
             if (isPositive()) {
                 finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
             } else if (isNegative()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, calculateEffectDuration(pokemonEntity) * 20, stage + 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
             }
-        }
-        if (Objects.equals(getName(), "speed")) {
+        } else if (Objects.equals(getName(), "defense") || Objects.equals(getName(), "special_defense")) {
+            if (isPositive()) {
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+            } else if (isNegative()) {
+                //finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));//It's not working?
+            }
+        } else if (Objects.equals(getName(), "speed")) {
             if (isPositive()) {
                 finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
             } else if (isNegative()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, calculateEffectDuration(pokemonEntity) * 20, stage + 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
+            }
+        } else if (Objects.equals(getName(), "all")) {
+            if (isPositive()) {
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+            } else if (isNegative()) {
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
             }
         }
     }

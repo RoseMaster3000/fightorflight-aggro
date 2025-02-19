@@ -3,9 +3,11 @@
   "target": "self",
   "chance": 0.1,
   "canActivateSheerForce": true,
-  "name": "attack",
+  "name": "all",
   "move_list": [
-    "metalclaw"
+    "ancienpower",
+    "ominouswind",
+    "sliverwind"
   ],
   "stage": 1
 }

@@ -3,9 +3,9 @@
   "target": "self",
   "chance": 0.1,
   "canActivateSheerForce": true,
-  "name": "attack",
+  "name": "defense",
   "move_list": [
-    "metalclaw"
+    "steelwing"
   ],
   "stage": 1
 }

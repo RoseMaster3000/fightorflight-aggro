@@ -3,9 +3,13 @@
   "target": "self",
   "chance": 1.0,
   "canActivateSheerForce": false,
-  "name": "speed",
+  "name": "attack",
   "move_list": [
-    "spinout"
+    "dracometeor",
+    "psychoboost",
+    "fleurcannon",
+    "overheat",
+    "leafstorm"
   ],
   "stage": -2
 }

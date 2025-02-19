@@ -12,7 +12,8 @@
     "PokemonServerDelegateMixin",
     "PokemonFollowOwnerGoalMixin",
     "EmptyPokeBallEntityMixin",
-    "PokemonEntityCompanionMixin"
+    "PokemonEntityCompanionMixin",
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

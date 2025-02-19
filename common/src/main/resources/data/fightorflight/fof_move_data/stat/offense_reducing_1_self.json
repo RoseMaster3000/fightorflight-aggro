@@ -3,11 +3,10 @@
   "target": "self",
   "chance": 1.0,
   "canActivateSheerForce": false,
-  "name": "speed",
+  "name": "attack",
   "move_list": [
-    "icehammer",
-    "hammerarm",
-    "vcreate"
+    "superpower",
+    "makeitrain"
   ],
   "stage": -1
 }

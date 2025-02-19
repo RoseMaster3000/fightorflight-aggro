@@ -282,11 +282,24 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         return amount * (1 - pokemonMultipliers.getMaximumDamageReduction() * Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
         //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
     }
-
-    @Inject(method = "hurt", at = @At("RETURN"))
+    /*
+    @Inject(method = "hurt", at = @At("TAIL"))
     private void hurtDamageToPokemon(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (PokemonUtils.isUsingNewHealthMechanic() && invulnerableTime == 20) {
             PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, amount, false);
+        }
+    }*/
+
+    @Override
+    protected void actuallyHurt(DamageSource damageSource, float damageAmount) {
+        float prevHealth = getHealth();
+        super.actuallyHurt(damageSource, damageAmount);
+        if (PokemonUtils.isUsingNewHealthMechanic() && invulnerableTime == 20) {
+            float newHealth = getHealth();
+            float d = newHealth - prevHealth;
+            if (d < 0) {
+                PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, -d, false);
+            }
         }
     }
 
@@ -331,11 +344,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (getNextCryTime() >= 0) {
             setNextCryTime(getNextCryTime() - 1);
         }
-    }
-
-    //Don't use @Override for this function, or you will find that you can't change your pokemon's held item
-    @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
-    private void mobInteractInject(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))

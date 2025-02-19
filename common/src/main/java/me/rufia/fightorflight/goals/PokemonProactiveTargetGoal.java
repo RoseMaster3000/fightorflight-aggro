@@ -26,7 +26,6 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_proactive) { return false; }
         PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
         if (!pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
-
         return super.canUse();
     }
 

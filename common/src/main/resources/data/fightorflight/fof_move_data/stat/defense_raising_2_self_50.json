@@ -1,11 +1,11 @@
 {
   "type": "stat",
   "target": "self",
-  "chance": 0.1,
+  "chance": 0.5,
   "canActivateSheerForce": true,
-  "name": "attack",
+  "name": "defense",
   "move_list": [
-    "metalclaw"
+    "diamondstorm"
   ],
-  "stage": 1
+  "stage": 2
 }
