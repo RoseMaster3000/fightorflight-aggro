@@ -1,0 +1,18 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "flashcannon",
+    "earthpower",
+    "acid",
+    "focusblast",
+    "psychic",
+    "energyball",
+    "bugbuzz"
+
+  ],
+  "stage": -1
+}

@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -25,6 +26,9 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
     public boolean canUse() {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_proactive) { return false; }
         PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
+        if(pokemonEntity.getPokemon().getState() instanceof ShoulderedState){
+            return false;
+        }
         if (!pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
         return super.canUse();
     }

@@ -1,0 +1,15 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "gravapple",
+    "firelash",
+    "appleacid",
+    "thunderouskick"
+
+  ],
+  "stage": -1
+}

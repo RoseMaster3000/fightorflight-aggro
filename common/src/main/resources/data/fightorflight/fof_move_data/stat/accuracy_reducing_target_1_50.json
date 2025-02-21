@@ -1,0 +1,13 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 0.5,
+  "canActivateSheerForce": true,
+  "name": "accuracy",
+  "move_list": [
+    "octazooka",
+    "leaftornado"
+
+  ],
+  "stage": -1
+}

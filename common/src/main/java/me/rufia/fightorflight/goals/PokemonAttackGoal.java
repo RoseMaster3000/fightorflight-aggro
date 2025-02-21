@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.utils.PokemonUtils;
@@ -66,6 +67,9 @@ public abstract class PokemonAttackGoal extends Goal {
     @Override
     public boolean canUse(){
         if(PokemonUtils.moveCommandAvailable(getPokemonEntity())){
+            return false;
+        }
+        if(getPokemonEntity().getPokemon().getState() instanceof ShoulderedState){
             return false;
         }
         return true;

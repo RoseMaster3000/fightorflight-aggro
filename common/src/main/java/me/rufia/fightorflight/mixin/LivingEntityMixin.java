@@ -23,23 +23,19 @@ public abstract class LivingEntityMixin {
 
     @ModifyArg(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
     private float updateDamageAmount(DamageSource damageSource, float damageAmount) {
-        if (!damageSource.is(DamageTypeTags.BYPASSES_EFFECTS) && !damageSource.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
-            CobblemonFightOrFlight.LOGGER.info("DTT PASSED!");
-            //dmg*5/(4-amp)
-            int amp = -1;
-            var effect = getEffect(FOFEffects.RESISTANCE_WEAKENED);
-            if (effect != null) {
-                CobblemonFightOrFlight.LOGGER.info("EFFECT DETECTED!");
-                amp = effect.getAmplifier();//I don't know why I just can't get this effect!!!
+        if (damageSource != null) {
+            if (!damageSource.is(DamageTypeTags.BYPASSES_EFFECTS) && !damageSource.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
+                int amp = -1;
+                var effect = getEffect(FOFEffects.RESISTANCE_WEAKENED);
+                if (effect != null) {
+                    CobblemonFightOrFlight.LOGGER.info("EFFECT DETECTED!");
+                    amp = effect.getAmplifier();
+                }
+                if (amp > 3) {
+                    amp = 3;
+                }
+                return damageAmount * 5 / (4 - amp);
             }
-            if (amp > 3) {
-                amp = 3;
-            }
-            float result = damageAmount * 5 / (4 - amp);
-            CobblemonFightOrFlight.LOGGER.info("Modified value:{}", result);
-
-            return result;
-
         }
         return damageAmount;
     }

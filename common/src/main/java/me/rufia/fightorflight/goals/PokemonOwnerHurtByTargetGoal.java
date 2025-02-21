@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -26,6 +27,9 @@ public class PokemonOwnerHurtByTargetGoal extends TargetGoal {
         LivingEntity owner = this.pokemonEntity.getOwner();
 
         if (owner != null && !this.pokemonEntity.isBusy()) {
+            if(pokemonEntity.getPokemon().getState() instanceof ShoulderedState){
+                return false;
+            }
             this.ownerLastHurtBy = owner.getLastHurtByMob();
             int i = owner.getLastHurtByMobTimestamp();
             return i != this.timestamp &&

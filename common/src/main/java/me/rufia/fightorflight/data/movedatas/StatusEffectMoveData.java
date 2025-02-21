@@ -42,23 +42,29 @@ public class StatusEffectMoveData extends MoveData {
                 setName("freeze");
             }
         }
-        if (Objects.equals(getName(), "poison")) {
+        String name = getName();
+        if (Objects.equals(name, "poison")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.POISON, duration * 30, 0));
-        } else if (Objects.equals(getName(), "badly_poison")) {
+        } else if (Objects.equals(name, "badly_poison")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.POISON, duration * 30, 1));
-        } else if (Objects.equals(getName(), "sleep")) {
+        } else if (Objects.equals(name, "sleep")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration * 25, 2));
             finalTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, duration * 25, 1));
-        } else if (Objects.equals(getName(), "freeze")) {
+        } else if (Objects.equals(name, "freeze")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration * 25, 2));
             finalTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, duration * 25, 1));
             finalTarget.setTicksFrozen(finalTarget.getTicksFrozen() + duration);
-        } else if (Objects.equals(getName(), "paralysis")) {
+        } else if (Objects.equals(name, "paralysis")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration * 30, 0));
             finalTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, duration * 30, 0));
-        } else if (Objects.equals(getName(), "burn")) {
+        } else if (Objects.equals(name, "burn")) {
             finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration * 30, 0));
             finalTarget.setRemainingFireTicks(duration * 30);
+        } else if (Objects.equals(name, "flinch")) {
+            finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 2 * 30, 1));
+            finalTarget.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 2 * 30, 0));
+        } else if (Objects.equals(name, "confusion")) {
+            finalTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration * 30, 0));
         }
     }
 }

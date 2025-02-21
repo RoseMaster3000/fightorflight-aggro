@@ -239,60 +239,6 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public String[] burn_status_move = {
             "willowisp"
     };
-    @Comment("Moves that lowers the target's Attack / Special Defense stat by two stages(WIP)")
-    public String[] defense_reducing_target_2 = {
-            "luminacrash"
-    };
-    @Comment("Moves that has a 40% chance to lower the target's Attack / Special Defense stat by two stages(WIP)")
-    public String[] defense_reducing_2_target_40 = {
-            "seedflare",
-            "acidspray"
-    };
-    @Comment("Moves that lowers the target's Attack / Special Defense stat by one stage(WIP)")
-    public String[] defense_reducing_1_target = {
-            "gravapple",
-            "firelash",
-            "appleacid",
-            "thunderouskick"
-    };
-    @Comment("Moves that has a 50% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
-    public String[] defense_reducing_1_target_50 = {
-            "triplearrows",
-            "crushclaw",
-            "lusterpurge",
-            "rocksmash",
-            "razorshell"
-    };
-    @Comment("Moves that has a 30% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
-    public String[] defense_reducing_1_target_30 = {
-            "irontail"
-    };
-    @Comment("Moves that has a 20% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
-    public String[] defense_reducing_1_target_20 = {
-            "crunch",
-            "shadowbone",
-            "shadowball",
-            "liquidation"
-    };
-    @Comment("Moves that has a 10% chance to lower the target's Attack / Special Defense stat by one stage(WIP)")
-    public String[] defense_reducing_1_target_10 = {
-            "flashcannon",
-            "earthpower",
-            "acid",
-            "focusblast",
-            "psychic",
-            "energyball",
-            "bugbuzz"
-    };
-    @Comment("Moves that lowers the user's Speed stat by one stage")
-    public String[] speed_reducing_1_self = {
-            "icehammer",
-            "hammerarm"
-    };
-    @Comment("Moves that lowers the user's Speed stat by two stages")
-    public String[] speed_reducing_2_self = {
-            "spinout"
-    };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
     public boolean pokemon_griefing = false;

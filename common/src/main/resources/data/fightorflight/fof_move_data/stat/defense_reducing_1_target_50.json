@@ -1,0 +1,15 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 0.5,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "triplearrows",
+    "crushclaw",
+    "rocksmash",
+    "razorshell"
+
+  ],
+  "stage": -1
+}

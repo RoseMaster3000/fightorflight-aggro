@@ -1,0 +1,13 @@
+{
+  "type": "status",
+  "target": "target",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "confusion",
+  "move_list": [
+    "confusion",
+    "psybeam",
+    "signalbeam",
+    "axekick"
+  ]
+}

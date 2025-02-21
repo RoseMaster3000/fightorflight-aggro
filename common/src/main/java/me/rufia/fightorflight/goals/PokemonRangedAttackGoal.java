@@ -3,6 +3,7 @@ package me.rufia.fightorflight.goals;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.battles.BattleRegistry;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
@@ -60,7 +61,9 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
         if (!PokemonUtils.shouldShoot(pokemonEntity) || PokemonUtils.moveCommandAvailable(pokemonEntity)) {
             return false;
         }
-
+        if(pokemonEntity.getPokemon().getState() instanceof ShoulderedState){
+            return false;
+        }
         LivingEntity livingEntity = this.pokemonEntity.getTarget();
         if (livingEntity != null && livingEntity.isAlive()) {
             this.target = livingEntity;

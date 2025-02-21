@@ -1,0 +1,13 @@
+{
+  "type": "stat",
+  "target": "target",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "luminacrash",
+    "acidspray"
+
+  ],
+  "stage": -2
+}

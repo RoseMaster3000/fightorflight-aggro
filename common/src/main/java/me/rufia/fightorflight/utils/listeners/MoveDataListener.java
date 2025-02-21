@@ -26,20 +26,6 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
     protected Map<ResourceLocation, MoveDataContainer> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, MoveDataContainer> map = new HashMap<>();
         CobblemonFightOrFlight.LOGGER.info("[FOF] Preparing to read");
-        /*
-        for (var entry : resourceManager.listResources("fof_move_data/" + "stat", fileName -> fileName.getPath().endsWith(".json")).entrySet()) {
-            var resourceLocation = entry.getKey();
-            var resource = entry.getValue();
-            try {
-                //CobblemonFightOrFlight.LOGGER.info(resourceLocation.getPath());
-                JsonReader reader = new JsonReader(new InputStreamReader(resource.open()));
-                Gson gson = new Gson();
-                StatChangeMoveDataContainer container = gson.fromJson(reader, StatChangeMoveDataContainer.class);
-                map.put(resourceLocation, container);
-            } catch (Exception e) {
-                CobblemonFightOrFlight.LOGGER.warn("Failed to read " + resourceLocation);
-            }
-        }*/
         prepareTag(resourceManager, "stat", StatChangeMoveDataContainer.class, map);
         prepareTag(resourceManager, "status", StatusEffectMoveDataContainer.class, map);
         return map;
@@ -55,7 +41,7 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
                 Gson gson = new Gson();
                 map.put(resourceLocation, gson.fromJson(reader, type));
             } catch (Exception e) {
-                CobblemonFightOrFlight.LOGGER.warn("Failed to read " + resourceLocation);
+                CobblemonFightOrFlight.LOGGER.warn("Failed to read {}", resourceLocation);
             }
         }
     }
@@ -77,8 +63,8 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
     @Override
     protected void apply(Map<ResourceLocation, MoveDataContainer> map, ResourceManager resourceManager, ProfilerFiller profiler) {
         MoveData.moveData.clear();
+        int fileCount=0;
         for (var entry : map.entrySet()) {
-            CobblemonFightOrFlight.LOGGER.info("[FOF] Move Data is ready to be processed");
             var location = entry.getKey();
             var container = entry.getValue();
             Map<String, ? extends MoveData> dataMap = null;
@@ -89,9 +75,10 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
             }
             if (dataMap != null) {
                 register(dataMap);
+                ++fileCount;
             }
         }
-        CobblemonFightOrFlight.LOGGER.info("[FOF] Move Data processed.");
+        CobblemonFightOrFlight.LOGGER.info("[FOF] {} move data files processed.",fileCount);
     }
 
 
