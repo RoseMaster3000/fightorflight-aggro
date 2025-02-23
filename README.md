@@ -1,3 +1,7 @@
+## Aggro Edition
+Unprovoked Attack Improved! Insteal of all pokemon attacking unprovoked, I created a list of specific species that attack unprovoked. This list is in the config file.
+
+
 This version is no longer server-side only. I added new items and entities to support some features. I heard that someone is developing a server-side version in the Cobblemon discord. Please wait for that if you can't accept adding this to your server. I'm just too busy to solve this problem. Sorry.  
 Though I haven't made contact with them, I don't mind they use my code if necessary.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
