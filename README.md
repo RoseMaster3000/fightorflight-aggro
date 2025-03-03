@@ -58,23 +58,41 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - Nature multipliers.(It can't be edited in the config before.)
 - Failed captures will be counted as provocation.
 - Strength and weakness can influence the pokemon's damage now(follow the Minecraft rule, mostly). Both the range attack and melee attack can benefit from this(I know these effects don't increase the damage of the projectiles in Minecraft.)
-### Features/Changes that is not released currently:
-- New config options: The aggression system will only work in the dark areas.(Similar to the spiders in Minecraft)
-- Bug fixes: The invulnerable time don't work properly for pokemon entity;
+### Features/Changes that is not released currently(For 0.7.5):
+- New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, disabled by default)
+- New config options: do_pokemon_defend_creeper_proactive: Player owned pokemon can attack creeper proactively.(Disabled by default.)
+- Bug fixes: The invulnerable time should work properly for pokemon entity;
 - Bug fixes: The tracing projectiles should work correctly now.
+- Bug fixes: The explosive projectiles can deal the damage properly now.
+- Pokemon on shoulders should stop targeting now.
+- Combat overhaul
+  - Remove the type effects(levitate for psychic, weakness for fight,etc.)
+  - Give more special effect to different moves
+    - Pokemon gain strength after using Power-up Punch, gain weakness and resistance weakened(a new effect added by myself) after using Close Combat,etc.
+      - I want to make it easy so the effect level WON'T stack like the core series.
+    - Moves that can apply status conditions can apply status effects from Minecraft:
+      - Burn -> Weakness & set the entity on fire.
+      - Poison -> Poison
+      - Badly Poison -> Poison II
+      - Freeze & Sleep -> Mining Fatigue II & Slowness III & Increase the frozen time.
+      - Paralysis -> Mining Fatigue & Slowness
+      - Flinch -> Mining Fatigue & Slowness II
+      - Confusion -> Confusion
+    - Serene Grace can increase the effect to trigger the additional effect
+    - Sheer Force no longer boost all the moves. It works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
 ## TODO
 - Main Goal For the Next Update:
-  - Combat overhaul
-    - Remove the type effect(levitate for psychic, weakness for fight,etc.)
-    - Give more special effect to different moves(Pokemon gain strength after using Power-up Punch, gain weakness after using Close Combat)
-      - I want to make it easy so the effect level won't stack
+  - Undecided yet.
 - Things that might be done in a short period of time(1~3 big updates):
   - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
     - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
     - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
     - The indicator for the cooldown might come later than this feature.
   - Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
+  - Targeting whitelist
+  - Compatibility with LivelierPokemon
 - Things that might not be done in a short period of time:
+  - Add an item similar to the Sticky Glob(Sounds cool, but we still got many things to do.)
   - Repel effect.(It's being worked on by the Cobblemon team according to their roadmap.)
   - Attack Position for Poke Staff(not available currently. It is quite difficult.)
   - Limit the number of pokemon in combat(It's a little bit difficult to check)

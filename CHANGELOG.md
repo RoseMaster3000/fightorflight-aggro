@@ -1,3 +1,4 @@
+# Please check the modrinth page for the other changelogs.
 ## v0.6.1
 * **Animation Support** Support for animations from cobblemon mod when attacking(These animations are not designed for this mod so it might be weird)
 * Wild Pokemon cries correctly when provoked.

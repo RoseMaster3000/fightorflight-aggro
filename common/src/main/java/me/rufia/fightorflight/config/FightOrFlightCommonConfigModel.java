@@ -88,8 +88,10 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Player Pokemon Defence")
     @Comment("Do player Pokemon defend their owners when they attack or are attacked by other mobs?")
     public boolean do_pokemon_defend_owner = true;
-    @Comment("Do player Pokemon defend their owners proactively? (follows the same rules as Iron Golems)")
+    @Comment("Do player Pokemon defend their owners proactively? (follows the same rules as Iron Golems!!!)")
     public boolean do_pokemon_defend_proactive = true;
+    @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
+    public boolean do_pokemon_defend_creeper_proactive = false;
     @Comment("Can player Pokemon target other players? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_players = false;
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
