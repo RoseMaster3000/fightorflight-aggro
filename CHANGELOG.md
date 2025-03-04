@@ -1,4 +1,27 @@
 # Please check the modrinth page for the other changelogs.
+## v0.7.5
+- New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, disabled by default)
+- New config options: do_pokemon_defend_creeper_proactive: Player owned pokemon can attack creeper proactively.(Disabled by default.)
+- Bug fixes: The invulnerable time should work properly for pokemon entity now;
+- Bug fixes: The tracing projectiles should work correctly now.
+- Bug fixes: The explosive projectiles can deal the damage properly now.
+- Pokemon on shoulders should stop targeting now.
+- Combat overhaul
+    - Remove the type effects(levitate for psychic, weakness for fight,etc.)
+    - Give more special effect to different moves(Stat changing/Status related attack moves)
+        - Pokemon gain strength after using Power-up Punch, gain weakness and resistance weakened(a new effect added by myself) after using Close Combat,etc.
+            - I want to make it easy so the effect level WON'T stack like the core series.
+        - Moves that can apply status conditions can apply status effects from Minecraft:
+            - Burn -> Weakness & set the entity on fire.
+            - Poison -> Poison
+            - Badly Poison -> Poison II
+            - Freeze & Sleep -> Mining Fatigue II & Slowness III & Increase the frozen time.
+            - Paralysis -> Mining Fatigue & Slowness
+            - Flinch -> Mining Fatigue & Slowness II
+            - Confusion -> Confusion
+        - Serene Grace can increase the chance to trigger the additional effect
+        - Sheer Force no longer boost all the moves. It works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
+
 ## v0.6.1
 * **Animation Support** Support for animations from cobblemon mod when attacking(These animations are not designed for this mod so it might be weird)
 * Wild Pokemon cries correctly when provoked.

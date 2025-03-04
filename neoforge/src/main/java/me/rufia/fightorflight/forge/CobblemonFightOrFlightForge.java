@@ -1,14 +1,13 @@
 package me.rufia.fightorflight.forge;
 
 
-import dev.architectury.neoforge.ArchitecturyNeoForge;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.effects.FOFEffects;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
+import me.rufia.fightorflight.platform.neoforge.EffectRegisterImpl;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -21,9 +20,9 @@ public final class CobblemonFightOrFlightForge {
         EntityFightOrFlight.bootstrap();
         ItemFightOrFlight.bootstrap();
         FOFEffects.bootstrap();
+        EffectRegisterImpl.MOB_EFFECTS.register(modEventBus);
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
         NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
-
     }
 
     //    @SubscribeEvent
@@ -32,7 +31,6 @@ public final class CobblemonFightOrFlightForge {
 //        event.add(CobblemonEntities.POKEMON.get(), Attributes.ATTACK_DAMAGE, 2.0D);
 //        //event.add(CobblemonEntities.POKEMON.get(), Attributes.ATTACK_KNOCKBACK, 2.0D);
 //    }
-
 
 
 //    @SubscribeEvent

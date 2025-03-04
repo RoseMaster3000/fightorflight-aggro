@@ -282,13 +282,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         return amount * (1 - pokemonMultipliers.getMaximumDamageReduction() * Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
         //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
     }
-    /*
-    @Inject(method = "hurt", at = @At("TAIL"))
-    private void hurtDamageToPokemon(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (PokemonUtils.isUsingNewHealthMechanic() && invulnerableTime == 20) {
-            PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, amount, false);
-        }
-    }*/
 
     @Override
     protected void actuallyHurt(DamageSource damageSource, float damageAmount) {
