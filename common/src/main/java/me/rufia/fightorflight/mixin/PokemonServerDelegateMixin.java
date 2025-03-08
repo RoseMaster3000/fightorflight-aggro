@@ -29,7 +29,7 @@ public abstract class PokemonServerDelegateMixin implements PokemonSideDelegate 
                 int currentHealth = entity.getPokemon().getCurrentHealth();
                 int entityMaxHealth = PokemonUtils.getMaxHealth(entity);
                 boolean notUpdated = entityMaxHealth != 20 && entity.getMaxHealth() == 20;//Attention: I'm not sure what bugs it might cause currently
-                float newHealth = entity.getOwner() == null && CobblemonFightOrFlight.commonConfig().health_sync_for_wild_pokemon ? (notUpdated ? entityMaxHealth : entity.getHealth()) : Math.round((float) currentHealth / hpStat * entityMaxHealth);
+                float newHealth = entity.getOwner() == null && !CobblemonFightOrFlight.commonConfig().enable_health_sync_for_wild_pokemon ? (notUpdated ? entityMaxHealth : entity.getHealth()) : Math.round((float) currentHealth / hpStat * entityMaxHealth);
                 entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(entityMaxHealth);
                 entity.setHealth(currentHealth > 0 && newHealth == 0 ? 1 : newHealth);
             }

@@ -109,7 +109,7 @@ public class PokemonAttackEffect {
         float minDmg = isSpecial ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
         float maxDmg = isSpecial ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
         float sheerForceMultiplier = PokemonUtils.canActivateSheerForce(pokemonEntity) ? 1.3f : 1.0f;
-        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingRangeAttack);
+        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
         float mobEffectBoost = getMobEffectBoost(pokemonEntity);
         //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);

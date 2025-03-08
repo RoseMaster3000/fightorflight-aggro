@@ -51,7 +51,6 @@ public class PokemonMultipliers {
             return hasOwner ? CobblemonFightOrFlight.commonConfig().ranged_attack_damage_player : 1.0f;
         }
         if (isMeleeAttack) {
-
             return hasOwner ? CobblemonFightOrFlight.commonConfig().attack_damage_player : 1.0f;
         }
         return 1.0f;

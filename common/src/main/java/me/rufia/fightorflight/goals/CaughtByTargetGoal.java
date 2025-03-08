@@ -21,7 +21,6 @@ import java.util.List;
 public class CaughtByTargetGoal extends TargetGoal {
     private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
     private LivingEntity lastCaughtByMob;
-    private int lastCaughtByMobTimestamp;
 
     public CaughtByTargetGoal(Mob mob) {
         super(mob, true, false);
@@ -29,6 +28,9 @@ public class CaughtByTargetGoal extends TargetGoal {
     }
 
     public boolean canUse() {
+        if (!CobblemonFightOrFlight.commonConfig().failed_capture_counted_as_provocation) {
+            return false;
+        }
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
         if (pokemonEntity.getOwner() != null) {
             return false;
@@ -38,9 +40,6 @@ public class CaughtByTargetGoal extends TargetGoal {
             Entity target = mob.level().getEntity(mobID);
             if (target instanceof LivingEntity livingEntity) {
                 lastCaughtByMob = livingEntity;
-                //CobblemonFightOrFlight.LOGGER.info("Converted");
-            } else {
-                //CobblemonFightOrFlight.LOGGER.info("Failed to convert");
             }
         }
         if (lastCaughtByMob != null) {
@@ -61,12 +60,7 @@ public class CaughtByTargetGoal extends TargetGoal {
         if (this.mob.getTarget() instanceof Player) {
             this.mob.setLastHurtByPlayer((Player) this.mob.getTarget());
         }
-//        this.timestamp = this.mob.getLastHurtByMobTimestamp();
         this.unseenMemoryTicks = 300;
-//        if (this.alertSameType) {
-//            this.alertOthers();
-//        }
-
         super.start();
     }
 }

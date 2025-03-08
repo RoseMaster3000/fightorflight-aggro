@@ -15,6 +15,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean do_pokemon_attack_unprovoked = false;
     @Comment("If the aggressive pokemon will only attack unprovoked in the dark area.(similar to the spider in Minecraft,do_pokemon_attack_unprovoked needs to be set to true")
     public boolean light_dependent_unprovoked_attack = true;
+    @Comment("If failed captures can be counted as provocation?")
+    public boolean failed_capture_counted_as_provocation = true;
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
@@ -179,8 +181,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Health Calculation & Synchronization")
     @Comment("If the original updateMaxHealth() will be replaced by my version. Pokemons outside of battle will use the hp stat instead of the base hp stat. The following configurations needs this one to work.")
     public boolean shouldOverrideUpdateMaxHealth = true;
-    @Comment("If health sync will work on the wild pokemon, healing them on standard pokemon battle start if they were damaged before.")
-    public boolean health_sync_for_wild_pokemon = true;
+    @Comment("If health sync will work on the wild pokemon, set to false will heal them on standard pokemon battle start if they were damaged before.")
+    public boolean enable_health_sync_for_wild_pokemon = false;
     @Comment("The minimum hp of a pokemon outside standard pokemon battle,shedinja is set to 1.0 and can't be changed.")
     public int min_HP = 8;
     @Comment("The medium hp value of a pokemon outside standard pokemon battle,the medium value is designed to allow you to better tweak the growth of HP value for the entity")

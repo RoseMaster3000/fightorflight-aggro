@@ -51,7 +51,7 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     public void tick() {
         super.tick();
-        makeParticle(4);
+        makeParticle(2);
     }
 
     protected void readAdditionalSaveData(CompoundTag compound) {

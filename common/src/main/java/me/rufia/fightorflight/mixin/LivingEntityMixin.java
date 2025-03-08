@@ -32,7 +32,7 @@ public abstract class LivingEntityMixin {
             int amp = -1;
             var effect = getEffect(FOFEffects.RESISTANCE_WEAKENED);
             if (effect != null) {
-                CobblemonFightOrFlight.LOGGER.info("EFFECT DETECTED! Amp:{}", effect.getAmplifier());
+                //CobblemonFightOrFlight.LOGGER.info("EFFECT DETECTED! Amp:{}", effect.getAmplifier());
                 amp = effect.getAmplifier();
             }
             if (amp > 3) {
