@@ -2,7 +2,7 @@ This version is no longer server-side only. I added new items and entities to su
 Though I haven't made contact with them, I don't mind they use my code if necessary.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in v0.7.5:
+### Features included in v0.7.6:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -55,7 +55,7 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 * Added a new config to disable the health sync for wild pokemon(the health sync for wild pokemon will be disabled by default)
 - Options to enable friendly fire
 - Nature multipliers.(It can't be edited in the config before.)
-- Failed captures will be counted as provocation.
+- Failed captures will be counted as provocation.(can be disabled in the config)
 - Strength and weakness can influence the pokemon's damage now(follow the Minecraft rule, mostly). Both the range attack and melee attack can benefit from this(I know these effects don't increase the damage of the projectiles in Minecraft.)
 - New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, disabled by default)
 - New config options: do_pokemon_defend_creeper_proactive: Player owned pokemon can attack creeper proactively.(Disabled by default.)
@@ -75,11 +75,7 @@ Though I haven't made contact with them, I don't mind they use my code if necess
     - Serene Grace can increase the effect to trigger the additional effect
     - Sheer Force works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
 ### Features/Changes that is not released currently:
-- A config option to disable failed captures counted as provocation
-- Bug fixes:Fix the bug that health_sync_for_wild_pokemon is disabled when set to true
-  - If I just revert it, every player has to edit the config to use their preferred choice. To avoid that, it will be renamed to enable_health_sync_for_wild_pokemon so the you won't need to edit the config if you use the default setting.
-- Bug fixes:Fix the bug that attack_damage_player is not working.
-- Bug fixes:Fix the bug that the tracing projectile is being influenced by the gravity when tracing target.
+- Type effectiveness for Pokemon entities
 ## TODO
 - Main Goal For the Next Update:
 - Things that might be done in a short period of time(1~3 big updates):
@@ -87,7 +83,6 @@ Though I haven't made contact with them, I don't mind they use my code if necess
     - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
     - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
     - The indicator for the cooldown might come later than this feature.
-  - Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
   - Targeting whitelist
   - Compatibility with LivelierPokemon
 - Things that might not be done in a short period of time:

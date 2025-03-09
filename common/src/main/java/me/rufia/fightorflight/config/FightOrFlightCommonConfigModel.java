@@ -168,6 +168,14 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
     public int maximum_special_attack_stat = 200;
     @ConfigEntry.Category("Pokemon Damage Multiplier(misc),These modifiers doesn't stack currently")
+    @Comment("If the pokemon type effectiveness will be activated outside standard Pokemon battle")
+    public boolean type_effectiveness_between_pokemon=true;
+    @Comment("Multiplier for super effective damage against the other Pokemon")
+    public float super_effective_multiplier=2f;
+    @Comment("Multiplier for not very effective damage against the other Pokemon")
+    public float not_very_effective_multiplier=0.5f;
+    @Comment("Multiplier for no effect damage against the other Pokemon")
+    public float no_effect_multiplier =0.1f;
     @Comment("Water type damage will be more effective on mobs like Blaze,Enderman,etc.")
     public float water_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Fire type damage will be not very effective against fire immune entity.(set to 0 if you want a complete immune)")

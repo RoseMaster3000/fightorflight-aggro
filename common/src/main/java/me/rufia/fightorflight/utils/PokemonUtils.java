@@ -350,7 +350,11 @@ public class PokemonUtils {
     }
 
     public static boolean isSheerForce(PokemonEntity pokemonEntity) {
-        return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
+        return abilityIs(pokemonEntity, "sheerforce");
+    }
+
+    public static boolean abilityIs(PokemonEntity pokemonEntity, String abilityName) {
+        return pokemonEntity.getPokemon().getAbility().getName().equals(abilityName);
     }
 
     public static boolean canActivateSheerForce(PokemonEntity pokemonEntity) {

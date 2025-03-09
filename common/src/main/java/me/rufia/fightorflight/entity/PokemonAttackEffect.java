@@ -17,6 +17,7 @@ import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
 import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonMultipliers;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.TypeEffectiveness;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -109,7 +110,8 @@ public class PokemonAttackEffect {
         float minDmg = isSpecial ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
         float maxDmg = isSpecial ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
         float sheerForceMultiplier = PokemonUtils.canActivateSheerForce(pokemonEntity) ? 1.3f : 1.0f;
-        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
+        float typeEffectivenessMultiplier = target instanceof PokemonEntity targetPokemon ? TypeEffectiveness.getTypeEffectiveness(pokemonEntity, targetPokemon) : 1f;
+        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack) * typeEffectivenessMultiplier;
         float mobEffectBoost = getMobEffectBoost(pokemonEntity);
         //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
@@ -135,7 +137,7 @@ public class PokemonAttackEffect {
             secondaryType = primaryType;
         }
         if (primaryType.equals(move.getType()) || secondaryType.equals(move.getType())) {
-            STAB = 1.5f;
+            STAB = PokemonUtils.abilityIs(pokemonEntity,"adaptability") ? 2f : 1.5f;
         } else {
             STAB = 1.0f;
         }
@@ -393,6 +395,15 @@ public class PokemonAttackEffect {
         }
         if (b5) {
             makeMagicAttackParticle(pokemonEntity, hurtTarget);
+        }
+        if (hurtTarget instanceof PokemonEntity targetPokemon) {
+            float typeEffectivenessMultiplier = TypeEffectiveness.getTypeEffectiveness(pokemonEntity, targetPokemon);
+            if (typeEffectivenessMultiplier >= 1.3f) {
+                //Filter/Solid Rock will reduce the damage,1.3 is to avoid the inaccuracy of float.
+                PokemonUtils.makeParticle(particleAmount, hurtTarget, ParticleTypes.WAX_ON);
+            } else if (typeEffectivenessMultiplier < 1f) {
+                PokemonUtils.makeParticle(particleAmount, hurtTarget, ParticleTypes.SCRAPE);
+            }
         }
     }
 

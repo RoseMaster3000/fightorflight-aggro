@@ -1,4 +1,13 @@
 # Please check the modrinth page for the other changelogs.
+## v0.7.6
+A small update that fixes some small bug before I start working on the other features.
+### New Features:
+- New config options: A config option to disable failed captures counted as provocation
+### Fixes:
+- Bug fixes:Fix the bug that health_sync_for_wild_pokemon is disabled when set to true
+    - If I just revert it, every player has to edit the config to use their preferred choice. To avoid that, it will be renamed to enable_health_sync_for_wild_pokemon so you won't need to edit the config if you use the default setting.
+- Bug fixes:Fix the bug that attack_damage_player is not working.
+- Bug fixes:Fix the bug that the tracing projectile is being influenced by the gravity when tracing the target.
 ## v0.7.5
 ### New Features:
 - New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, disabled by default)
