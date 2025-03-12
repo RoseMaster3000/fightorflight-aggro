@@ -21,6 +21,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -132,7 +134,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
         targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive && arg instanceof Creeper)));
     }
-
 
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
     public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
@@ -302,6 +303,11 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (source.getEntity() instanceof LivingEntity livingEntity) {
             if (!PokemonAttackEffect.shouldBeHurtByAllyMob(((PokemonEntity) (Object) this), livingEntity)) {
                 cir.setReturnValue(false);
+            }
+        }
+        if (CobblemonFightOrFlight.commonConfig().slow_down_after_hurt) {
+            if (!getPokemon().isPlayerOwned()) {
+                addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 0));
             }
         }
     }

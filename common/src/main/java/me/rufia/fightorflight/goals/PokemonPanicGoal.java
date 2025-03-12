@@ -27,7 +27,9 @@ public class PokemonPanicGoal extends PanicGoal {
             return false;
         }
         if (PokemonUtils.shouldStopRunningAfterHurt(pokemonEntity)) {
-            return false;
+            if (pokemonEntity.getMaxHealth() != pokemonEntity.getHealth()) {
+                return false;
+            }
         }
         if (this.mob.isOnFire() || this.mob.isFreezing()) {
             return true;

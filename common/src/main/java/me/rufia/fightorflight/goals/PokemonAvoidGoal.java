@@ -51,7 +51,9 @@ public class PokemonAvoidGoal extends Goal {
         }
         String species = pokemonEntity.getPokemon().getSpecies().getName().toLowerCase();
         if (PokemonUtils.shouldStopRunningAfterHurt(pokemonEntity)) {
-            return false;
+            if (pokemonEntity.getMaxHealth() != pokemonEntity.getHealth()) {
+                return false;
+            }
         }
         if (CobblemonFightOrFlight.SpeciesAlwaysFlee(species)) {
             //These pokemon won't run away from creative mode player,I thought I had to switch it on manually so I spent an hour debugging...

@@ -33,6 +33,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public double always_aggro_below = -128;
     @Comment("Pokemon stops running away if the hp is not full.")
     public boolean stop_running_after_hurt = true;
+    @Comment("Wild pokemon will be slow down if the hp is not full.")
+    public boolean slow_down_after_hurt = false;
     @Comment("Pokemon with these natures are slightly more aggressive.")
     public String[] aggressive_nature = {"sassy", "hardy", "bold", "impish", "hasty"};
     @Comment("The aggression multiplier for natures above.")
@@ -138,6 +140,10 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float maximum_movement_speed = 2.0f;
     @Comment("The speed stat required for a pokemon to reach the highest fleeing and pursuing speed.The default value(548) is the max speed stat of a lvl.100 Regieleki with a beneficial nature.")
     public int speed_stat_limit = 548;
+    @Comment("Use the classic type effect after hitting the enemy.(Levitate for the psychic type move,regeneration for grass type move)")
+    public boolean activate_type_effect = false;
+    @Comment("Use the move effect after hitting the enemy(Inferno will always burn the target, Flamethrower has a 10% chance to burn the target.)")
+    public boolean activate_move_effect = true;
     @Comment("The maximum damage reduction wild pokemon can get from its defense/special defense(uses the highest one)")
     public float max_damage_reduction_multiplier = 0.4f;
     @Comment("The multiplier for player-owned Pokemon for maximum damage reduction")
@@ -169,13 +175,13 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public int maximum_special_attack_stat = 200;
     @ConfigEntry.Category("Pokemon Damage Multiplier(misc),These modifiers doesn't stack currently")
     @Comment("If the pokemon type effectiveness will be activated outside standard Pokemon battle")
-    public boolean type_effectiveness_between_pokemon=true;
+    public boolean type_effectiveness_between_pokemon = true;
     @Comment("Multiplier for super effective damage against the other Pokemon")
-    public float super_effective_multiplier=2f;
+    public float super_effective_multiplier = 2f;
     @Comment("Multiplier for not very effective damage against the other Pokemon")
-    public float not_very_effective_multiplier=0.5f;
+    public float not_very_effective_multiplier = 0.5f;
     @Comment("Multiplier for no effect damage against the other Pokemon")
-    public float no_effect_multiplier =0.1f;
+    public float no_effect_multiplier = 0.1f;
     @Comment("Water type damage will be more effective on mobs like Blaze,Enderman,etc.")
     public float water_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Fire type damage will be not very effective against fire immune entity.(set to 0 if you want a complete immune)")
@@ -204,6 +210,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("HP stat needed to get maximum HP outside standard pokemon battle. The max hp of a Blissey is 714.")
     public int max_HP_required_stat = 500;
     @ConfigEntry.Category("Poke Staff")
+    @Comment("The Pokemon stays still after finishing the move command.")
     public boolean stay_after_move_command = true;
 
 }

@@ -137,7 +137,7 @@ public class PokemonAttackEffect {
             secondaryType = primaryType;
         }
         if (primaryType.equals(move.getType()) || secondaryType.equals(move.getType())) {
-            STAB = PokemonUtils.abilityIs(pokemonEntity,"adaptability") ? 2f : 1.5f;
+            STAB = PokemonUtils.abilityIs(pokemonEntity, "adaptability") ? 2f : 1.5f;
         } else {
             STAB = 1.0f;
         }
@@ -316,7 +316,7 @@ public class PokemonAttackEffect {
                     livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.POISON, effectStrength * 20, 0), pokemonEntity);
                     break;
                 case "psychic":
-                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, effectStrength * 20, 0), pokemonEntity);
+                    livingHurtTarget.addEffect(new MobEffectInstance(MobEffects.LEVITATION, effectStrength * 20, 0), pokemonEntity);
                     break;
                 case "fairy":
                 case "fighting":
@@ -445,12 +445,14 @@ public class PokemonAttackEffect {
         if (b3) {
             pokemonRecoilSelf(pokemonEntity, 1.0f);
         }
+
         if (b4 || b5) {
             float dmg = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
             boolean hasBigRoot = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.BIG_ROOT);
             float percent = (b4 ? 0.5f : 0.75f) * (hasBigRoot ? 1.3f : 1.0f);
             pokemonEntity.heal(dmg * percent);
         }
+
         if (b6) {
             var abilityName = pokemonEntity.getPokemon().getAbility().getName();
             if (!(abilityName.equals("sheerforce") || abilityName.equals("magicguard"))) {
@@ -458,12 +460,17 @@ public class PokemonAttackEffect {
             }
         }
 
-        if (MoveData.moveData.containsKey(move.getName())) {
-            for (MoveData data : MoveData.moveData.get(move.getName())) {
-                data.invoke(pokemonEntity, hurtTarget);
-            }
+        if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
+            applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
         }
 
+        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+            if (MoveData.moveData.containsKey(move.getName())) {
+                for (MoveData data : MoveData.moveData.get(move.getName())) {
+                    data.invoke(pokemonEntity, hurtTarget);
+                }
+            }
+        }
     }
 
     public static void pokemonRecallWithAnimation(PokemonEntity pokemonEntity) {
@@ -524,10 +531,10 @@ public class PokemonAttackEffect {
                 target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                 PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
-                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
+                applyPostEffect(pokemonEntity, target, move);
                 //applyTypeEffect(pokemonEntity, target);
             } else if (b6) {
-                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move);
+                applyPostEffect(pokemonEntity, target, move);
                 //Nothing to do now.
             } else {
                 bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
@@ -659,7 +666,9 @@ public class PokemonAttackEffect {
                 applyPostEffect(pokemonEntity, livingEntity, move);
             }
         } else {
-            //applyTypeEffect(pokemonEntity, hurtTarget);
+            if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
+                applyTypeEffect(pokemonEntity, hurtTarget);
+            }
             makeTypeEffectParticle(6, hurtTarget, pokemonEntity.getPokemon().getPrimaryType().getName());
             hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, false);
         }
@@ -667,7 +676,7 @@ public class PokemonAttackEffect {
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
         boolean flag = hurtTarget.hurt(pokemonEntity.level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
-            if (hurtTarget instanceof LivingEntity livingEntity) {
+            if (CobblemonFightOrFlight.commonConfig().activate_type_effect && hurtTarget instanceof LivingEntity livingEntity) {
                 livingEntity.knockback(hurtKnockback * 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
                 pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
             }
