@@ -9,7 +9,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
-import me.rufia.fightorflight.goals.*;
+import me.rufia.fightorflight.goals.targeting.*;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;

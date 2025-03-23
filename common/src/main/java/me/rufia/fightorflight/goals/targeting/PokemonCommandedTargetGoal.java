@@ -1,7 +1,6 @@
-package me.rufia.fightorflight.goals;
+package me.rufia.fightorflight.goals.targeting;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.PokemonUtils;

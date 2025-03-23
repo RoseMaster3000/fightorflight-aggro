@@ -10,6 +10,7 @@ import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.goals.*;
 import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.TargetingWhitelist;
 import me.rufia.fightorflight.utils.listeners.MoveDataListener;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -61,6 +62,7 @@ public class CobblemonFightOrFlight {
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
         CobblemonFightOrFlightNetwork.init();
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));//unfinished
+        TargetingWhitelist.init();
     }
 
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {

@@ -108,6 +108,10 @@ public class PokemonUtils {
         }
         moves.addAll(pokemon.getForm().getMoves().getLevelUpMovesUpTo(100));
         moves.addAll(pokemon.getForm().getMoves().getEvolutionMoves());
+        moves.addAll(pokemon.getForm().getMoves().getTmMoves());
+        moves.addAll(pokemon.getForm().getMoves().getTutorMoves());
+        moves.addAll(pokemon.getForm().getMoves().getEggMoves());
+        //Might be a huge load for a big server?
         return moves;
     }
 

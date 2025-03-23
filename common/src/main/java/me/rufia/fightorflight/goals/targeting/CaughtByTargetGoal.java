@@ -1,9 +1,9 @@
-package me.rufia.fightorflight.goals;
+package me.rufia.fightorflight.goals.targeting;
 
-import com.cobblemon.mod.common.entity.pokeball.EmptyPokeBallEntity;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.utils.TargetingWhitelist;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,9 +14,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 public class CaughtByTargetGoal extends TargetGoal {
     private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
@@ -38,6 +36,9 @@ public class CaughtByTargetGoal extends TargetGoal {
         int mobID = ((PokemonInterface) pokemonEntity).getCapturedBy();
         if (mobID != 0) {
             Entity target = mob.level().getEntity(mobID);
+            if (target != null && TargetingWhitelist.getWhitelist(pokemonEntity).contains(target.getEncodeId())) {
+                return false;//I don't know who will list the player in the list, but just let it happen.
+            }
             if (target instanceof LivingEntity livingEntity) {
                 lastCaughtByMob = livingEntity;
             }

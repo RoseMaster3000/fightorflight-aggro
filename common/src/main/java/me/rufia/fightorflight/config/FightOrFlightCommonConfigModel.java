@@ -86,6 +86,18 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "turboblaze",
             "teravolt"
     };
+    @Comment("Whitelist for all pokemon.(won't influence the Poke Staff)")
+    public String[] all_pokemon_targeting_whitelist={
+            "minecraft:villager"
+    };
+    @Comment("Whitelist for wild pokemon.")
+    public String[] wild_pokemon_targeting_whitelist={
+
+    };
+    @Comment("Whitelist for player owned pokemon.(won't influence the Poke Staff)")
+    public String[] player_owned_pokemon_targeting_whitelist={
+
+    };
     @Comment("Allow the Pokemon to use the teleport move to flee if the Pokemon had learnt it?")
     public boolean allow_teleport_to_flee = true;
 
