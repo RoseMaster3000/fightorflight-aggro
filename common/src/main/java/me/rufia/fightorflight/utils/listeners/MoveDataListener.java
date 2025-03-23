@@ -5,6 +5,7 @@ import com.google.gson.stream.JsonReader;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.data.MoveData;
 import me.rufia.fightorflight.data.MoveDataContainer;
+import me.rufia.fightorflight.data.container.MiscMoveDataContainer;
 import me.rufia.fightorflight.data.container.StatChangeMoveDataContainer;
 import me.rufia.fightorflight.data.container.StatusEffectMoveDataContainer;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +29,7 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
         CobblemonFightOrFlight.LOGGER.info("[FOF] Preparing to read");
         prepareTag(resourceManager, "stat", StatChangeMoveDataContainer.class, map);
         prepareTag(resourceManager, "status", StatusEffectMoveDataContainer.class, map);
+        prepareTag(resourceManager, "misc", MiscMoveDataContainer.class, map);
         return map;
     }
 
@@ -63,7 +65,7 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
     @Override
     protected void apply(Map<ResourceLocation, MoveDataContainer> map, ResourceManager resourceManager, ProfilerFiller profiler) {
         MoveData.moveData.clear();
-        int fileCount=0;
+        int fileCount = 0;
         for (var entry : map.entrySet()) {
             var location = entry.getKey();
             var container = entry.getValue();
@@ -72,13 +74,15 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
                 dataMap = statChangeMoveDataContainer.build();
             } else if (container instanceof StatusEffectMoveDataContainer statusEffectMoveDataContainer) {
                 dataMap = statusEffectMoveDataContainer.build();
+            } else if (container instanceof MiscMoveDataContainer miscMoveDataContainer) {
+                dataMap = miscMoveDataContainer.build();
             }
             if (dataMap != null) {
                 register(dataMap);
                 ++fileCount;
             }
         }
-        CobblemonFightOrFlight.LOGGER.info("[FOF] {} move data files processed.",fileCount);
+        CobblemonFightOrFlight.LOGGER.info("[FOF] {} move data files processed.", fileCount);
     }
 
 

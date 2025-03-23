@@ -9,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.Objects;
 
 public class StatusEffectMoveData extends MoveData {
-    public StatusEffectMoveData(String target, float chance, boolean canActivateSheerForce, String name) {
-        super("status", target, chance, canActivateSheerForce, name);
+    public StatusEffectMoveData(String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name) {
+        super("status", target, triggerEvent, chance, canActivateSheerForce, name);
     }
 
     @Override

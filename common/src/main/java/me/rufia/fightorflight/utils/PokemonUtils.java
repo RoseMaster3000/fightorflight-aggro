@@ -27,6 +27,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -100,18 +101,28 @@ public class PokemonUtils {
         return !pokemonEntity.isBusy();
     }
 
+    public static Set<MoveTemplate> getAllLearnableMoveTemplates(Pokemon pokemon) {
+        Set<MoveTemplate> moves = new HashSet<>();
+        for (var move : pokemon.getBenchedMoves()) {
+            moves.add(move.getMoveTemplate());
+        }
+        moves.addAll(pokemon.getForm().getMoves().getLevelUpMovesUpTo(100));
+        moves.addAll(pokemon.getForm().getMoves().getEvolutionMoves());
+        return moves;
+    }
+
     public static Move getMove(PokemonEntity pokemonEntity) {
         if (pokemonEntity == null) {
             CobblemonFightOrFlight.LOGGER.info("PokemonEntity is null");//This will be shown if the projectile hits the target and the pokemon is recalled
             return null;
         }
-        String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
+        String moveName = !(((PokemonInterface) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
         Move move = null;
         boolean flag = false;
         if (moveName == null) {
             return null;
         }
-        for (MoveTemplate m : pokemonEntity.getPokemon().getAllAccessibleMoves()) {
+        for (MoveTemplate m : getAllLearnableMoveTemplates(pokemonEntity.getPokemon())) {
             move = m.create();
             if (m.getName().equals(moveName)) {
                 flag = true;
@@ -122,7 +133,7 @@ public class PokemonUtils {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
         if (move == null) {
-            CobblemonFightOrFlight.LOGGER.warn("Returning a null move for no reason");
+            CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);
         }
         return move;
     }

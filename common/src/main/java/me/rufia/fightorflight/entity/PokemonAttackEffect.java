@@ -424,6 +424,22 @@ public class PokemonAttackEffect {
         PokemonUtils.makeParticle(particleAmount, entity, getParticleFromType(typeName));
     }
 
+    public static void applyOnUseEffect(PokemonEntity pokemonEntity,LivingEntity hurtTarget,Move move){
+        Level level = hurtTarget.level();
+        if (move == null || level.isClientSide) {
+            return;
+        }
+        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+            if (MoveData.moveData.containsKey(move.getName())) {
+                for (MoveData data : MoveData.moveData.get(move.getName())) {
+                    if (data.isOnUse()) {
+                        data.invoke(pokemonEntity, hurtTarget);
+                    }
+                }
+            }
+        }
+    }
+
     public static void applyPostEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget, Move move) {
         Level level = hurtTarget.level();
         if (move == null || level.isClientSide) {
@@ -467,7 +483,9 @@ public class PokemonAttackEffect {
         if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
             if (MoveData.moveData.containsKey(move.getName())) {
                 for (MoveData data : MoveData.moveData.get(move.getName())) {
-                    data.invoke(pokemonEntity, hurtTarget);
+                    if (data.isOnHit()) {
+                        data.invoke(pokemonEntity, hurtTarget);
+                    }
                 }
             }
         }
@@ -643,6 +661,15 @@ public class PokemonAttackEffect {
         int stat = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
         int requiredStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
         return Math.min(Mth.lerp(((float) stat) / requiredStat, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);
+    }
+
+    public static int calculateAttackTime(PokemonEntity pokemonEntity, double distance) {
+        if (pokemonEntity == null) {
+            return -1;
+        }
+        float attackSpeedModifier = Math.max(0.1f, 1 - pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
+        float f = (float) Math.sqrt(distance) / PokemonUtils.getAttackRadius() * attackSpeedModifier;
+        return Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
     }
 
     public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {

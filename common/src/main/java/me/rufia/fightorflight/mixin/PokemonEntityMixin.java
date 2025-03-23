@@ -341,6 +341,9 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (getNextCryTime() >= 0) {
             setNextCryTime(getNextCryTime() - 1);
         }
+        if (getAttackTime() > 0) {
+            setAttackTime(getAttackTime() - 1);
+        }
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))

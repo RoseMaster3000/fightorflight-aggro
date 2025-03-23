@@ -10,8 +10,8 @@ import java.util.Map;
 public class StatChangeMoveDataContainer extends MoveDataContainer<StatChangeMoveData> {
     private int stage;
 
-    public StatChangeMoveDataContainer(String type, String target, float chance, boolean canActivateSheerForce, String name, List<String> move_list, int stage) {
-        super(type, target, chance, canActivateSheerForce, name, move_list);
+    public StatChangeMoveDataContainer(String type, String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name, List<String> move_list, int stage) {
+        super(type, target, triggerEvent, chance, canActivateSheerForce, name, move_list);
         this.stage = stage;
     }
 
@@ -19,7 +19,7 @@ public class StatChangeMoveDataContainer extends MoveDataContainer<StatChangeMov
     public Map<String, StatChangeMoveData> build() {
         Map<String, StatChangeMoveData> dataMap = new HashMap<>();
         for (String moveName : getMoveList()) {
-            StatChangeMoveData data = new StatChangeMoveData(getTarget(), getChance(), canActivateSheerForce(), getName(), stage);
+            StatChangeMoveData data = new StatChangeMoveData(getTarget(), getTriggerEvent(), getChance(), canActivateSheerForce(), getName(), stage);
             dataMap.put(moveName, data);
         }
         return dataMap;

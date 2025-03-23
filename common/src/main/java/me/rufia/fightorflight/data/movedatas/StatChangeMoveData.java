@@ -12,8 +12,8 @@ import java.util.Objects;
 public class StatChangeMoveData extends MoveData {
     private int stage;
 
-    public StatChangeMoveData(String target, float chance, boolean canActivateSheerForce, String name, int stage) {
-        super("stat", target, chance, canActivateSheerForce, name);
+    public StatChangeMoveData(String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name, int stage) {
+        super("stat", target, triggerEvent, chance, canActivateSheerForce, name);
         this.stage = stage;
     }
 

@@ -76,6 +76,9 @@ Though I haven't made contact with them, I don't mind they use my code if necess
     - Sheer Force works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
 ### Features/Changes that is not released currently:
 - Type effectiveness for Pokemon entities
+- Added a new config option to use the classical move effect.(You can use it with the new move effect, disabled by default)
+- Adaptability can enhance the STAB effect now.
+- Added a new config option to slow the pokemon when hurt.(disabled by default)
 ## TODO
 - Main Goal For the Next Update:
 - Things that might be done in a short period of time(1~3 big updates):
