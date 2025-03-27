@@ -33,6 +33,7 @@ import java.util.Set;
 
 public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
+    public static final String COBBLEMON_MOD_ID="cobblemon";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
     private static FightOrFlightCommonConfigModel commonConfig;

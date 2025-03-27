@@ -11,18 +11,22 @@ public interface PokemonInterface {
         return 0;
     }
 
-    ;
 
     default void setAttackTime(int val) {
     }
 
-    ;
+    default int getMaxAttackTime() {
+        return 0;
+    }
+
+
+    default void setMaxAttackTime(int val) {
+    }
 
     default boolean usingBeam() {
         return false;
     }
 
-    ;
 
     default boolean usingSound() {
         return false;
@@ -35,13 +39,11 @@ public interface PokemonInterface {
     default void setCurrentMove(Move move) {
     }
 
-    ;
 
     default String getCurrentMove() {
         return null;
     }
 
-    ;
 
     default int getNextCryTime() {
         return 0;

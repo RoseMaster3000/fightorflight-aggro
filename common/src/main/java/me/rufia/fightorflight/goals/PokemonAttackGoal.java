@@ -36,7 +36,7 @@ public abstract class PokemonAttackGoal extends Goal {
 
     protected void resetAttackTime(double d) {
         PokemonEntity pokemonEntity = getPokemonEntity();
-        setAttackTime(PokemonAttackEffect.calculateAttackTime(pokemonEntity, d));
+        PokemonAttackEffect.resetAttackTime(pokemonEntity, d);
     }
 
     @Override

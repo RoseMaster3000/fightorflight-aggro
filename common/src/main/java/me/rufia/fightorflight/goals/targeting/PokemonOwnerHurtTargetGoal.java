@@ -28,9 +28,6 @@ public class PokemonOwnerHurtTargetGoal extends TargetGoal {
         }
 
         LivingEntity owner = this.pokemonEntity.getOwner();
-//        if (owner != null) {
-//            LogUtils.getLogger().info(pokemonEntity.getPokemon().getSpecies().getName() + " owner: " + this.pokemonEntity.getPokemon().getOwnerPlayer());
-//        }
 
         if (owner != null && !this.pokemonEntity.isBusy()) {
             if (pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
@@ -39,7 +36,6 @@ public class PokemonOwnerHurtTargetGoal extends TargetGoal {
             this.ownerLastHurt = owner.getLastHurtMob();
             int i = owner.getLastHurtMobTimestamp();
             if (ownerLastHurt != null && TargetingWhitelist.getWhitelist(pokemonEntity).contains(ownerLastHurt.getEncodeId())) {
-                CobblemonFightOrFlight.LOGGER.info("DON'T HURT IT!");
                 return false;
             }
             return i != this.timestamp

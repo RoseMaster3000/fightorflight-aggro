@@ -137,7 +137,9 @@ public class PokemonUtils {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
         if (move == null) {
-            CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);
+            if (!pokemonEntity.level().isClientSide) {
+                CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);
+            }
         }
         return move;
     }

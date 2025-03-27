@@ -18,8 +18,7 @@ public class MiscMoveData extends MoveData {
         if (Objects.equals("recharge_1_turn", getName()) || Objects.equals("charge_1_turn", getName())) {
             if (pokemonEntity.getTarget() != null) {
                 int originalAttackTime = ((PokemonInterface) pokemonEntity).getAttackTime();
-                int extraAttackTime = PokemonAttackEffect.calculateAttackTime(pokemonEntity, pokemonEntity.distanceTo(pokemonEntity.getTarget()));
-                ((PokemonInterface) pokemonEntity).setAttackTime(originalAttackTime + extraAttackTime);
+                PokemonAttackEffect.refreshAttackTime(pokemonEntity, originalAttackTime * 2);
             }
         }
     }

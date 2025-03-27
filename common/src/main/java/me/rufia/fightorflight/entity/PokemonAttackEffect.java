@@ -424,7 +424,7 @@ public class PokemonAttackEffect {
         PokemonUtils.makeParticle(particleAmount, entity, getParticleFromType(typeName));
     }
 
-    public static void applyOnUseEffect(PokemonEntity pokemonEntity,LivingEntity hurtTarget,Move move){
+    public static void applyOnUseEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget, Move move) {
         Level level = hurtTarget.level();
         if (move == null || level.isClientSide) {
             return;
@@ -667,9 +667,24 @@ public class PokemonAttackEffect {
         if (pokemonEntity == null) {
             return -1;
         }
+        boolean isMelee = PokemonUtils.shouldMelee(pokemonEntity);
         float attackSpeedModifier = Math.max(0.1f, 1 - pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
-        float f = (float) Math.sqrt(distance) / PokemonUtils.getAttackRadius() * attackSpeedModifier;
-        return Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
+        float f = (isMelee ? 0.2f : (float) Math.sqrt(distance) / PokemonUtils.getAttackRadius()) * attackSpeedModifier;
+        if (isMelee) {
+            return Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_melee_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_melee_attack_interval));
+        } else {
+            return Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
+        }
+    }
+
+    public static void refreshAttackTime(PokemonEntity pokemonEntity, int attackTime) {
+        ((PokemonInterface) pokemonEntity).setAttackTime(attackTime);
+        ((PokemonInterface) pokemonEntity).setMaxAttackTime(attackTime);
+    }
+
+    public static void resetAttackTime(PokemonEntity pokemonEntity, double distance) {
+        int attackTime = calculateAttackTime(pokemonEntity, distance);
+        refreshAttackTime(pokemonEntity, attackTime);
     }
 
     public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {

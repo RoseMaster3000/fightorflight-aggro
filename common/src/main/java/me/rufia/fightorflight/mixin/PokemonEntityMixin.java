@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.mixin;
 
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
@@ -65,6 +66,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     private static final EntityDataAccessor<Integer> ATTACK_TIME;
     @Unique
+    private static final EntityDataAccessor<Integer> MAX_ATTACK_TIME;
+    @Unique
     private static final EntityDataAccessor<String> MOVE;
     @Unique
     private static final EntityDataAccessor<Integer> CRY_CD;
@@ -79,6 +82,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         DATA_ID_CAPTURED_BY = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
+        MAX_ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         COMMAND = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
@@ -147,6 +151,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(DATA_ID_ATTACK_TARGET, 0);
         builder.define(DATA_ID_CAPTURED_BY, 0);
         builder.define(ATTACK_TIME, 0);
+        builder.define(MAX_ATTACK_TIME, -1);
         builder.define(MOVE, "");
         builder.define(CRY_CD, 0);
         builder.define(COMMAND, "");
@@ -182,6 +187,16 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public void setAttackTime(int val) {
         entityData.set(ATTACK_TIME, val);
+    }
+
+    @Override
+    public int getMaxAttackTime() {
+        return entityData.get(MAX_ATTACK_TIME);
+    }
+
+    @Override
+    public void setMaxAttackTime(int val) {
+        entityData.set(MAX_ATTACK_TIME, val);
     }
 
     @Override
@@ -344,6 +359,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (getAttackTime() > 0) {
             setAttackTime(getAttackTime() - 1);
         }
+
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
