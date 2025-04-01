@@ -54,6 +54,7 @@ public class SendMoveSlotHandler implements NetworkPacketHandler<SendMoveSlotPac
                             if (move != null) {
                                 //CobblemonFightOrFlight.LOGGER.info(move.getDisplayName().toString());
                                 ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+                                PokemonAttackEffect.refreshAttackTime(pokemonEntity,20);
                                 player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemon.getDisplayName(), move.getDisplayName()));
                             }
                         }

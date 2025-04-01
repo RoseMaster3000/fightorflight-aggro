@@ -105,7 +105,6 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
             Move move = PokemonUtils.getMove(pokemonEntity);
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
             PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
-            PokemonAttackEffect.applyPostEffect(pokemonEntity, livingEntity, move);
         }
     }
 

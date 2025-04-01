@@ -1,8 +1,12 @@
 package me.rufia.fightorflight.entity.projectile;
 
+import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -138,8 +142,15 @@ public class PokemonArrow extends AbstractPokemonProjectile {
                     }
                 }
                 if (entity2 instanceof PokemonEntity pokemonEntity) {
-                    applyTypeEffect(pokemonEntity, livingEntity);
+                    if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
+                        applyTypeEffect(pokemonEntity, livingEntity);
+                    }
+                    if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                        Move move = PokemonUtils.getMove(pokemonEntity);
+                        PokemonAttackEffect.applyPostEffect(pokemonEntity, livingEntity, move, true);
+                    }
                 }
+
             }
             this.discard();
         } else {

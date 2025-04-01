@@ -1,9 +1,8 @@
 package me.rufia.fightorflight.client.hud.moveslots;
 
-
-import com.cobblemon.mod.common.api.gui.GuiUtilsKt;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.types.ElementalType;
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.activestate.SentOutState;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,37 +37,38 @@ public class MoveSlotsRender {
             if (entity != null) {
                 Move move = PokemonUtils.getMove(entity);
                 if (move != null) {
-                    ElementalType type = move.getType();
-                    int x = screenWidth * 13 / 16;
-                    int y = screenHeight * 5 / 8;
-                    int cooldown = ((PokemonInterface) entity).getAttackTime();
-                    int maxCooldown = ((PokemonInterface) entity).getMaxAttackTime();
-                    float cooldownPer = (float) cooldown / maxCooldown;
-                    RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
-                    if (cooldown > 2) {
-                        graphics.setColor(0.5f, 0.5f, 0.5f, 1f);
-                    }
-                    graphics.blit(TYPE_ICON_LOCATION, x, y, DRAW_SIZE, DRAW_SIZE, TYPE_ICON_SIZE * type.getTextureXMultiplier(), 0, TYPE_ICON_SIZE, TYPE_ICON_SIZE, TYPE_ICON_SIZE * 18, TYPE_ICON_SIZE);
-                    graphics.setColor(1f, 1f, 1f, 1f);
-                    if (cooldown > 1 && maxCooldown != 0) {
-                        graphics.setColor(0.65f, 0.7f, 1f, 0.9f);
-                        int cdHeight = (int) ((float) DRAW_SIZE * (1 - cooldownPer));
-                        graphics.blit(TYPE_ICON_LOCATION, x, y + DRAW_SIZE - cdHeight, DRAW_SIZE, cdHeight, TYPE_ICON_SIZE * type.getTextureXMultiplier(), TYPE_ICON_SIZE - (float) (cdHeight * TYPE_ICON_SIZE) / DRAW_SIZE, TYPE_ICON_SIZE, (int) ((float) (cdHeight * TYPE_ICON_SIZE) / DRAW_SIZE), TYPE_ICON_SIZE * 18, TYPE_ICON_SIZE);
-                        graphics.setColor(1f, 1f, 1f, 1f);
-                    }
-                    RenderSystem.disableBlend();
-                    Font font = minecraft.gui.getFont();
-                    PoseStack poseStack = graphics.pose();
-                    poseStack.pushPose();
-                    poseStack.scale(TEXT_SIZE, TEXT_SIZE, 1);
-                    graphics.drawCenteredString(font, move.getDisplayName(), (int) (x / TEXT_SIZE), (int) (y / TEXT_SIZE), 0xFFFFFF);
-                    poseStack.popPose();
-                    //RenderSystem.enableBlend();
-                    //RenderSystem.defaultBlendFunc();
-                    //RenderSystem.disableBlend();
+                    int originX = screenWidth * 13 / 16;
+                    int originY = screenHeight * 11 / 16;
+                    Font font = minecraft.font;
+                    renderMoveSlot(graphics, font, originX, originY, entity, move);
                 }
             }
         }
+    }
+
+    public static void renderMoveSlot(GuiGraphics graphics, Font font, int x, int y, PokemonEntity entity, Move move) {
+        ElementalType type = move.getType();
+        int cooldown = ((PokemonInterface) entity).getAttackTime();
+        int maxCooldown = ((PokemonInterface) entity).getMaxAttackTime();
+        float cooldownPer = (float) cooldown / maxCooldown;
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        if (cooldown > 2) {
+            graphics.setColor(0.5f, 0.5f, 0.5f, 1f);
+        }
+        graphics.blit(TYPE_ICON_LOCATION, x, y, DRAW_SIZE, DRAW_SIZE, TYPE_ICON_SIZE * type.getTextureXMultiplier(), 0, TYPE_ICON_SIZE, TYPE_ICON_SIZE, TYPE_ICON_SIZE * 18, TYPE_ICON_SIZE);
+        graphics.setColor(1f, 1f, 1f, 1f);
+        if (cooldown > 1 && maxCooldown != 0) {
+            graphics.setColor(0.65f, 0.8f, 1f, 0.95f);
+            int cdHeight = (int) ((float) DRAW_SIZE * (1 - cooldownPer));
+            graphics.blit(TYPE_ICON_LOCATION, x, y + DRAW_SIZE - cdHeight, DRAW_SIZE, cdHeight, TYPE_ICON_SIZE * type.getTextureXMultiplier(), TYPE_ICON_SIZE - (float) (cdHeight * TYPE_ICON_SIZE) / DRAW_SIZE, TYPE_ICON_SIZE, (int) ((float) (cdHeight * TYPE_ICON_SIZE) / DRAW_SIZE), TYPE_ICON_SIZE * 18, TYPE_ICON_SIZE);
+            graphics.setColor(1f, 1f, 1f, 1f);
+        }
+        RenderSystem.disableBlend();
+        PoseStack poseStack = graphics.pose();
+        poseStack.pushPose();
+        poseStack.scale(TEXT_SIZE, TEXT_SIZE, 1);
+        graphics.drawCenteredString(font, move.getDisplayName(), (int) (x / TEXT_SIZE), (int) (y / TEXT_SIZE), 0xFFFFFF);
+        poseStack.popPose();
     }
 }

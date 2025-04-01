@@ -26,10 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PokemonUtils {
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
@@ -138,7 +135,7 @@ public class PokemonUtils {
         }
         if (move == null) {
             if (!pokemonEntity.level().isClientSide) {
-                CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);
+                CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);//Will appear in the log when you send a pokemon out for a short period of time in the client environment, so I remove it from the client environment.
             }
         }
         return move;
@@ -165,8 +162,8 @@ public class PokemonUtils {
             return true;
         }
         String moveName = move.getName();
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        boolean isSpecial = isSpecialMove(move);
+        boolean isPhysical = isPhysicalMove(move);
         boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
         boolean b2 = isSpecial && (Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
@@ -177,8 +174,8 @@ public class PokemonUtils {
             return true;
         }
         String moveName = move.getName();
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        boolean isSpecial = isSpecialMove(move);
+        boolean isPhysical = isPhysicalMove(move);
         boolean b1 = isPhysical && (Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
         boolean b2 = isSpecial && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
@@ -210,11 +207,15 @@ public class PokemonUtils {
     }
 
     public static boolean isSpecialMove(Move move) {
-        return move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSPECIAL());
     }
 
     public static boolean isPhysicalMove(Move move) {
-        return move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getPHYSICAL());
+    }
+
+    public static boolean isStatusMove(Move move) {
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSTATUS());
     }
 
     public static void makeParticle(int particleAmount, Entity entity, SimpleParticleType particleType) {

@@ -14,7 +14,6 @@ import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import me.rufia.fightorflight.entity.projectile.PokemonArrow;
 import me.rufia.fightorflight.entity.projectile.PokemonBullet;
 import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
-import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonMultipliers;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.TypeEffectiveness;
@@ -27,14 +26,13 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class PokemonAttackEffect {
     public static SimpleParticleType getParticleFromType(String name) {
@@ -110,8 +108,7 @@ public class PokemonAttackEffect {
         float minDmg = isSpecial ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
         float maxDmg = isSpecial ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
         float sheerForceMultiplier = PokemonUtils.canActivateSheerForce(pokemonEntity) ? 1.3f : 1.0f;
-        float typeEffectivenessMultiplier = target instanceof PokemonEntity targetPokemon ? TypeEffectiveness.getTypeEffectiveness(pokemonEntity, targetPokemon) : 1f;
-        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack) * typeEffectivenessMultiplier;
+        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
         float mobEffectBoost = getMobEffectBoost(pokemonEntity);
         //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
@@ -129,7 +126,10 @@ public class PokemonAttackEffect {
             CobblemonFightOrFlight.LOGGER.info("Null move detected");
             return CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_damage;
         }
-        boolean isSpecial = DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory());
+        if (PokemonUtils.isStatusMove(move)) {
+            return 0f;
+        }
+        boolean isSpecial = PokemonUtils.isSpecialMove(move);
         float STAB;
         var primaryType = pokemonEntity.getPokemon().getPrimaryType();
         var secondaryType = pokemonEntity.getPokemon().getSecondaryType();
@@ -176,8 +176,7 @@ public class PokemonAttackEffect {
             }
         } else {
             //TODO type effectiveness here
-            //I checked MoveInstruction, DamageInstruction and SuperEffectiveInstruction and found nothing.
-            // I doubt that Cobblemon doesn't have the type effectiveness logic,it might be sent to showdown to process.I need to write it myself.
+            return TypeEffectiveness.getTypeEffectiveness(pokemonEntity, targetPokemon);
         }
         return 1.0f;
     }
@@ -440,7 +439,7 @@ public class PokemonAttackEffect {
         }
     }
 
-    public static void applyPostEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget, Move move) {
+    public static void applyPostEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget, Move move, boolean targetIsHurt) {
         Level level = hurtTarget.level();
         if (move == null || level.isClientSide) {
             return;
@@ -483,7 +482,7 @@ public class PokemonAttackEffect {
         if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
             if (MoveData.moveData.containsKey(move.getName())) {
                 for (MoveData data : MoveData.moveData.get(move.getName())) {
-                    if (data.isOnHit()) {
+                    if (data.isOnHit() && targetIsHurt) {
                         data.invoke(pokemonEntity, hurtTarget);
                     }
                 }
@@ -546,14 +545,13 @@ public class PokemonAttackEffect {
                     addProjectileEntity(pokemonEntity, target, bullet, move);
                 }
             } else if (b5 || b7 || b8) {
-                target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
+                boolean success = target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
                 PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                 PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
-                applyPostEffect(pokemonEntity, target, move);
+                applyPostEffect(pokemonEntity, target, move, success);
                 //applyTypeEffect(pokemonEntity, target);
             } else if (b6) {
-                applyPostEffect(pokemonEntity, target, move);
-                //Nothing to do now.
+                //Should not be processed here.
             } else {
                 bullet = new PokemonArrow(livingEntity.level(), pokemonEntity, target);
                 shootProjectileEntity(pokemonEntity, target, bullet);
@@ -705,7 +703,7 @@ public class PokemonAttackEffect {
                 //applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
                 makeTypeEffectParticle(10, livingEntity, move.getType().getName());
                 PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
-                applyPostEffect(pokemonEntity, livingEntity, move);
+
             }
         } else {
             if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
@@ -718,9 +716,14 @@ public class PokemonAttackEffect {
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
         boolean flag = hurtTarget.hurt(pokemonEntity.level().damageSources().mobAttack(pokemonEntity), hurtDamage);
         if (flag) {
-            if (CobblemonFightOrFlight.commonConfig().activate_type_effect && hurtTarget instanceof LivingEntity livingEntity) {
-                livingEntity.knockback(hurtKnockback * 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
-                pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+            if (hurtTarget instanceof LivingEntity livingEntity) {
+                if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
+                    pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+                }
+                if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                    applyPostEffect(pokemonEntity, livingEntity, move, true);
+                }
+                livingEntity.knockback(CobblemonFightOrFlight.commonConfig().activate_type_effect ? hurtKnockback * 0.5F : 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
             }
 
             pokemonEntity.setLastHurtMob(hurtTarget);
