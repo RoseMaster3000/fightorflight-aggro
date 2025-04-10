@@ -1,4 +1,4 @@
-package me.rufia.fightorflight.data;
+package me.rufia.fightorflight.data.movedata;
 
 import java.util.List;
 import java.util.Map;

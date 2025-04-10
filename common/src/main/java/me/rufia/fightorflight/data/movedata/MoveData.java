@@ -1,4 +1,4 @@
-package me.rufia.fightorflight.data;
+package me.rufia.fightorflight.data.movedata;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import net.minecraft.util.RandomSource;

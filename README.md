@@ -2,7 +2,7 @@ This version is no longer server-side only. I added new items and entities to su
 Though I haven't made contact with them, I don't mind they use my code if necessary.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in v0.7.6:
+### Features included in v0.7.7:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -40,6 +40,7 @@ Though I haven't made contact with them, I don't mind they use my code if necess
   * Ice type damage will be not very effective against entities that don't take the frost damage(still x0.1).
   * Ice type damage will be more effective against entities that has a weaker resistant to the frost damage,(blaze,magma cube,etc.).
   * Poison type damage will be not very effective against undead mobs.(x0.1 again)
+- Type effectiveness for Pokemon entities
 * Health mechanic reworked
   * Use a mixin to replace the original max health calculation function,set shouldOverrideUpdateMaxHealth in config/fightorflight.json5 to false to disable it if you don't like the changes I made.
   * The hp of the pokemon entity is no longer decided by the base stat,it is decided by the hp stat of the pokemon directly now.
@@ -60,7 +61,7 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, disabled by default)
 - New config options: do_pokemon_defend_creeper_proactive: Player owned pokemon can attack creeper proactively.(Disabled by default.)
 - Combat overhaul
-  - Remove the type effects(levitate for psychic, weakness for fight,etc.)
+  - Remove the type effects(levitate for psychic, weakness for fight,etc. can be enabled again in the config)
   - Give more special effect to different moves
     - Pokemon gain strength after using Power-up Punch, gain weakness and resistance weakened(a new effect added by myself) after using Close Combat,etc.
       - I want to make it easy so the effect level WON'T stack like the core series.
@@ -74,18 +75,15 @@ Though I haven't made contact with them, I don't mind they use my code if necess
       - Confusion -> Confusion
     - Serene Grace can increase the effect to trigger the additional effect
     - Sheer Force works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
+
 ### Features/Changes that is not released currently:
-- Type effectiveness for Pokemon entities
-- Added a new config option to use the classical move effect.(You can use it with the new move effect, disabled by default)
-- Adaptability can enhance the STAB effect now.
-- Added a new config option to slow the pokemon when hurt.(disabled by default)
+- Added new configs to set the position of the indicator
 ## TODO
 - Main Goal For the Next Update:
 - Things that might be done in a short period of time(1~3 big updates):
   - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
     - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
     - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
-    - The indicator for the cooldown might come later than this feature.
   - Targeting whitelist
   - Compatibility with LivelierPokemon
 - Things that might not be done in a short period of time:

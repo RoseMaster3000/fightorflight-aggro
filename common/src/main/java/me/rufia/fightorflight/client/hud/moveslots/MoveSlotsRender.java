@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 public class MoveSlotsRender {
     private static final ResourceLocation TYPE_ICON_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.COBBLEMON_MOD_ID, "textures/gui/types.png");
     private static final int TYPE_ICON_SIZE = 36;
-    private static final int DRAW_SIZE = TYPE_ICON_SIZE / 2;
+    private static final int DRAW_SIZE = (int) (TYPE_ICON_SIZE * CobblemonFightOrFlight.visualEffectConfig().move_indicator_size);
     private static final float TEXT_SIZE = 0.5f;
 
     public static void render(GuiGraphics graphics, float tickDelta, Pokemon pokemon) {
@@ -37,8 +37,8 @@ public class MoveSlotsRender {
             if (entity != null) {
                 Move move = PokemonUtils.getMove(entity);
                 if (move != null) {
-                    int originX = screenWidth * 13 / 16;
-                    int originY = screenHeight * 11 / 16;
+                    int originX = (int) (screenWidth * CobblemonFightOrFlight.visualEffectConfig().move_indicator_x_relative);
+                    int originY = (int) (screenHeight * CobblemonFightOrFlight.visualEffectConfig().move_indicator_y_relative);
                     Font font = minecraft.font;
                     renderMoveSlot(graphics, font, originX, originY, entity, move);
                 }

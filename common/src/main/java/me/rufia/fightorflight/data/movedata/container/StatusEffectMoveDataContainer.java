@@ -1,7 +1,7 @@
-package me.rufia.fightorflight.data.container;
+package me.rufia.fightorflight.data.movedata.container;
 
-import me.rufia.fightorflight.data.MoveDataContainer;
-import me.rufia.fightorflight.data.movedatas.StatusEffectMoveData;
+import me.rufia.fightorflight.data.movedata.MoveDataContainer;
+import me.rufia.fightorflight.data.movedata.movedatas.StatusEffectMoveData;
 
 import java.util.HashMap;
 import java.util.List;

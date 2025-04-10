@@ -1,4 +1,14 @@
-# Please check the modrinth page for the other changelogs.
+# v0.7.7
+### New features:
+- Type effectiveness for Pokemon: 2x damage for super effective moves, 0.5x damage for not very super effective moves and 0.1x damage for no effect. 
+- Adaptability can enhance the STAB now.
+- Added a new indicator located in the lower right corner of the screen that shows the move's name, type and cooldown.
+- New config options: slow_down_after_hurt slows the pokemon after being attacked, an alternative choice of stop_running_after_hurt.(Disabled by default)
+- New config options: activate_type_effect use the classical type effect that was used in the original version and before v0.7.5.(Disabled by default)
+- New config options: activate_move_effect use the move effect added in v0.7.5, you can enable them together.(Enabled by default)
+- New config options: all_pokemon_targeting_whitelist, wild_pokemon_targeting_whitelist and player_owned_pokemon_targeting_whitelist
+### Fixes:
+- Probably fixed the bug that some pokemon's move can't be recognized if it learns it at a low level.
 ## v0.7.6
 A small update that fixes some small bug before I start working on the other features.
 ### New Features:

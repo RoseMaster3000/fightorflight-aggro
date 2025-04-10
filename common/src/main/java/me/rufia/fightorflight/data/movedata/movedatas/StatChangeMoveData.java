@@ -1,7 +1,7 @@
-package me.rufia.fightorflight.data.movedatas;
+package me.rufia.fightorflight.data.movedata.movedatas;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.data.MoveData;
+import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.effects.FOFEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
