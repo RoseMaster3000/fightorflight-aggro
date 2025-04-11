@@ -3,7 +3,7 @@ Unprovoked Attack Improved! My version works in a more predictable way. There ar
 1. Aggressive Pokemon (attack on sight, unprovoked)
 2. Territorial Pokemon (attack only if player provokes)
 3. Wimp Pokemon (always run if player provokes)
-0. Smart Pokemon (all others, will never attack on sight, but will fight/flight if provoked)
+4. Smart Pokemon (all others, will never attack on sight, but will fight/flight if provoked)
 
 There is also these key settings
 * always_aggro_below [INT] (y level where Pokémon will always aggro, EXPECT wimp pokemon)
