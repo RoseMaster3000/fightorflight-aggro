@@ -1,12 +1,18 @@
-## Aggro Edition
-Unprovoked Attack Improved! Insteal of all pokemon attacking unprovoked, I created a list of specific species that attack unprovoked. This list is in the config file.
+## RM3-Aggro Edition
+Unprovoked Attack Improved! My version works in a more predictable way. There are 3 lists of pokemon in the config
+1. Aggressive Pokemon (attack on sight, unprovoked)
+2. Territorial Pokemon (attack only if player provokes)
+3. Wimp Pokemon (always run if player provokes)
+X. Smart Pokemon (all others, will never attack on sight, but will fight/flight if provoked)
+
+There is also these key settings
+* always_aggro_below [INT] (y level where Pokémon will always aggro, EXPECT wimp pokemon)
+* territorial_nocturnal [BOOL] (territorial pokemon converted to Aggressive at night)
+* smart_nocturnal [BOOL] (Smart Pokémon converted to Territorial at night)
+* sunlight_wimps [BOOL] (dark & ghost Pokémon converted to wimp in light)
 
 
-This version is no longer server-side only. I added new items and entities to support some features. I heard that someone is developing a server-side version in the Cobblemon discord. Please wait for that if you can't accept adding this to your server. I'm just too busy to solve this problem. Sorry.  
-Though I haven't made contact with them, I don't mind they use my code if necessary.
-### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
-## New Features & Changes Since 0.5.3
-### Features included in v0.7.4:
+## Features included in v0.7.4:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -62,10 +68,16 @@ Though I haven't made contact with them, I don't mind they use my code if necess
 - Nature multipliers.(It can't be edited in the config before.)
 - Failed captures will be counted as provocation.
 - Strength and weakness can influence the pokemon's damage now(follow the Minecraft rule, mostly). Both the range attack and melee attack can benefit from this(I know these effects don't increase the damage of the projectiles in Minecraft.)
-### Features/Changes that is not released currently:
+
+## Features/Changes that is not released currently:
 - New config options: The aggression system will only work in the dark areas.(Similar to the spiders in Minecraft)
 - Bug fixes: The invulnerable time don't work properly for pokemon entity;
 - Bug fixes: The tracing projectiles should work correctly now.
+
+## Dependencies
+[Architectury](https://modrinth.com/mod/architectury-api) required
+
+
 ## TODO
 - Main Goal For the Next Update:
   - Combat overhaul
@@ -87,10 +99,13 @@ Though I haven't made contact with them, I don't mind they use my code if necess
   - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
   - More config options for fight of flight choices.
   - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
+
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
-### Known issues for 1.21.1 version
+
+## Known issues for 1.21.1 version
 - I'm not sure why the battle does not start when using the key bind I added.
+
 ## How to use the Poke Staff
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  
