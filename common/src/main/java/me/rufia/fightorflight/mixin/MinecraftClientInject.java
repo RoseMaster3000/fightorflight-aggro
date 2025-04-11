@@ -109,7 +109,7 @@ public abstract class MinecraftClientInject {
                     BattleChallengePacket packet = new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid(), BattleFormat.Companion.getGEN_9_SINGLES());
                     //packet.sendToServer();
                     CobblemonNetwork.INSTANCE.sendToServer(packet);
-                    CobblemonFightOrFlight.LOGGER.info("sending battle packet");
+                    //CobblemonFightOrFlight.LOGGER.info("sending battle packet");
                     //player.sendSystemMessage(Component.literal("Sending battle packet - message"));
                     break;
                 } else if (pokemonEntity.getOwner() != player) {

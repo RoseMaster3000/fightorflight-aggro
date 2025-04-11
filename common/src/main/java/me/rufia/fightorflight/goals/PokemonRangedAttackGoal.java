@@ -30,7 +30,6 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
     private final LivingEntity livingEntity;
     @Nullable
     private LivingEntity target;
-    //private int attackTime;
     private final double speedModifier;
     private int seeTime;
 
@@ -61,7 +60,7 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
         if (!PokemonUtils.shouldShoot(pokemonEntity) || PokemonUtils.moveCommandAvailable(pokemonEntity)) {
             return false;
         }
-        if(pokemonEntity.getPokemon().getState() instanceof ShoulderedState){
+        if (pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
             return false;
         }
         LivingEntity livingEntity = this.pokemonEntity.getTarget();
@@ -143,7 +142,6 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
                 }
             }
             this.pokemonEntity.getLookControl().setLookAt(this.target);
-            ((PokemonInterface) (Object) pokemonEntity).setAttackTime(((PokemonInterface) (Object) pokemonEntity).getAttackTime() - 1);
             if (getAttackTime() == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
                 PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
             }

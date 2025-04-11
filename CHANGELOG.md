@@ -1,3 +1,49 @@
+# v0.7.7
+### New features:
+- Type effectiveness for Pokemon: 2x damage for super effective moves, 0.5x damage for not very super effective moves and 0.1x damage for no effect. 
+- Adaptability can enhance the STAB now.
+- Added a new indicator located in the lower right corner of the screen that shows the move's name, type and cooldown.
+- New config options: slow_down_after_hurt slows the pokemon after being attacked, an alternative choice of stop_running_after_hurt.(Disabled by default)
+- New config options: activate_type_effect use the classical type effect that was used in the original version and before v0.7.5.(Disabled by default)
+- New config options: activate_move_effect use the move effect added in v0.7.5, you can enable them together.(Enabled by default)
+- New config options: all_pokemon_targeting_whitelist, wild_pokemon_targeting_whitelist and player_owned_pokemon_targeting_whitelist
+### Fixes:
+- Probably fixed the bug that some pokemon's move can't be recognized if it learns it at a low level.
+## v0.7.6
+A small update that fixes some small bug before I start working on the other features.
+### New Features:
+- New config options: A config option to disable failed captures counted as provocation
+### Fixes:
+- Bug fixes:Fix the bug that health_sync_for_wild_pokemon is disabled when set to true
+    - If I just revert it, every player has to edit the config to use their preferred choice. To avoid that, it will be renamed to enable_health_sync_for_wild_pokemon so you won't need to edit the config if you use the default setting.
+- Bug fixes:Fix the bug that attack_damage_player is not working.
+- Bug fixes:Fix the bug that the tracing projectile is being influenced by the gravity when tracing the target.
+## v0.7.5
+### New Features:
+- New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, disabled by default)
+- New config options: do_pokemon_defend_creeper_proactive: Player owned pokemon can attack creeper proactively.(disabled by default.)
+- Combat overhaul
+    - Remove the type effects(levitate for psychic, weakness for fight,etc.)
+    - Give more special effect to different moves(Stat changing/Status related attack moves)
+        - Pokemon gain strength after using Power-up Punch, gain weakness and resistance weakened(a new effect added by myself) after using Close Combat,etc.
+            - I want to make it easy so the effect level WON'T stack like the core series.
+        - Moves that can apply status conditions can apply status effects from Minecraft:
+            - Burn -> Weakness & set the entity on fire.
+            - Poison -> Poison
+            - Badly Poison -> Poison II
+            - Freeze & Sleep -> Mining Fatigue II & Slowness III & Increase the frozen time.
+            - Paralysis -> Mining Fatigue & Slowness
+            - Flinch -> Mining Fatigue & Slowness II
+            - Confusion -> Confusion
+        - Serene Grace can increase the chance to trigger the additional effect
+        - Sheer Force no longer boost all the moves. It works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
+### Changes 
+- Pokemon on shoulders should stop targeting now.
+### Fixes:
+- Bug fixes: The tracing projectiles should work correctly now.
+- Bug fixes: The explosive projectiles can deal the damage properly now.
+- Bug fixes: The invulnerable time should work properly for pokemon entity now;
+
 ## v0.6.1
 * **Animation Support** Support for animations from cobblemon mod when attacking(These animations are not designed for this mod so it might be weird)
 * Wild Pokemon cries correctly when provoked.

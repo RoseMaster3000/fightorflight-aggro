@@ -31,8 +31,8 @@ import java.util.UUID;
 
 
 public class PokemonTracingBullet extends ExplosivePokemonProjectile {
-    private static final double SPEED = 0.3;
-    private static final int min_interval = 5;
+    private static final double SPEED = 0.2;
+    private static final int min_interval = 10;
     private static final int random_interval = 2;
     @Nullable
     private Entity finalTarget;
@@ -53,6 +53,7 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
     public PokemonTracingBullet(Level level, LivingEntity shooter, Entity finalTarget, Direction.Axis axis) {
         super(EntityFightOrFlight.TRACING_BULLET.get(), level);
         initPosition(shooter);
+        setOwner(shooter);
         this.finalTarget = finalTarget;
         this.currentMoveDirection = Direction.UP;
         this.selectNextMoveDirection(axis);
@@ -197,9 +198,7 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
                 }
             }
 
-            if (this.finalTarget == null || !this.finalTarget.isAlive() || this.finalTarget instanceof Player && this.finalTarget.isSpectator()) {
-                applyGravity();
-            } else {
+            if (canAttackTarget()) {
                 this.targetDeltaX = Mth.clamp(this.targetDeltaX * 1.025, -1.0, 1.0);
                 this.targetDeltaY = Mth.clamp(this.targetDeltaY * 1.025, -1.0, 1.0);
                 this.targetDeltaZ = Mth.clamp(this.targetDeltaZ * 1.025, -1.0, 1.0);
@@ -240,7 +239,18 @@ public class PokemonTracingBullet extends ExplosivePokemonProjectile {
                 }
             }
         }
+    }
 
+    @Override
+    protected double getDefaultGravity() {
+        if (canAttackTarget()) {
+            return 0f;
+        }
+        return 0.04;
+    }
+
+    protected boolean canAttackTarget() {
+        return !(this.finalTarget == null || !this.finalTarget.isAlive() || this.finalTarget instanceof Player && this.finalTarget.isSpectator());
     }
 
     protected boolean canHitEntity(Entity target) {

@@ -1,5 +1,5 @@
-## 没有在服务端经过测试，请自行承担可能的风险
-这个版本添加了新实体和物品，不再是仅服务端的mod。我听说有人在Cobblemon的discord频道里面写仅服务端的版本，如果你无法接受客户端和服务端都需要安装那可以等他们做好。我没有什么时间和办法处理这件事，抱歉。
+## 开发过程中没有在服务端经过测试，有bug请反馈
+这个版本添加了新实体和物品，不再是仅服务端的mod。我听说有人在Cobblemon的discord频道里面写仅服务端的版本，如果你无法接受客户端和服务端都需要安装那可以等他们做好。直接将该版本改成兼容服务端需要大量时间和精力，但我没有这么多时间处理这件事，十分抱歉。
 ### 施工中
 ### 需要[Architectury](https://modrinth.com/mod/architectury-api) !!!
 ## 自 0.5.3 （原mod最后一个版本） 之后的特性/改动
@@ -56,24 +56,52 @@
 * 非满血宝可梦不会尝试逃跑(可以在config禁用).
 * 给玩家宝可梦添加额外伤害和防御系数
 * 加入config设置来禁用野生宝可梦血量同步(野生宝可梦血量同步将默认关闭)
-
+- 关闭友军伤害的config
+- 性格在判断是否敌对中的系数可在config更改.(0.5.3及之前并不能更改.)
+- 捕获失败会激怒宝可梦.(可以在config关闭)
+- 力量和虚弱会影响宝可梦伤害(大部分接近mc自己的机制)近战和远程攻击都会享受到伤害的影响(我知道原版mc这些效果不影响弹射物伤害)
+- 新的config: light_dependent_unprovoked_attack: 启用后宝可梦只在黑暗地区才有可能敌对(类似于mc的蜘蛛，需要先启动主动攻击)
+- 新的config: do_pokemon_defend_creeper_proactive: 玩家宝可梦可以主动攻击苦力怕.(默认关闭)
+- 战斗大改
+    - 移除原来不同属性的特性(超能系可以打出漂浮, 格斗系可以打出虚弱等)
+    - 将一些效果给到技能上
+        - 宝可梦使用增强拳会获得力量，使用近身战会获得抗性减弱（新状态效果）
+            - 我想要简化这个设计所以暂时不考虑状态效果等级叠加
+        - 可以给目标加异常状态的攻击技能会对敌人有一些特殊效果:
+            - 烧伤 -> 虚弱 & 目标着火.
+            - 中毒 -> 中毒
+            - 剧毒 -> 中毒 II
+            - 冰冻 & 睡眠 -> 挖掘疲劳 II & 缓慢 III & 延长冻结时间（仅冰冻）.
+            - 麻痹 -> 挖掘疲劳 & 缓慢
+            - 畏缩 -> 挖掘疲劳 & 缓慢 II
+            - 混乱 -> 反胃
+        - 天恩会提高附加效果触发的可能
+        - 强行的效果恢复到类似于主系列中的效果。(部分特效没实现且不会被强行宝可梦学到的技能暂时不会触发强行)
 ### Features that is not released currently:
-- 友伤设置
-- 性格的敌意系数设置.(性格对敌意的影响之前是写死的)
 
 ## TODO
-- Attack Position for Poke Staff(not available currently. It is quite difficult.)
-- Give more special effects to different moves.
-- Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
-- Special effect for abilities like aftermath,bulletproof,soundproof,etc.
-- More config options for fight of flight choices.
-- Type effectiveness for Pokemon entities:There doesn't seem to be a built-in type modifier list in Cobblemon,the data might be sent to showdown to process,which means I should spend some time to add it myself and test it.
-- Use the berry/heal items that heal the pokemon to heal the Pokemon entity(The healing items don't share a unique base class, they just extends PokemonSelectingItem(the base class for many items that can open the party menu and select a Pokemon to use). I don't think adding the mixin to every class and implements an interface is a good idea.)
-- The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
+- 下次更新的目标:
+- 短期内可能实现内容(1~3个大更新):
+    - 变化技能效果实现 (大部分变化技能都没有效果，目前可以用来让宝可梦不要主动攻击)
+        - 我想鼓励玩家使用宝可杖切技能以获取更高伤害/战术优势
+        - 例子: 使用剑舞获得力量效果，持续时间比用增强拳长，效果也更高，同时变化技能cd也更长/意念移物抬人。
+        - 冷却时间的指示器可能会比这个特性晚一点出
+    - 目标白名单，可以避免攻击狼、村民等对玩家有用的生物
+    - 与LivelierPokemon的兼容
+- 短期内不大可能实现的内容:
+    - 加入类似黏丸的物品(听起来很coool，但我还有很多别的事要干)
+    - 除虫喷雾.(根据Cobblemon的路线图来看他们已经在做了)
+    - 宝可杖的攻击位置(暂时不可用。有点难做且用途不大)
+    - 限制对战中使用的宝可梦数(有点难检测)
+- 长期目标:
+    - 给技能加特效
+    - 实现特性效果
+    - 更多影响战斗/逃跑的config
+    - 使用技能消耗pp(这会导致宝可梦在前期明显变弱且目前的强度还不需要这么平衡，在这个mod足够优秀之前我不会加这个。另外我看传说ZA中似乎也不存在pp设定，pp限制在这种环境可能有点多余了)
 ## Known Issues
 - 电球这类需要双方能力值计算的技能威力无法正常计算(我目前还不确认怎么处理对非宝可梦实体使用这些招式的伤害计算所以直接一刀切了)
 ### Known issues for 1.21.1 version(not released yet)
-- 我原本加的快捷键不管用，目前尚未弄清楚原因。
+- 我原本加的开始战斗的快捷键不管用，目前尚未弄清楚原因。
 ## 如何使用宝可杖
 1. 合成一个宝可杖/创造拿.
 2. 潜行右键切换模式  

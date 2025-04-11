@@ -8,6 +8,7 @@ import com.cobblemon.mod.common.battles.BattleRegistry;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +25,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     public int ticksUntilNewAngerParticle = 0;
     public int ticksUntilNewAngerCry = 0;
 
-    public PokemonMeleeAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
+    public PokemonMeleeAttackGoal(PokemonEntity mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
         this.speedModifier = speedModifier;
     }
@@ -79,8 +80,13 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
     protected void checkAndPerformAttack(LivingEntity target) {
         if (canPerformAttack(target)) {
-            this.resetAttackCooldown();
-            pokemonDoHurtTarget(target);
+            if (mob instanceof PokemonEntity pokemonEntity) {
+                if (((PokemonInterface) pokemonEntity).getAttackTime() == 0) {
+                    this.resetAttackCooldown();
+                    pokemonDoHurtTarget(target);
+                    PokemonAttackEffect.resetAttackTime(pokemonEntity, 1);
+                }
+            }
         }
     }
 
@@ -96,7 +102,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().self_centered_aoe_moves).toList().contains(move.getName())) {
-                    PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity,  true);
+                    PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity, true);
                     if (PokemonUtils.isMeleeAttackMove(move)) {
                         PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
                     } else {

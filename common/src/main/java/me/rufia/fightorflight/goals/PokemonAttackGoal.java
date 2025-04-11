@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 public abstract class PokemonAttackGoal extends Goal {
     private int ticksUntilNewAngerParticle = 0;
     private int ticksUntilNewAngerCry = 0;
+
     protected PokemonEntity getPokemonEntity() {
         return null;
     }
@@ -21,7 +23,7 @@ public abstract class PokemonAttackGoal extends Goal {
         if (pokemonEntity == null) {
             return;
         }
-        ((PokemonInterface) (Object) pokemonEntity).setAttackTime(i);
+        ((PokemonInterface) pokemonEntity).setAttackTime(i);
     }
 
     protected int getAttackTime() {
@@ -29,24 +31,21 @@ public abstract class PokemonAttackGoal extends Goal {
         if (pokemonEntity == null) {
             return -1;
         }
-        return ((PokemonInterface) (Object) pokemonEntity).getAttackTime();
+        return ((PokemonInterface) pokemonEntity).getAttackTime();
     }
 
     protected void resetAttackTime(double d) {
         PokemonEntity pokemonEntity = getPokemonEntity();
-        float attackSpeedModifier = Math.max(0.1f, 1 - pokemonEntity.getSpeed() / CobblemonFightOrFlight.commonConfig().speed_stat_limit);
-        float f = (float) Math.sqrt(d) / PokemonUtils.getAttackRadius() * attackSpeedModifier;
-        //this.attackTime = Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval));
-        setAttackTime(Mth.floor(20 * Mth.lerp(f, CobblemonFightOrFlight.commonConfig().minimum_ranged_attack_interval, CobblemonFightOrFlight.commonConfig().maximum_ranged_attack_interval)));
+        PokemonAttackEffect.resetAttackTime(pokemonEntity, d);
     }
 
     @Override
-    public void tick(){
-        if(getPokemonEntity()==null){
+    public void tick() {
+        if (getPokemonEntity() == null) {
             return;
         }
-        PokemonEntity pokemonEntity=getPokemonEntity();
-        LivingEntity owner=pokemonEntity.getOwner();
+        PokemonEntity pokemonEntity = getPokemonEntity();
+        LivingEntity owner = pokemonEntity.getOwner();
         if (owner == null) {
             if (ticksUntilNewAngerParticle < 1) {
                 CobblemonFightOrFlight.PokemonEmoteAngry(pokemonEntity);
@@ -65,11 +64,11 @@ public abstract class PokemonAttackGoal extends Goal {
     }
 
     @Override
-    public boolean canUse(){
-        if(PokemonUtils.moveCommandAvailable(getPokemonEntity())){
+    public boolean canUse() {
+        if (PokemonUtils.moveCommandAvailable(getPokemonEntity())) {
             return false;
         }
-        if(getPokemonEntity().getPokemon().getState() instanceof ShoulderedState){
+        if (getPokemonEntity().getPokemon().getState() instanceof ShoulderedState) {
             return false;
         }
         return true;

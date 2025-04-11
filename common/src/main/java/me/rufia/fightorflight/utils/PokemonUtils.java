@@ -10,7 +10,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import me.rufia.fightorflight.data.MoveData;
+import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -20,17 +20,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PokemonUtils {
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
@@ -102,18 +98,32 @@ public class PokemonUtils {
         return !pokemonEntity.isBusy();
     }
 
+    public static Set<MoveTemplate> getAllLearnableMoveTemplates(Pokemon pokemon) {
+        Set<MoveTemplate> moves = new HashSet<>();
+        for (var move : pokemon.getBenchedMoves()) {
+            moves.add(move.getMoveTemplate());
+        }
+        moves.addAll(pokemon.getForm().getMoves().getLevelUpMovesUpTo(100));
+        moves.addAll(pokemon.getForm().getMoves().getEvolutionMoves());
+        moves.addAll(pokemon.getForm().getMoves().getTmMoves());
+        moves.addAll(pokemon.getForm().getMoves().getTutorMoves());
+        moves.addAll(pokemon.getForm().getMoves().getEggMoves());
+        //Might be a huge load for a big server?
+        return moves;
+    }
+
     public static Move getMove(PokemonEntity pokemonEntity) {
         if (pokemonEntity == null) {
             CobblemonFightOrFlight.LOGGER.info("PokemonEntity is null");//This will be shown if the projectile hits the target and the pokemon is recalled
             return null;
         }
-        String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
+        String moveName = !(((PokemonInterface) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
         Move move = null;
         boolean flag = false;
         if (moveName == null) {
             return null;
         }
-        for (MoveTemplate m : pokemonEntity.getPokemon().getAllAccessibleMoves()) {
+        for (MoveTemplate m : getAllLearnableMoveTemplates(pokemonEntity.getPokemon())) {
             move = m.create();
             if (m.getName().equals(moveName)) {
                 flag = true;
@@ -124,7 +134,9 @@ public class PokemonUtils {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
         if (move == null) {
-            CobblemonFightOrFlight.LOGGER.warn("Returning a null move for no reason");
+            if (!pokemonEntity.level().isClientSide) {
+                CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);//Will appear in the log when you send a pokemon out for a short period of time in the client environment, so I remove it from the client environment.
+            }
         }
         return move;
     }
@@ -150,8 +162,8 @@ public class PokemonUtils {
             return true;
         }
         String moveName = move.getName();
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        boolean isSpecial = isSpecialMove(move);
+        boolean isPhysical = isPhysicalMove(move);
         boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
         boolean b2 = isSpecial && (Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
@@ -162,8 +174,8 @@ public class PokemonUtils {
             return true;
         }
         String moveName = move.getName();
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        boolean isSpecial = isSpecialMove(move);
+        boolean isPhysical = isPhysicalMove(move);
         boolean b1 = isPhysical && (Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
         boolean b2 = isSpecial && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
@@ -195,11 +207,15 @@ public class PokemonUtils {
     }
 
     public static boolean isSpecialMove(Move move) {
-        return move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSPECIAL());
     }
 
     public static boolean isPhysicalMove(Move move) {
-        return move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getPHYSICAL());
+    }
+
+    public static boolean isStatusMove(Move move) {
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSTATUS());
     }
 
     public static void makeParticle(int particleAmount, Entity entity, SimpleParticleType particleType) {
@@ -343,7 +359,7 @@ public class PokemonUtils {
 
     public static void entityHpToPokemonHp(PokemonEntity pokemonEntity, float amount, boolean isHealing) {
         Pokemon pokemon = pokemonEntity.getPokemon();
-        if (pokemon.getCurrentHealth() == 0 || pokemonEntity.isBattling() || pokemonEntity.getOwner() == null && CobblemonFightOrFlight.commonConfig().health_sync_for_wild_pokemon) {
+        if (pokemon.getCurrentHealth() == 0 || pokemonEntity.isBattling() || pokemonEntity.getOwner() == null && !CobblemonFightOrFlight.commonConfig().enable_health_sync_for_wild_pokemon) {
             return;
         }
         float ratio = amount / getMaxHealth(pokemonEntity);
@@ -352,7 +368,11 @@ public class PokemonUtils {
     }
 
     public static boolean isSheerForce(PokemonEntity pokemonEntity) {
-        return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
+        return abilityIs(pokemonEntity, "sheerforce");
+    }
+
+    public static boolean abilityIs(PokemonEntity pokemonEntity, String abilityName) {
+        return pokemonEntity.getPokemon().getAbility().getName().equals(abilityName);
     }
 
     public static boolean canActivateSheerForce(PokemonEntity pokemonEntity) {

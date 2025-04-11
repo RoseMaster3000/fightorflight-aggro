@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.mixin;
 
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
@@ -9,7 +10,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
-import me.rufia.fightorflight.goals.*;
+import me.rufia.fightorflight.goals.targeting.*;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;
@@ -20,9 +21,9 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -65,6 +66,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     private static final EntityDataAccessor<Integer> ATTACK_TIME;
     @Unique
+    private static final EntityDataAccessor<Integer> MAX_ATTACK_TIME;
+    @Unique
     private static final EntityDataAccessor<String> MOVE;
     @Unique
     private static final EntityDataAccessor<Integer> CRY_CD;
@@ -79,6 +82,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         DATA_ID_CAPTURED_BY = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
+        MAX_ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         COMMAND = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
@@ -132,9 +136,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         targetSelector.addGoal(4, new HurtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(4, new CaughtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
-        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(arg instanceof Creeper)));
+        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive && arg instanceof Creeper)));
     }
-
 
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
     public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
@@ -148,6 +151,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(DATA_ID_ATTACK_TARGET, 0);
         builder.define(DATA_ID_CAPTURED_BY, 0);
         builder.define(ATTACK_TIME, 0);
+        builder.define(MAX_ATTACK_TIME, -1);
         builder.define(MOVE, "");
         builder.define(CRY_CD, 0);
         builder.define(COMMAND, "");
@@ -183,6 +187,16 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public void setAttackTime(int val) {
         entityData.set(ATTACK_TIME, val);
+    }
+
+    @Override
+    public int getMaxAttackTime() {
+        return entityData.get(MAX_ATTACK_TIME);
+    }
+
+    @Override
+    public void setMaxAttackTime(int val) {
+        entityData.set(MAX_ATTACK_TIME, val);
     }
 
     @Override
@@ -282,13 +296,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         return amount * (1 - pokemonMultipliers.getMaximumDamageReduction() * Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
         //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
     }
-    /*
-    @Inject(method = "hurt", at = @At("TAIL"))
-    private void hurtDamageToPokemon(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (PokemonUtils.isUsingNewHealthMechanic() && invulnerableTime == 20) {
-            PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, amount, false);
-        }
-    }*/
 
     @Override
     protected void actuallyHurt(DamageSource damageSource, float damageAmount) {
@@ -311,6 +318,11 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (source.getEntity() instanceof LivingEntity livingEntity) {
             if (!PokemonAttackEffect.shouldBeHurtByAllyMob(((PokemonEntity) (Object) this), livingEntity)) {
                 cir.setReturnValue(false);
+            }
+        }
+        if (CobblemonFightOrFlight.commonConfig().slow_down_after_hurt) {
+            if (!getPokemon().isPlayerOwned()) {
+                addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 0));
             }
         }
     }
@@ -344,6 +356,10 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (getNextCryTime() >= 0) {
             setNextCryTime(getNextCryTime() - 1);
         }
+        if (getAttackTime() > 0) {
+            setAttackTime(getAttackTime() - 1);
+        }
+
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))

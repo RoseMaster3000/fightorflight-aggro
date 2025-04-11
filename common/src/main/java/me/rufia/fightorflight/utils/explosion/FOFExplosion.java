@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-//TODO unfinished
 public class FOFExplosion extends Explosion {
     protected static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
     protected static final int MAX_DROPS_PER_COMBINED_STACK = 16;
@@ -148,8 +147,8 @@ public class FOFExplosion extends Explosion {
     public void finalizeExplosion() {
         if (this.level.isClientSide) {
             this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
-        }else{
-            this.level.playSound(null,x,y,z,SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS,4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F);
+        } else {
+            this.level.playSound(null, x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F);
         }
         //CobblemonFightOrFlight.LOGGER.info("Explosion finalizing");
         boolean bl = this.interactsWithBlocks();
@@ -160,12 +159,9 @@ public class FOFExplosion extends Explosion {
         } else {
             particleType = ParticleTypes.EXPLOSION;
         }
-        if (level.isClientSide) {
-            this.level.addParticle(particleType, this.x, this.y, this.z, 1.0, 0.0, 0.0);
-        } else {
-            if (this.level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(particleType, this.x, this.y, this.z, 1, 1.0, 0.0, 0.0,1.0f);
-            }
+
+        if (this.level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(particleType, this.x, this.y, this.z, 1, 1.0, 0.0, 0.0, 1.0f);
         }
         //replace it with type-specific particle
 

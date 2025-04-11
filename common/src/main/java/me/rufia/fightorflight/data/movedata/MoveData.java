@@ -1,4 +1,4 @@
-package me.rufia.fightorflight.data;
+package me.rufia.fightorflight.data.movedata;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import net.minecraft.util.RandomSource;
@@ -15,6 +15,7 @@ public abstract class MoveData {
     private final String target;
     private final float chance;
     private final boolean canActivateSheerForce;
+    private final String triggerEvent;
     private String name;
 
     protected LivingEntity pickTarget(PokemonEntity pokemonEntity, LivingEntity hurtTarget) {
@@ -63,16 +64,29 @@ public abstract class MoveData {
         this.name = name;
     }
 
+    public String getTriggerEvent() {
+        return triggerEvent;
+    }
+
+    public boolean isOnHit() {
+        return Objects.equals("on_hit", triggerEvent);
+    }
+
+    public boolean isOnUse() {
+        return Objects.equals("on_use", triggerEvent);
+    }
+
     public int calculateEffectDuration(PokemonEntity pokemonEntity) {
         return Math.max(pokemonEntity.getPokemon().getLevel() / 10, 1);
     }
 
-    public MoveData(String type, String target, float chance, boolean canActivateSheerForce, String name) {
+    public MoveData(String type, String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name) {
         this.type = type;
         this.target = target;
         this.chance = chance;
         this.canActivateSheerForce = canActivateSheerForce;
         this.name = name;
+        this.triggerEvent = triggerEvent;
     }
 
     public abstract void invoke(PokemonEntity pokemonEntity, LivingEntity target);

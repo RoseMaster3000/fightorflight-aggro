@@ -1,7 +1,7 @@
-package me.rufia.fightorflight.data.movedatas;
+package me.rufia.fightorflight.data.movedata.movedatas;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.data.MoveData;
+import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.effects.FOFEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -12,8 +12,8 @@ import java.util.Objects;
 public class StatChangeMoveData extends MoveData {
     private int stage;
 
-    public StatChangeMoveData(String target, float chance, boolean canActivateSheerForce, String name, int stage) {
-        super("stat", target, chance, canActivateSheerForce, name);
+    public StatChangeMoveData(String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name, int stage) {
+        super("stat", target, triggerEvent, chance, canActivateSheerForce, name);
         this.stage = stage;
     }
 

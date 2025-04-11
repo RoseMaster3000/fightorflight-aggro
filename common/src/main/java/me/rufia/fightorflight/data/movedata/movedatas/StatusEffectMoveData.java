@@ -1,7 +1,7 @@
-package me.rufia.fightorflight.data.movedatas;
+package me.rufia.fightorflight.data.movedata.movedatas;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.data.MoveData;
+import me.rufia.fightorflight.data.movedata.MoveData;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.Objects;
 
 public class StatusEffectMoveData extends MoveData {
-    public StatusEffectMoveData(String target, float chance, boolean canActivateSheerForce, String name) {
-        super("status", target, chance, canActivateSheerForce, name);
+    public StatusEffectMoveData(String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name) {
+        super("status", target, triggerEvent, chance, canActivateSheerForce, name);
     }
 
     @Override

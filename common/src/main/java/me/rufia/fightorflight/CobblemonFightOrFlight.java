@@ -10,6 +10,7 @@ import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.goals.*;
 import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import me.rufia.fightorflight.utils.TargetingWhitelist;
 import me.rufia.fightorflight.utils.listeners.MoveDataListener;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -32,6 +33,7 @@ import java.util.Set;
 
 public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
+    public static final String COBBLEMON_MOD_ID="cobblemon";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
     private static FightOrFlightCommonConfigModel commonConfig;
@@ -61,6 +63,7 @@ public class CobblemonFightOrFlight {
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
         CobblemonFightOrFlightNetwork.init();
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));//unfinished
+        TargetingWhitelist.init();
     }
 
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {

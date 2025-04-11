@@ -52,7 +52,7 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
         Entity owner = getOwner();
         if (owner instanceof PokemonEntity pokemonEntity) {
             if (result.getEntity() instanceof LivingEntity target) {
-                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity));
+                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity),true);
                 explode(pokemonEntity);
             }
         }

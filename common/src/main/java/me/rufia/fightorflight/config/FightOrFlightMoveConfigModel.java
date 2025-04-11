@@ -221,7 +221,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     @Comment()
     public String[] recoil_moves_allHP = {
-            "self-destruct",
+            "selfdestruct",
             "explosion",
             "mindblown",
             "mistyexplosion"

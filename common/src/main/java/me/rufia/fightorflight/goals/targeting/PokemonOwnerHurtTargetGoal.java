@@ -1,8 +1,9 @@
-package me.rufia.fightorflight.goals;
+package me.rufia.fightorflight.goals.targeting;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.utils.TargetingWhitelist;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
@@ -22,19 +23,21 @@ public class PokemonOwnerHurtTargetGoal extends TargetGoal {
     }
 
     public boolean canUse() {
-        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner) { return false; }
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner) {
+            return false;
+        }
 
         LivingEntity owner = this.pokemonEntity.getOwner();
-//        if (owner != null) {
-//            LogUtils.getLogger().info(pokemonEntity.getPokemon().getSpecies().getName() + " owner: " + this.pokemonEntity.getPokemon().getOwnerPlayer());
-//        }
 
         if (owner != null && !this.pokemonEntity.isBusy()) {
-            if(pokemonEntity.getPokemon().getState() instanceof ShoulderedState){
+            if (pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
                 return false;
             }
             this.ownerLastHurt = owner.getLastHurtMob();
             int i = owner.getLastHurtMobTimestamp();
+            if (ownerLastHurt != null && TargetingWhitelist.getWhitelist(pokemonEntity).contains(ownerLastHurt.getEncodeId())) {
+                return false;
+            }
             return i != this.timestamp
                     && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT) && this.pokemonEntity.wantsToAttack(this.ownerLastHurt, owner);
         } else {

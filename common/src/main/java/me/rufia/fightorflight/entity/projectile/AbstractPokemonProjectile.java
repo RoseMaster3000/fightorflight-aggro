@@ -51,7 +51,7 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     public void tick() {
         super.tick();
-        makeParticle(4);
+        makeParticle(2);
     }
 
     protected void readAdditionalSaveData(CompoundTag compound) {
@@ -105,7 +105,6 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
             Move move = PokemonUtils.getMove(pokemonEntity);
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
             PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
-            PokemonAttackEffect.applyPostEffect(pokemonEntity, livingEntity, move);
         }
     }
 

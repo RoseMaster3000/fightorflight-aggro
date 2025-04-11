@@ -11,33 +11,26 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Wild Pokemon Aggression")
     @Comment("Do more aggressive Pokemon fight back when provoked?")
     public boolean do_pokemon_attack = true;
-
     @Comment("Do especially aggressive Pokemon attack unprovoked?")
-    public boolean do_pokemon_attack_unprovoked = true;
-
+    public boolean do_pokemon_attack_unprovoked = false;
     @Comment("If the aggressive pokemon will only attack unprovoked in the dark area.(similar to the spider in Minecraft,do_pokemon_attack_unprovoked needs to be set to true")
     public boolean light_dependent_unprovoked_attack = true;
-
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
-
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
     public int minimum_attack_level = 5;
     @Comment("The minimum level a Pokemon needs to be to attack unprovoked.")
-    public int minimum_attack_unprovoked_level = 1;
+    public int minimum_attack_unprovoked_level = 10;
     @Comment("The multiplier used to calculate the wild Pokemon's aggression,lower value can make the high level Pokemon less aggressive.")
     public float aggression_level_multiplier = 1.0f;
-
     @Comment("Are Dark types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
     public boolean dark_light_level_aggro = true;
     @Comment("Are Ghost types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
     public boolean ghost_light_level_aggro = true;
-
     @Comment("Pokemon below this map height (y) will always be aggressive.")
-    public double always_aggro_below = 40;
+    public double always_aggro_below = -128;
     @Comment("Pokemon stops running away if the hp is not full.")
-    public boolean stop_running_after_hurt = false;
-
+    public boolean stop_running_after_hurt = true;
     @Comment("Pokemon with these natures are slightly more aggressive.")
     public String[] aggressive_nature = {"sassy", "hardy", "bold", "impish", "hasty"};
     @Comment("The aggression multiplier for natures above.")
@@ -55,8 +48,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The aggression multiplier for natures above.")
     public float more_peaceful_nature_multiplier = -2f;
 
-
-
     @Comment("Forms that will always be aggressive")
     public String[] always_aggro_aspects = {
             "alolan"
@@ -66,18 +57,15 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "mankey",
             "primeape"
     };
-
     @Comment("Pokemon that will never be aggressive, priority over always aggresive species/forms")
     public String[] never_aggro = {
             "slowpoke",
             "pyukumuku"
     };
-
     @Comment("Pokemon that will be aggressive only when provoked(WIP)")
     public String[] provoke_only_aggro = {
 
     };
-
     @Comment("Pokemon that will always flee away from the player, priority over always aggresive species/forms")
     public String[] always_flee = {
             "wimpod"
@@ -107,14 +95,12 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_player_pokemon = false;
     @Comment("Will the wild pokemon cries for several times when angered,set to false so the pokemon will only cry one time when it's angered")
-    public boolean multiple_cries = false;
+    public boolean multiple_cries = true;
     @Comment("Tick(1/20s by default) needed for the pokemon to cry again(it will only work when the multiple_cries is set to true)")
     public int time_to_cry_again = 100;
-
-
     @ConfigEntry.Category("Pokemon yield")
     @Comment("How much experience a pokemon can get by killing a pokemon without a battle? Set to 0 for no experience outside standard pokemon battles.")
-    public float experience_multiplier = 0f;
+    public float experience_multiplier = 0.5f;
     @Comment("Your pokemon can gain EV points by killing a pokemon without a battle?")
     public boolean can_gain_ev = true;
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle? For example Primeape can use Rage Fist 20x to evolve without a traditional Pokemon Battle.")
