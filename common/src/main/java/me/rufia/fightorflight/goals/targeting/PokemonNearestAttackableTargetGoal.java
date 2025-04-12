@@ -23,9 +23,21 @@ public class PokemonNearestAttackableTargetGoal<T extends LivingEntity> extends 
         if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(pokemonEntity) || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && pokemonEntity.getLightLevelDependentMagicValue() >= 0.5f)) {
             return false;
         }
+
+        // Aggressive Pokémon List Checker
+        boolean isAggressive = CobblemonFightOrFlight.SpeciesAlwaysAggro(pokemonEntity);
+        // Territorial Pokémon List Checker
+        boolean isTerritorial = CobblemonFightOrFlight.SpeciesAlwaysRetaliate(pokemonEntity);
+        // Wimp Pokémon
+        boolean isWimp = CobblemonFightOrFlight.SpeciesAlwaysFlee(pokemonEntity);
+        // Dumb Pokémon
+        boolean isDumb = CobblemonFightOrFlight.SpeciesNeverAggro(pokemonEntity);
+
+
         if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD) {
             return false;
-        } else {
+        }
+        else {
             if (ticksUntilNewAngerParticle < 1) {
                 CobblemonFightOrFlight.PokemonEmoteAngry(this.mob);
                 ticksUntilNewAngerParticle = 25;

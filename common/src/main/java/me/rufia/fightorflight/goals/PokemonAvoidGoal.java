@@ -56,7 +56,7 @@ public class PokemonAvoidGoal extends Goal {
             }
         }
         if (CobblemonFightOrFlight.SpeciesAlwaysFlee(species)) {
-            //These pokemon won't run away from creative mode player,I thought I had to switch it on manually so I spent an hour debugging...
+            //These pokemon won't run away from creative mode player, I thought I had to switch it on manually so I spent an hour debugging...
             this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(Player.class, this.mob.getBoundingBox().inflate((double) this.maxDist, 3.0, (double) this.maxDist), (livingEntity) -> true), this.avoidEntityTargeting, this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
         } else {
             if (this.mob.getTarget() != null) {

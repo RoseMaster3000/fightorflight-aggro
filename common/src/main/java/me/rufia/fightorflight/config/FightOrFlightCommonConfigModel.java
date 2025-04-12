@@ -67,7 +67,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("DUMB POKEMON that will never be aggressive, priority over always aggresive species/forms")
     public String[] never_aggro = {"slowpoke", "pyukumuku", "quagsire", "magikarp"};
 
-    @Comment("AGGRESSIVE POKEMON that will always be aggressive")
+    @Comment("AGGRESSIVE POKEMON that will always attack on sight (unprovoked)")
     public String[] always_aggro = {
             "charizard","beedrill","raticate","spearow","fearow",
             "arbok","nidoqueen","nidoking","zubat","golbat",
@@ -177,6 +177,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean do_pokemon_defend_owner = true;
     @Comment("Do player Pokemon defend their owners proactively? (follows the same rules as Iron Golems)")
     public boolean do_pokemon_defend_proactive = true;
+    @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
+    public boolean do_pokemon_defend_creeper_proactive = false;
     @Comment("Can player Pokemon target other players? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_players = false;
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
@@ -185,8 +187,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean multiple_cries = false;
     @Comment("Tick(1/20s by default) needed for the pokemon to cry again(it will only work when the multiple_cries is set to true)")
     public int time_to_cry_again = 100;
-    @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
-    public boolean do_pokemon_defend_creeper_proactive = false;
     @Comment("Wild pokemon will be slow down if the hp is not full.")
     public boolean slow_down_after_hurt = false;
 

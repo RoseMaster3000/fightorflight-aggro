@@ -134,8 +134,8 @@ public class CobblemonFightOrFlight {
             typeSecondary = typePrimary;
         }
 
-        boolean ghostLightLevelModifier = CobblemonFightOrFlight.commonConfig().ghost_light_level_aggro && (typePrimary.getName() == "ghost" || typeSecondary.getName() == "ghost");
-        boolean darkLightLevelModifier = CobblemonFightOrFlight.commonConfig().dark_light_level_aggro && (typePrimary.getName() == "dark" || typeSecondary.getName() == "dark");
+        boolean ghostLightLevelModifier = CobblemonFightOrFlight.commonConfig().ghost_light_level_aggro && (typePrimary.getName().equals("ghost") || typeSecondary.getName().equals("ghost"));
+        boolean darkLightLevelModifier = CobblemonFightOrFlight.commonConfig().dark_light_level_aggro && (typePrimary.getName().equals("dark") || typeSecondary.getName().equals("dark"));
 
         if (ghostLightLevelModifier || darkLightLevelModifier) {
             int skyDarken = ((Entity) pokemonEntity).level().getSkyDarken();
@@ -178,8 +178,10 @@ public class CobblemonFightOrFlight {
         return false;
     }
 
+    public static boolean SpeciesAlwaysAggro(PokemonEntity pokemon) {
+        return SpeciesAlwaysAggro(pokemon.getPokemon().getSpecies().getName().toLowerCase());
+    }
     public static boolean SpeciesAlwaysAggro(String speciesName) {
-        //LogUtils.getLogger().info("Are " + speciesName + " always aggro?");
         for (String aggroSpecies : CobblemonFightOrFlight.commonConfig().always_aggro) {
             if (aggroSpecies.equals(speciesName)) {
                 return true;
@@ -188,15 +190,23 @@ public class CobblemonFightOrFlight {
         return false;
     }
 
+    public static boolean SpeciesNeverAggro(PokemonEntity pokemon) {
+        return SpeciesNeverAggro(pokemon.getPokemon().getSpecies().getName().toLowerCase());
+    }
     public static boolean SpeciesNeverAggro(String speciesName) {
-        for (String passiveSpecies : CobblemonFightOrFlight.commonConfig().never_aggro) {
-            if (passiveSpecies.equals(speciesName)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(commonConfig().never_aggro).toList().contains(speciesName);
     }
 
+    public static boolean SpeciesAlwaysRetaliate(PokemonEntity pokemon) {
+        return SpeciesAlwaysRetaliate(pokemon.getPokemon().getSpecies().getName().toLowerCase());
+    }
+    public static boolean SpeciesAlwaysRetaliate(String speciesName) {
+        return Arrays.stream(commonConfig().provoke_only_aggro).toList().contains(speciesName);
+    }
+
+    public static boolean SpeciesAlwaysFlee(PokemonEntity pokemon) {
+        return SpeciesAlwaysFlee(pokemon.getPokemon().getSpecies().getName().toLowerCase());
+    }
     public static boolean SpeciesAlwaysFlee(String speciesName) {
         return Arrays.stream(commonConfig().always_flee).toList().contains(speciesName);
     }
