@@ -13,19 +13,18 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean do_pokemon_attack = true;
     @Comment("Do especially aggressive Pokemon attack unprovoked?")
     public boolean do_pokemon_attack_unprovoked = true;
-    @Comment("If the aggressive pokemon will only attack unprovoked in the dark area.(similar to the spider in Minecraft,do_pokemon_attack_unprovoked needs to be set to true")
-    public boolean light_dependent_unprovoked_attack = false;
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
     @Comment("If failed captures can be counted as provocation?")
     public boolean failed_capture_counted_as_provocation = true;
-
+    @Comment("Spawn Safe Zone Radius (Pokemon never aggro in this zone)")
+    public int safe_zone_radius = 75;
 
     @ConfigEntry.Category("Smart Pokemon Aggression")
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
     public int minimum_attack_level = 1;
     @Comment("The minimum level a Pokemon needs to be to attack unprovoked.")
-    public int minimum_attack_unprovoked_level = 10;
+    public int minimum_attack_unprovoked_level = 1;
     @Comment("The multiplier used to calculate the wild Pokemon's aggression,lower value can make the high level Pokemon less aggressive.")
     public float aggression_level_multiplier = 1.0f;
     @Comment("Are Dark types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
@@ -33,7 +32,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Are Ghost types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
     public boolean ghost_light_level_aggro = true;
     @Comment("Pokemon stops running away if the hp is not full.")
-    public boolean stop_running_after_hurt = true;
+    public boolean stop_running_after_hurt = false;
     @Comment("Pokemon with these natures are slightly more aggressive.")
     public String[] aggressive_nature = {"sassy", "hardy", "bold", "impish", "hasty"};
     @Comment("The aggression multiplier for natures above.")
@@ -72,7 +71,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "charizard","beedrill","raticate","spearow","fearow",
             "arbok","nidoqueen","nidoking","zubat","golbat",
             "mankey","primeape","poliwrath","tentacruel",
-            "kangaskhan","scyther","dodrio","pinsir","tauros",
+            "kangaskhan","scyther","dodrio","pinsir",
             "trapinch","gyarados","omastar","kabutops","aerodactyl",
             "feraligatr","ariados","crobat","steelix","granbull",
             "qwilfish","scizor","ursaring","houndoom","donphan",
@@ -107,7 +106,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "bouffalant","venusaur","ekans","nidoqueen","golem",
             "forretress","shuckle","pupitar","hariyama","lairon",
             "camerupt","rhyhorn","rhydon","stantler","hitmonlee",
-            "hitmonchan","slaking","medicham","torkoal",
+            "hitmonchan","slaking","medicham","torkoal", "tauros",
             "cacturne","metagross","torterra","staraptor",
             "lucario","bastiodon","shieldon","electivire","magmortar",
             "watchog","conkeldurr","gigalith","sawsbuck","aegislash",
@@ -137,7 +136,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "togepi","mareep","smoochum","miltank","magby",
             "torchic","ralts","surskit","skitty","anorith",
             "kecleon","castform","wynaut","pachirisu",
-            "buneary","bonsly","mime jr.","happiny","mantyke",
+            "buneary","bonsly","mime jr.","mimejr","happiny","mantyke",
             "petilil","joltik","wishiwashi","wooloo","arboliva",
             "dolliv","smoliv","shroodle","tandemaus","maushold",
             "rellor","tinkatink","flittle","glimmet","celebi",
@@ -272,7 +271,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Damage multiplier player-owned pokemon would do with ranged attacks")
     public float ranged_attack_damage_player = 1.2f;
     @Comment("The minimum time between pokemons melee attacks. In seconds.")
-    public float minimum_melee_attack_interval = 0.8f;
+    public float minimum_melee_attack_interval = 1.0f;
     @Comment("The maximum time between pokemons melee attacks. In seconds.")
     public float maximum_melee_attack_interval = 3.0f;
     @Comment("Maximum damage multiplier player-owned pokemon would do with ranged attacks")

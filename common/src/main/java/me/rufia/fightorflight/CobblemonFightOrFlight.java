@@ -20,9 +20,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,7 @@ public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
     public static final String COBBLEMON_MOD_ID="cobblemon";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
-    public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
+    public static final float AUTO_AGGRO_THRESHOLD = 999f;
     private static FightOrFlightCommonConfigModel commonConfig;
     private static FightOrFlightMoveConfigModel moveConfig;
     private static FightOrFlightVisualEffectConfigModel visualEffectConfig;
@@ -93,14 +95,42 @@ public class CobblemonFightOrFlight {
         Set<String> pokemonAspects = pokemon.getAspects();
         double height = pokemonEntity.position().y;
 
+        // SPAWN ZONE (all pokemon WIMP)
+        Vec3 pos = pokemonEntity.position();
+        int safeRadius = CobblemonFightOrFlight.commonConfig().safe_zone_radius;
+        if ((pos.x <= safeRadius) && (pos.z <= safeRadius) && (pos.y > 50)) {
+            return -100;
+        }
+
+        // WIMP / DUMB
         if (SpeciesNeverAggro(speciesName) || SpeciesAlwaysFlee(speciesName)) {
             return -100;
         }
 
+        // AGGRESSIVE
         if (SpeciesAlwaysAggro(speciesName) || AspectsAlwaysAggro(pokemonAspects) || BelowAlwaysAggro(height)) {
-            return 100;
+            return 1000;
         }
 
+        // TERRITORIAL (night)
+        boolean isTerritorial = SpeciesAlwaysRetaliate(speciesName);
+        boolean isNight = pokemonEntity.level().isNight();
+        if (isTerritorial && isNight && CobblemonFightOrFlight.commonConfig().territorial_nocturnal){
+            return 1000;
+        }
+
+        // TERRITORIAL (provoked)
+        LivingEntity lastEnemy = pokemonEntity.getLastHurtByMob();
+        if (isTerritorial && lastEnemy!=null && lastEnemy.isAlive()){
+            return 1000;
+        }
+
+        // SMART (night + provoked)
+        if (isNight && lastEnemy!=null && lastEnemy.isAlive() && CobblemonFightOrFlight.commonConfig().smart_nocturnal){
+            return 1000;
+        }
+
+        // SMART (calculate coefficient)
         float levelMultiplier = CobblemonFightOrFlight.commonConfig().aggression_level_multiplier;
         double pkmnLevel = levelMultiplier * pokemon.getLevel();
         double lowStatPenalty = (pkmnLevel * 1.5) + 30;
