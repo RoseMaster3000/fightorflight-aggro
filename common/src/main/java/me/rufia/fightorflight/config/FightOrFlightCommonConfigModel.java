@@ -8,17 +8,19 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 @Config(name = "fightorflight")
 public class FightOrFlightCommonConfigModel implements ConfigData {
 
-    @ConfigEntry.Category("Wild Pokemon Aggression")
+    @ConfigEntry.Category("Base Settings")
     @Comment("Do more aggressive Pokemon fight back when provoked?")
     public boolean do_pokemon_attack = true;
     @Comment("Do especially aggressive Pokemon attack unprovoked?")
-    public boolean do_pokemon_attack_unprovoked = false;
+    public boolean do_pokemon_attack_unprovoked = true;
     @Comment("If the aggressive pokemon will only attack unprovoked in the dark area.(similar to the spider in Minecraft,do_pokemon_attack_unprovoked needs to be set to true")
-    public boolean light_dependent_unprovoked_attack = true;
+    public boolean light_dependent_unprovoked_attack = false;
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
+
+    @ConfigEntry.Category("Smart Pokemon Aggression")
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
-    public int minimum_attack_level = 5;
+    public int minimum_attack_level = 1;
     @Comment("The minimum level a Pokemon needs to be to attack unprovoked.")
     public int minimum_attack_unprovoked_level = 10;
     @Comment("The multiplier used to calculate the wild Pokemon's aggression,lower value can make the high level Pokemon less aggressive.")
@@ -27,8 +29,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean dark_light_level_aggro = true;
     @Comment("Are Ghost types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
     public boolean ghost_light_level_aggro = true;
-    @Comment("Pokemon below this map height (y) will always be aggressive.")
-    public double always_aggro_below = -128;
     @Comment("Pokemon stops running away if the hp is not full.")
     public boolean stop_running_after_hurt = true;
     @Comment("Pokemon with these natures are slightly more aggressive.")
@@ -48,28 +48,103 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The aggression multiplier for natures above.")
     public float more_peaceful_nature_multiplier = -2f;
 
-    @Comment("Forms that will always be aggressive")
-    public String[] always_aggro_aspects = {
-            "alolan"
-    };
-    @Comment("Pokemon that will always be aggressive")
-    public String[] always_aggro = {
-            "mankey",
-            "primeape"
-    };
-    @Comment("Pokemon that will never be aggressive, priority over always aggresive species/forms")
-    public String[] never_aggro = {
-            "slowpoke",
-            "pyukumuku"
-    };
-    @Comment("Pokemon that will be aggressive only when provoked(WIP)")
-    public String[] provoke_only_aggro = {
+    @ConfigEntry.Category("Aggro Configs")
+    @Comment("Pokemon below this map height (y) will always be aggressive.")
+    public double always_aggro_below = 40;
+    @Comment("Territorial Pokemon converted to Aggressive at night")
+    public boolean territorial_nocturnal = true;
+    @Comment("Smart Pokemon converted to Territorial at night")
+    public boolean smart_nocturnal = true;
 
+
+    @ConfigEntry.Category("Aggro Buckets")
+    @Comment("Forms that will always be aggressive")
+    public String[] always_aggro_aspects = {};
+
+    @Comment("DUMB POKEMON that will never be aggressive, priority over always aggresive species/forms")
+    public String[] never_aggro = {"slowpoke", "pyukumuku", "quagsire", "magikarp"};
+
+    @Comment("AGGRESSIVE POKEMON that will always be aggressive")
+    public String[] always_aggro = {
+            "charizard","beedrill","raticate","spearow","fearow",
+            "arbok","nidoqueen","nidoking","zubat","golbat",
+            "mankey","primeape","poliwrath","tentacruel",
+            "kangaskhan","scyther","dodrio","pinsir","tauros",
+            "trapinch","gyarados","omastar","kabutops","aerodactyl",
+            "feraligatr","ariados","crobat","steelix","granbull",
+            "qwilfish","scizor","ursaring","houndoom","donphan",
+            "larvitar","tyranitar","mightyena","vigoroth","exploud",
+            "sableye","aggron","carvanha","sharpedo","zangoose",
+            "seviper","absol","glalie","walrein","bagon","salamence",
+            "monferno","infernape","luxray","cranidos","rampardos",
+            "bastiodon","vespiquen","garchomp","hippowdon","skorupi",
+            "drapion","abomasnow","weavile","yanmega","serperior",
+            "venipede","whirlipede","scolipede","basculin","excadrill",
+            "krookodile","cofagrigus","zoroark","eelektross","fraxure",
+            "haxorus","beartic","druddigon","escavalier","galvantula",
+            "druddigon","durant","hydreigon","volcarona","pyroar",
+            "pangoro","malamar","barbaracle","tyrunt","tyrantrum",
+            "noivern","trevenant","noivern","yungoos","vikavolt",
+            "crabrawler","crabominable","toxapex","golisopod",
+            "rillaboom","drednaw","arrokuda","barraskewda",
+            "grapploct","impidimp","morgrem","grimmsnarl","dragapult",
+            "obstagoon","perrserker","ursaluna","cursola","runerigus",
+            "dracozolt","arctozolt","kleavor","basculegion","overqwil",
+            "skeledirge","toedscruel","ceruledge","scovillain","espathra",
+            "greavard","houndstone","veluza","grafaiai","scovillain",
+            "annihilape","great tusk","scream tail","iron treads",
+            "iron jugulis","baxcalibur","roaring moon","deoxys","nihilego",
+            "buzzwole","pheromosa","xurkitree","celesteela","kartana",
+            "guzzlord","necrozma","magearna","marshadow","poipole",
+            "naganadel","blacephalon"
     };
-    @Comment("Pokemon that will always flee away from the player, priority over always aggresive species/forms")
+
+    @Comment("TERRITORIAL POKEMON that will be aggressive only when provoked")
+    public String[] provoke_only_aggro = {
+            "bouffalant","venusaur","ekans","nidoqueen","golem",
+            "forretress","shuckle","pupitar","hariyama","lairon",
+            "camerupt","rhyhorn","rhydon","stantler","hitmonlee",
+            "hitmonchan","slaking","medicham","torkoal",
+            "cacturne","metagross","torterra","staraptor",
+            "lucario","bastiodon","shieldon","electivire","magmortar",
+            "watchog","conkeldurr","gigalith","sawsbuck","aegislash",
+            "oranguru","turtonator","salazzle","kommo-o","hakamo-o",
+            "corviknight","corvisquire","dubwool","copperajah",
+            "sirfetch'd","duraludon","urshifu","kubfu","wyrdeer",
+            "garganacl","mabosstiff","maschiff","bramblin",
+            "brambleghast","dondozo","kingambit","raikou","entei",
+            "suicune","lugia","ho-oh","lugia","mewtwo","moltres",
+            "zapdos","articuno","regirock","regice","registeel",
+            "kyogre","groudon","rayquaza","dialga","palkia","heatran",
+            "regigigas","giratina","darkrai","arceus","cobalion",
+            "terrakion","virizion","tornadus","thundurus","reshiram",
+            "zekrom","landorus","kyurem","genesect","yveltal",
+            "xerneas","zygarde","diancie","hoopa","volcanion",
+            "tapu koko","tapu lele","tapu bulu","tapu fini","solgaleo",
+            "lunala","zeraora","stakataka","eternatus","zarude",
+            "regieleki","regidrago","enamorus","glastrier","spectrier",
+            "calyrex","koraidon","miraidon","chi-yu","walking wake",
+            "okidogi","munkidori","fezandipiti","ogerpon","archaludon",
+            "gouging fire","raging bolt","iron boulder","iron crown"
+    };
+
+    @Comment("WIMPY POKEMON that will always flee away from the player  (priority over always aggresive species/forms)")
     public String[] always_flee = {
-            "wimpod"
+            "abra","wimpod","pichu","igglybuff","pichu",
+            "togepi","mareep","smoochum","miltank","magby",
+            "torchic","ralts","surskit","skitty","anorith",
+            "kecleon","castform","wynaut","pachirisu",
+            "buneary","bonsly","mime jr.","happiny","mantyke",
+            "petilil","joltik","wishiwashi","wooloo","arboliva",
+            "dolliv","smoliv","shroodle","tandemaus","maushold",
+            "rellor","tinkatink","flittle","glimmet","celebi",
+            "unown","mew","latias","latios","jirachi","uxie",
+            "mesprit","azelf","cresselia","phione","manaphy",
+            "shaymin","keldeo","meloetta","terapagos","pecharunt"
     };
+
+
+    @ConfigEntry.Category("Ability Effects")
     @Comment("Abilities that will reduce wild pokemon's aggro")
     public String[] aggro_reducing_abilities = {
             "intimidate",
@@ -85,6 +160,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Allow the Pokemon to use the teleport move to flee if the Pokemon had learnt it?")
     public boolean allow_teleport_to_flee = true;
 
+
     @ConfigEntry.Category("Player Pokemon Defence")
     @Comment("Do player Pokemon defend their owners when they attack or are attacked by other mobs?")
     public boolean do_pokemon_defend_owner = true;
@@ -95,12 +171,14 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_player_pokemon = false;
     @Comment("Will the wild pokemon cries for several times when angered,set to false so the pokemon will only cry one time when it's angered")
-    public boolean multiple_cries = true;
+    public boolean multiple_cries = false;
     @Comment("Tick(1/20s by default) needed for the pokemon to cry again(it will only work when the multiple_cries is set to true)")
     public int time_to_cry_again = 100;
+
+
     @ConfigEntry.Category("Pokemon yield")
     @Comment("How much experience a pokemon can get by killing a pokemon without a battle? Set to 0 for no experience outside standard pokemon battles.")
-    public float experience_multiplier = 0.5f;
+    public float experience_multiplier = 0.25f;
     @Comment("Your pokemon can gain EV points by killing a pokemon without a battle?")
     public boolean can_gain_ev = true;
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle? For example Primeape can use Rage Fist 20x to evolve without a traditional Pokemon Battle.")
@@ -109,9 +187,9 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Pokemons should be immune to suffocation damage? (cant die to wall damage, like when sand drops into them)")
     public boolean suffocation_immunity = true;
     @Comment("Should player-owned pokemons be immune to damage from all players?")
-    public boolean pvp_immunity = true;
+    public boolean pvp_immunity = false;
     @Comment("Should player-owned pokemons be immune to damage from mobs on the same team?")
-    public boolean friendly_fire_immunity_team = true;
+    public boolean friendly_fire_immunity_team = false;
     @Comment("Should player-owned pokemons be immune to damage from the owner (friendly fire)?")
     public boolean friendly_fire_immunity_owner = true;
     @Comment("The maximum damage bonus can get if it reached the maximum stat(the physical and the special moves both share one value currently)")
@@ -144,6 +222,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean force_wild_battle_on_pokemon_hurt = false;
     @Comment("When a player owned Pokemon hurts or is hurt by another player's pokemon, should a pokemon battle be started? (EXPERIMENTAL)")
     public boolean force_player_battle_on_pokemon_hurt = false;
+
+
     @ConfigEntry.Category("Pokemon Ranged Attack")
     @Comment("If wild pokemon can use the ranged attack.")
     public boolean wild_pokemon_ranged_attack = false;
@@ -180,7 +260,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("If health sync will work on the wild pokemon, healing them on standard pokemon battle start if they were damaged before.")
     public boolean health_sync_for_wild_pokemon = true;
     @Comment("The minimum hp of a pokemon outside standard pokemon battle,shedinja is set to 1.0 and can't be changed.")
-    public int min_HP = 8;
+    public int min_HP = 5;
     @Comment("The medium hp value of a pokemon outside standard pokemon battle,the medium value is designed to allow you to better tweak the growth of HP value for the entity")
     public int mid_HP = 40;
     @Comment("The maximum hp of a pokemon outside standard pokemon battle.")
