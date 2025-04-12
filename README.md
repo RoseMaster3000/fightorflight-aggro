@@ -1,26 +1,28 @@
-This version is no longer server-side only. I added new items and entities to support some features.
-I heard that someone is developing a server-side version in the Cobblemon discord.
-Please wait for that if you can't accept adding this to your server.
-I'm just too busy to solve this problem. Sorry.  
-Though I haven't made contact with them, I don't mind they use my code if necessary.
-
-
 ## RM3-Aggro Edition
-Unprovoked Attack Improved! My version works in a more predictable way. There are 3 lists of pokemon in the config
-1. Aggressive Pokemon (attack on sight, unprovoked)
-2. Territorial Pokemon (attack only if player provokes)
-3. Wimp Pokemon (always run if player provokes)
-4. Smart Pokemon (all others, will never attack on sight, but will fight/flight if provoked)
+Unprovoked Attack Improved! Pokemon are aggro based on species buckets
+(I have prepopulated these buckets in the code, but they can be modified in the config file)
+1. Aggressive Pokemon [always_aggro] (attack on sight, unprovoked)
+2. Territorial Pokemon [provoke_only_aggro] (attack only if player provokes)
+3. Wimp Pokemon [always_flee] (always run if player provokes)
+4. Dumb Pokemon [never_aggro] (just sit there and take damage)
+5. Smart Pokemon (all others, will NEVER attack on sight, but will fight/flight if provoked)
 
 There is also these key settings
 * always_aggro_below [INT] (y level where Pokémon will always aggro, EXPECT wimp pokemon)
 * territorial_nocturnal [BOOL] (territorial pokemon converted to Aggressive at night)
 * smart_nocturnal [BOOL] (Smart Pokémon converted to Territorial at night)
-* sunlight_wimps [BOOL] (dark & ghost Pokémon converted to wimp in light)
 
+## Requirements
+* [Architectury](https://modrinth.com/mod/architectury-api) required
+* client + server (Poke-Staff means clients need this mod as well)
+
+## Compile
+Must use gradle wrapper, since so many bindings are used
+`chmod +x ./gradlew`
+Build with this...
+`./gradlew build`
 
 ## Features included in v0.7.4:
-- **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
 - **Faster Pokemon:** Pokemon with a higher speed stat can run faster.(can be changed in the config, the base speed of cobblemon is too slow, so it might not be obvious.)
@@ -80,10 +82,6 @@ There is also these key settings
 - New config options: The aggression system will only work in the dark areas.(Similar to the spiders in Minecraft)
 - Bug fixes: The invulnerable time don't work properly for pokemon entity;
 - Bug fixes: The tracing projectiles should work correctly now.
-
-## Dependencies
-[Architectury](https://modrinth.com/mod/architectury-api) required
-
 
 ## TODO
 - Main Goal For the Next Update:
