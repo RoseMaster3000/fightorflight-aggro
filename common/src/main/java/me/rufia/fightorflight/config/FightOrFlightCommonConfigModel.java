@@ -8,7 +8,7 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 @Config(name = "fightorflight")
 public class FightOrFlightCommonConfigModel implements ConfigData {
 
-    @ConfigEntry.Category("Base Settings")
+    @ConfigEntry.Category("General Settings")
     @Comment("Do more aggressive Pokemon fight back when provoked?")
     public boolean do_pokemon_attack = true;
     @Comment("Do especially aggressive Pokemon attack unprovoked?")
@@ -17,6 +17,9 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean light_dependent_unprovoked_attack = false;
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
+    @Comment("If failed captures can be counted as provocation?")
+    public boolean failed_capture_counted_as_provocation = true;
+
 
     @ConfigEntry.Category("Smart Pokemon Aggression")
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
@@ -157,11 +160,19 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "turboblaze",
             "teravolt"
     };
+    @Comment("Whitelist for all pokemon.(won't influence the Poke Staff)")
+    public String[] all_pokemon_targeting_whitelist = {
+            "minecraft:villager"
+    };
+    @Comment("Whitelist for wild pokemon.")
+    public String[] wild_pokemon_targeting_whitelist = {};
+    @Comment("Whitelist for player owned pokemon. (won't influence the Poke Staff)")
+    public String[] player_owned_pokemon_targeting_whitelist={};
     @Comment("Allow the Pokemon to use the teleport move to flee if the Pokemon had learnt it?")
     public boolean allow_teleport_to_flee = true;
 
 
-    @ConfigEntry.Category("Player Pokemon Defence")
+    @ConfigEntry.Category("Pokemon Defending")
     @Comment("Do player Pokemon defend their owners when they attack or are attacked by other mobs?")
     public boolean do_pokemon_defend_owner = true;
     @Comment("Do player Pokemon defend their owners proactively? (follows the same rules as Iron Golems)")
@@ -174,16 +185,22 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean multiple_cries = false;
     @Comment("Tick(1/20s by default) needed for the pokemon to cry again(it will only work when the multiple_cries is set to true)")
     public int time_to_cry_again = 100;
+    @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
+    public boolean do_pokemon_defend_creeper_proactive = false;
+    @Comment("Wild pokemon will be slow down if the hp is not full.")
+    public boolean slow_down_after_hurt = false;
 
 
-    @ConfigEntry.Category("Pokemon yield")
+    @ConfigEntry.Category("Pokemon Training")
     @Comment("How much experience a pokemon can get by killing a pokemon without a battle? Set to 0 for no experience outside standard pokemon battles.")
     public float experience_multiplier = 0.25f;
     @Comment("Your pokemon can gain EV points by killing a pokemon without a battle?")
     public boolean can_gain_ev = true;
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle? For example Primeape can use Rage Fist 20x to evolve without a traditional Pokemon Battle.")
     public boolean can_progress_use_move_evoluiton = true;
-    @ConfigEntry.Category("Pokemon Damage and Effects")
+
+
+    @ConfigEntry.Category("Pokemon Attacking (Damage & Effects) ")
     @Comment("Pokemons should be immune to suffocation damage? (cant die to wall damage, like when sand drops into them)")
     public boolean suffocation_immunity = true;
     @Comment("Should player-owned pokemons be immune to damage from all players?")
@@ -192,6 +209,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean friendly_fire_immunity_team = false;
     @Comment("Should player-owned pokemons be immune to damage from the owner (friendly fire)?")
     public boolean friendly_fire_immunity_owner = true;
+
     @Comment("The maximum damage bonus can get if it reached the maximum stat(the physical and the special moves both share one value currently)")
     public float max_bonus_from_stat = 4.0f;
     @Comment("The minimum damage wild pokemon could do on hit")
@@ -204,6 +222,15 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float attack_damage_player = 1.2f;
     @Comment("Maximum damage multiplier player-owned pokemon would do")
     public float maximum_attack_damage_player = 1.2f;
+    @Comment("If the pokemon type effectiveness will be activated outside standard Pokemon battle")
+    public boolean type_effectiveness_between_pokemon = true;
+    @Comment("Multiplier for super effective damage against the other Pokemon")
+    public float super_effective_multiplier = 1.5f;
+    @Comment("Multiplier for not very effective damage against the other Pokemon")
+    public float not_very_effective_multiplier = 0.5f;
+    @Comment("Multiplier for no effect damage against the other Pokemon")
+    public float no_effect_multiplier = 0.1f;
+
     @Comment("Attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
     public int maximum_attack_stat = 200;
     @Comment("The movement speed multiplier of a pokemon if the Speed stat of this Pokemon is 0.")
@@ -218,6 +245,11 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float max_damage_reduction_multiplier_player = 1.2f;
     @Comment("The highest defense stat needed to get the highest damage reduction.")
     public int defense_stat_limit = 161;
+
+    @Comment("Use the classic type effect after hitting the enemy.(Levitate for the psychic type move,regeneration for grass type move)")
+    public boolean activate_type_effect = false;
+    @Comment("Use the move effect after hitting the enemy (Inferno will always burn the target, Flamethrower has a 10% chance to burn the target.)")
+    public boolean activate_move_effect = true;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
     public boolean force_wild_battle_on_pokemon_hurt = false;
     @Comment("When a player owned Pokemon hurts or is hurt by another player's pokemon, should a pokemon battle be started? (EXPERIMENTAL)")
@@ -239,11 +271,17 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float minimum_ranged_attack_damage_player = 1.2f;
     @Comment("Damage multiplier player-owned pokemon would do with ranged attacks")
     public float ranged_attack_damage_player = 1.2f;
+    @Comment("The minimum time between pokemons melee attacks. In seconds.")
+    public float minimum_melee_attack_interval = 0.8f;
+    @Comment("The maximum time between pokemons melee attacks. In seconds.")
+    public float maximum_melee_attack_interval = 3.0f;
     @Comment("Maximum damage multiplier player-owned pokemon would do with ranged attacks")
     public float maximum_ranged_attack_damage_player = 1.2f;
     @Comment("Special attack stat required to reach the maximum damage,the default value is calculated with 50 level, 130 stat, 252 EVs, IVs of 31, and a helpful nature.")
     public int maximum_special_attack_stat = 200;
-    @ConfigEntry.Category("Pokemon Damage Multiplier(misc),These modifiers doesn't stack currently")
+
+
+    @ConfigEntry.Category("Pokemon Damage Multiplier (misc), These modifiers doesn't stack currently")
     @Comment("Water type damage will be more effective on mobs like Blaze,Enderman,etc.")
     public float water_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Fire type damage will be not very effective against fire immune entity.(set to 0 if you want a complete immune)")
@@ -254,12 +292,14 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float ice_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Poison type damage will be not very effective against undead mobs.(set to 0 if you want a complete immune)")
     public float poison_type_no_effect_dmg_multiplier = 0.1f;
+
+
     @ConfigEntry.Category("Health Calculation & Synchronization")
     @Comment("If the original updateMaxHealth() will be replaced by my version. Pokemons outside of battle will use the hp stat instead of the base hp stat. The following configurations needs this one to work.")
     public boolean shouldOverrideUpdateMaxHealth = true;
-    @Comment("If health sync will work on the wild pokemon, healing them on standard pokemon battle start if they were damaged before.")
-    public boolean health_sync_for_wild_pokemon = true;
-    @Comment("The minimum hp of a pokemon outside standard pokemon battle,shedinja is set to 1.0 and can't be changed.")
+    @Comment("If health sync will work on the wild pokemon, set to false will heal them on standard pokemon battle start if they were damaged before.")
+    public boolean enable_health_sync_for_wild_pokemon = true;
+    @Comment("The minimum hp of a pokemon outside standard pokemon battle, Shedinja is set to 1.0 and can't be changed.")
     public int min_HP = 5;
     @Comment("The medium hp value of a pokemon outside standard pokemon battle,the medium value is designed to allow you to better tweak the growth of HP value for the entity")
     public int mid_HP = 40;
@@ -271,6 +311,9 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public int mid_HP_required_stat = 160;
     @Comment("HP stat needed to get maximum HP outside standard pokemon battle. The max hp of a Blissey is 714.")
     public int max_HP_required_stat = 500;
+
+
+
     @ConfigEntry.Category("Poke Staff")
     public boolean stay_after_move_command = true;
 
