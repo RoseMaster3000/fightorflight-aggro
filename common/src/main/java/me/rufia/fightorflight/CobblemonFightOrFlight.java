@@ -95,7 +95,7 @@ public class CobblemonFightOrFlight {
         Set<String> pokemonAspects = pokemon.getAspects();
         double height = pokemonEntity.position().y;
 
-        // SPAWN ZONE (all pokemon WIMP)
+        // SPAWN ZONE (all Pokémon run on provoke like WIMPS)
         Vec3 pos = pokemonEntity.position();
         int safeRadius = CobblemonFightOrFlight.commonConfig().safe_zone_radius;
         if ((pos.x <= safeRadius) && (pos.z <= safeRadius) && (pos.y > 50)) {
